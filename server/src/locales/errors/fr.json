@@ -1,0 +1,6 @@
+{
+    "server:error": "Une erreur est survenue sur le serveur, veuillez réessayer",
+    "user.exists": "L'utilisateur existe déjà",
+    "user.credentials": "Mot de passe ou nom d'utilisateur invalide(s)",
+    "acc:no.account": "Aucun compte n'est associé à cet e-mail"
+}

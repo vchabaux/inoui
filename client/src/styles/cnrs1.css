@@ -1,0 +1,90 @@
+@font-face {
+  font-family: "Bauhaus";
+  font-display: swap;
+  src: url("@/assets/fonts/Bauhaus.ttf") format("truetype");
+}
+
+:root {
+  --app-radius: 0;
+  --app-border: var(--border-2);
+  --app-font-title: "Bauhaus", sans-serif;
+  --app-color-neutral-1: #252525;
+  --app-color-neutral-5: #111111;
+  --app-color-neutral-10: #282828;
+  --app-color-neutral-90: #eeeeee;
+  --app-color-accent-60: #eeeeee;
+  --app-color-neutral-30: #eeeeee;
+  --color-accent-1: #050d9e;
+  --color-accent-2: #00c4b3;
+
+  --app-signal-border: 3px dashed crimson !important;
+}
+
+img {
+  filter: brightness(0.8);
+}
+
+header {
+  border-block-end: var(--app-border, var(--border-1)) solid var(--color-full-accent);
+}
+
+footer {
+  border-block-start: var(--app-border, var(--border-1)) solid var(--color-full-accent);
+}
+
+.header-title,
+.color-title {
+  font-family: var(--app-font-title);
+}
+
+.color-title {
+  padding: var(--size-2) var(--size-6);
+  border-radius: var(--size-20);
+  position: relative;
+  text-shadow: 2px 2px 0 var(--color-background-neutral);
+}
+
+.color-title::before {
+  content: "";
+  position: absolute;
+  border: 1px solid currentColor;
+  inset-block-start: 50%;
+  inset-inline-start: 100%;
+}
+
+.color-title::after {
+  content: "";
+  display: block;
+  position: absolute;
+  inset-block-start: 60%;
+  transform: translateY(-50%);
+  aspect-ratio: 100/46;
+  background-image: url("@/assets/combi.png");
+  background-size: contain;
+}
+
+.tutorial .owl-dialog-body .svg-inline--fa, .plain-line, .dashed-line {
+  color: crimson;
+}
+
+@media (max-width: 767px) {
+  .color-title::before {
+    width: 50px;
+  }
+
+  .color-title::after {
+    width: 80px;
+    inset-inline-start: calc(100% + var(--size-4));
+  }
+}
+
+@media (min-width: 768px) {
+  .color-title::before {
+    width: 100px;
+  }
+
+  .color-title::after {
+    width: 100px;
+    inset-inline-start: calc(100% + var(--size-15));
+  }
+}

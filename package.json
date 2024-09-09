@@ -1,0 +1,29 @@
+{
+  "name": "owl-boilerplate",
+  "version": "1.0.0",
+  "description": "app + dashboard boilerplate",
+  "main": "index.js",
+  "scripts": {
+    "reinstall": "rm ./client/package-lock.json && rm ./server/package-lock.json && rm -rf ./client/node_modules && rm -rf ./server/node_modules && npm run install:all && npm run dev",
+    "dev": "concurrently -n client,server \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd ./client && npm run dev",
+    "start": "cd ./server && npm start",
+    "preinstall": "cd ./client && npm install && npm run build && cd ../server && npm install && cd ..",
+    "dev:server": "cd ./server && npm run dev",
+    "install:all": "cd ./client && npm i && cd .. && cd ./server && npm i"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owlabio/owl-boilerplate.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/owlabio/owl-boilerplate/issues"
+  },
+  "homepage": "https://github.com/owlabio/owl-boilerplate#readme",
+  "devDependencies": {
+    "concurrently": "^7.1.0"
+  }
+}

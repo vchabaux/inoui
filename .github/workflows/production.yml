@@ -1,0 +1,41 @@
+name: Deploy to SAOJOSE environment
+
+on:
+  push:
+    branches: [production]
+  pull_request:
+    branches: [production]
+
+jobs:
+  build:
+    runs-on: saojose
+    defaults:
+      run:
+        working-directory: ./
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          clean: false
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: |
+          npm install
+          npm run install:all
+          echo installing...
+          cd client
+          npm run build
+          cd ..
+          cd server
+          npm run import:dist
+
+      - name: Start server !!!
+        continue-on-error: true
+        run: |
+          cd ./server
+          pm2 stop saojose || pm2 start npm --name "saojose" -- run prod
+          pm2 start saojose
+          pm2 save

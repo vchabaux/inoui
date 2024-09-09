@@ -1,0 +1,5 @@
+{
+    "server.error": "TODO PT server:error",
+    "user.exists": "TODO PT user.exists",
+    "user.bad-credentials": "TODO PT user.bad-credentials"
+}

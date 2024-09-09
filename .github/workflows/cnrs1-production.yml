@@ -1,0 +1,77 @@
+name: Deploy to CNRS1/INOUI environment
+
+on:
+  push:
+    branches: [cnrs1]
+  pull_request:
+    branches: [cnrs1]
+
+jobs:
+  build:
+    runs-on: cnrs1
+    environment: cnrs1-prod
+    defaults:
+      run:
+        working-directory: ./
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          clean: false
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Create server .env file
+        run: |
+          cd ./server 
+          true > .env.production
+          echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env.production
+          echo APP_HOST=${{ secrets.APP_HOST }} >> .env.production
+          echo APP_NAME=${{ secrets.APP_NAME }} >> .env.production
+          echo APP_JWT_SECRET=${{ secrets.APP_JWT_SECRET }} >> .env.production
+          echo APP_PORT=${{ secrets.APP_PORT }} >> .env.production
+          echo APP_PROTOCOL=${{ secrets.APP_PROTOCOL }} >> .env.production
+          echo APP_SMTP_HOST=${{ secrets.APP_SMTP_HOST }} >> .env.production
+          echo APP_SMTP_PORT=${{ secrets.APP_SMTP_PORT }} >> .env.production
+          echo APP_EMAIL_PASSWORD=${{ secrets.APP_EMAIL_PASSWORD }} >> .env.production
+          echo APP_EMAIL_SENDER=${{ secrets.APP_EMAIL_SENDER }} >> .env.production
+          echo APP_URL=${{ secrets.APP_URL }} >> .env.production
+          echo MONGODB_URL=${{ secrets.MONGODB_URL }} >> .env.production
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env.production
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env.production
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env.production
+          echo SALT=${{ secrets.SALT }} >> .env.production
+          echo SESSION_SECRET=${{ secrets.SESSION_SECRET }} >> .env.production
+          echo SW_ACCESS_ID=${{ secrets.SW_ACCESS_ID }} >> .env.production
+          echo SW_SECRET_KEY=${{ secrets.SW_SECRET_KEY }} >> .env.production
+          cd ..
+
+      - name: Create client .env file
+        run: |
+          cd ./client
+          true > .env.production
+          echo VITE_APP_BACKEND_URL=${{ secrets.CLIENT_BACKEND_URL }} >> .env.production
+          echo VITE_APP_MAPBOX_TOKEN=${{ secrets.CLIENT_MAPBOX_TOKEN }} >> .env.production
+          cd ..
+
+      - name: Install and build client
+        run: |
+          cd ./client 
+          npm install
+          npm run build
+          cd ..
+
+      - name: Install server
+        run: |
+          cd ./server
+          npm install
+          npm run import:dist
+
+      - name: Start server
+        run: |
+          pm2 stop immersion || pm2 start npm --name "immersion" -- run prod
+          pm2 start immersion
+          pm2 save

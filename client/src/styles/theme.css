@@ -1,0 +1,38 @@
+:root {
+  --app-color-neutral-1: #030404;
+  --app-color-neutral-5: #101111;
+  --app-color-neutral-10: #1a1c1c;
+  --app-color-neutral-20: #2f3131;
+  --app-color-neutral-30: #464747;
+  --app-color-neutral-40: #5d5e5e;
+  --app-color-neutral-50: #777777;
+  --app-color-neutral-60: #919191;
+  --app-color-neutral-70: #ababab;
+  --app-color-neutral-80: #c6c6c6;
+  --app-color-neutral-90: #e3e2e2;
+  --app-color-neutral-95: #f1f0f0;
+  --app-color-neutral-99: #fdfcfc;
+  --app-color-accent-1: #000412;
+  --app-color-accent-5: #00102d;
+  --app-color-accent-10: #091b38;
+  --app-color-accent-20: #20304e;
+  --app-color-accent-30: #374766;
+  --app-color-accent-40: #4e5e7f;
+  --app-color-accent-50: #677799;
+  --app-color-accent-60: #8191b4;
+  --app-color-accent-70: #9babcf;
+  --app-color-accent-80: #b7c7ed;
+  --app-color-accent-90: #d6e2ff;
+  --app-color-accent-95: #ebf0ff;
+  --app-color-accent-99: #fdfbff;
+}
+
+.color-title {
+  border: var(--app-border, var(--border-1)) solid var(--color-full-accent);
+  margin-block-end: var(--size-8);
+}
+
+.emphasis-text {
+  font-weight: bold;
+  color: var(--color-text-neutral) !important;
+}

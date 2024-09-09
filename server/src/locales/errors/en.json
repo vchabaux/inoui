@@ -1,0 +1,8 @@
+{
+    "server:error": "An error happened on the server",
+    "user.exists": "User already exists",
+    "user.credentials": "Invalid credentials",
+    "track::notices-must-be-set": "Not all points have notices assigned, please set them in order to publish",
+    "track::unauthorized": "Permission denied, please contact an admin",
+    "track::publish-missing-notice": "You cannot remove a notice from a track that is already published !"
+}

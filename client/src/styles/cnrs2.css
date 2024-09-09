@@ -1,0 +1,78 @@
+@font-face {
+  font-family: "Poppins";
+  font-style: bold;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("@/assets/fonts/Poppins.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Menlo";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("@/assets/fonts/Menlo.ttf") format("truetype");
+}
+
+:root {
+  --app-radius: 0;
+  --app-border: var(--border-1);
+  --app-font-title: "Poppins", sans-serif;
+  --app-font-body: "Menlo", sans-serif;
+  --app-color-accent-40: black;
+  --app-color-neutral-70: black;
+  --color-accent-1: coral;
+
+  --app-signal-border: 3px dashed var(--color-accent-1) !important
+}
+
+header,
+footer {
+  border: var(--app-border, var(--border-1)) solid var(--color-full-accent);
+}
+
+.color-title {
+  padding: var(--size-2) var(--size-6);
+  font-family: var(--app-font-title);
+}
+
+.mobile-nav {
+  margin-inline-end: -1px;
+  border-inline: var(--app-border, var(--border-1)) solid var(--color-full-accent);
+}
+
+main:not(.app-intro) {
+  border-inline: var(--app-border, var(--border-1)) solid var(--color-full-accent);
+}
+
+/* Color effect */
+.color-title {
+  text-transform: uppercase;
+}
+
+.color-btn,
+map-filters {
+  box-shadow: var(--box-shadow-5);
+}
+
+.color-btn:hover {
+  filter: none !important;
+}
+
+.color-btn:not(.-active):hover {
+  background: var(--color-background-neutral) !important;
+}
+
+.color-btn .owl-button-label,
+.color-btn:hover .owl-button-label svg {
+  transition: all 0.1s ease-in-out;
+}
+
+.color-btn:hover .owl-button-label {
+  overflow: visible;
+  transform: scale(1.3);
+}
+
+.tutorial .owl-dialog-body .svg-inline--fa, .plain-line, .dashed-line {
+  color: var(--color-accent-1);
+}
