@@ -18,7 +18,7 @@
             <Link variant="text" class="header-link" active-class="-active" path="/more/musicians">Artistes</Link>
           </Container>
           <Container v-if="app === 'cnrs1'" flow="row" tag="li" stretched>
-            <Link variant="text" class="header-link" active-class="-active" path="/more/cards">Fiches pédagogiques (test)</Link>
+            <Link variant="text" class="header-link" active-class="-active" path="/more/cards">Fiches pédagogiques</Link>
           </Container>
           <Container v-else flow="row" tag="li" stretched>
             <Link variant="text" class="header-link" active-class="-active" path="/more/itineraries">Itineraries</Link>
