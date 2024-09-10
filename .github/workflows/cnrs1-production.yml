@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: cnrs1
+    runs-on: self-hosted 
     environment: cnrs1-prod
     defaults:
       run:
