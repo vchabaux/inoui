@@ -5,6 +5,8 @@ on:
     branches: [cnrs1]
   pull_request:
     branches: [cnrs1]
+  workflow_dispatch:
+    branches: [cnrs1]
 
 jobs:
   build:
