@@ -64,7 +64,7 @@ export function formatSingleAsset(data, file) {
         : file.mime_type.split("/")[0],
     originalname: file.name,
     url: `https://api.nakala.fr/data/${data.identifier}/${file.sha1}`,
-    // url: `https://apitest.nakala.fr/data/${data.identifier}/${file.sha1}`,
+     //url: `https://apitest.nakala.fr/data/${data.identifier}/${file.sha1}`,
     ...file,
   };
 }
@@ -147,6 +147,7 @@ export const useNakalaStore = defineStore("nakala", () => {
     const { title, description, language, metas, license, keywords, ...rest } =
       postData;
 
+    console.log(title);
     console.log(postData);
 
     return {
@@ -163,14 +164,14 @@ export const useNakalaStore = defineStore("nakala", () => {
         {
           // value: "CC-BY-4.0", // LICENSE CODE AND NOT URL
           value: license.code,
-          lang: language,
+          //lang: language,
           typeUri: "http://www.w3.org/2001/XMLSchema#string", // ?? Default
           propertyUri: "http://nakala.fr/terms#license",
         },
         // REQUIRED - TYPE Required for Medias
         {
           value: "http://purl.org/coar/resource_type/c_c513",
-          lang: language, // defaults France
+          //lang: language, // defaults France
           typeUri: "http://www.w3.org/2001/XMLSchema#anyURI",
           propertyUri: "http://nakala.fr/terms#type",
         },
@@ -184,7 +185,7 @@ export const useNakalaStore = defineStore("nakala", () => {
         // CREATED
         {
           value: null,
-          lang: language,
+          //lang: language,
           typeUri: null,
           propertyUri: "http://nakala.fr/terms#created",
         },
@@ -250,14 +251,14 @@ export const useNakalaStore = defineStore("nakala", () => {
           {
             // value: "CC-BY-4.0", // LICENSE CODE AND NOT URL
             value: license.code,
-            lang: language,
+            //lang: language,
             typeUri: "http://www.w3.org/2001/XMLSchema#string", // ?? Default
             propertyUri: "http://nakala.fr/terms#license",
           },
           // REQUIRED - TYPE Required for Medias
           {
             value: "http://purl.org/coar/resource_type/c_c513",
-            lang: language, // defaults France
+            //lang: language, // defaults France
             typeUri: "http://www.w3.org/2001/XMLSchema#anyURI",
             propertyUri: "http://nakala.fr/terms#type",
           },
@@ -271,7 +272,7 @@ export const useNakalaStore = defineStore("nakala", () => {
           // CREATED
           {
             value: null,
-            lang: language,
+            //lang: language,
             typeUri: null,
             propertyUri: "http://nakala.fr/terms#created",
           },
