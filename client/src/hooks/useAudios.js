@@ -12,7 +12,7 @@ export const useAudios = (audios, mode, hasAudio, currentTrack) => {
     const audioOK = unref(hasAudio);
     const globalOK = unref(currentTrack);
 
-    const playable = audioOK && !globalOK && modeOK === "narration";
+    const playable = audioOK && !globalOK;// && modeOK === "narration";
 
     for (const audio of audioUnref) {
       const found = players.value.find((player) => player.id === audio.id);
