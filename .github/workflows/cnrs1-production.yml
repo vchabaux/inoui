@@ -74,7 +74,6 @@ jobs:
 
       - name: Start server
         run: |
-          cd ./server
           pm2 stop immersion || pm2 start npm --name "immersion" -- run prod
           pm2 start immersion
           pm2 save
