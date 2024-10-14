@@ -232,13 +232,14 @@ function checkUploadSize(event) {
   for (const file of event.target.files) {
     totalSize += file.size;
   }
-
+/*
   if (totalSize >= 524288000) {
     alert("La taille maximum autorisée est de 500MB");
     event.target.value = "";
 
     images.value = "";
   }
+*/
 }
 
 function formatKeywords(keywords, lang) {
