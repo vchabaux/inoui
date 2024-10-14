@@ -13,8 +13,8 @@ const proxyHttp = (
   const instance = axios.create({
     baseURL: proxyURL,
     headers: options.headers,
-    maxContentLength: 1000000000,
-    maxBodyLength: 1000000000,
+    maxContentLength: 10000000000,
+    maxBodyLength: 10000000000,
   });
 
   return async (req, res, next) => {
