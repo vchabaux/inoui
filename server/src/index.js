@@ -10,6 +10,8 @@ const { createError } = require("./utils");
 const { initTransport } = require("./config/mail");
 require("./node-plugin/initialize");
 const { iconManagerServer } = require("@owlabio/icon-manager/server");
+const { createProxyMiddleware } = require("http-proxy-middleware");
+
 
 const app = express();
 
@@ -45,6 +47,14 @@ app.use(
 );
 
 app.use("/static", express.static(path.join(__dirname, "..", "static")));
+
+app.use(
+  "/api2",
+  createProxyMiddleware({
+    target: "http://localhost:5000", // Remplacez par l'adresse du deuxième serveur
+    changeOrigin: true,
+  })
+);
 
 app.use("/api", require("./routes"));
 

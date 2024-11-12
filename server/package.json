@@ -48,6 +48,7 @@
     "form-data": "^4.0.0",
     "handlebars": "^4.7.7",
     "hbs": "^4.2.0",
+    "http-proxy-middleware": "^3.0.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.2",
     "morgan": "^1.10.0",

@@ -13,8 +13,8 @@ const proxyHttp = (
   const instance = axios.create({
     baseURL: proxyURL,
     headers: options.headers,
-    maxContentLength: 10000000000,
-    maxBodyLength: 10000000000,
+    maxContentLength: Infinity,
+    maxBodyLength: Infinity,
   });
 
   return async (req, res, next) => {
@@ -23,11 +23,11 @@ const proxyHttp = (
     if (req.is("multipart/form-data")) {
       upload(req, res, async function (err) {
         if (err instanceof multer.MulterError) {
-          console.error(err);
+          console.error(err.response.data);
           return next("Multer Error");
         } else if (err) {
-          console.error(err);
-          return next(err);
+          console.error(err.response.data);
+          return next(err.response.data);
         }
 
         if (req.files) {
