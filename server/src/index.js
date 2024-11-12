@@ -51,11 +51,8 @@ app.use("/static", express.static(path.join(__dirname, "..", "static")));
 app.use(
   "/api2",
   createProxyMiddleware({
-    target: "http://localhost:5000", // Remplacez par l'adresse du deuxième serveur
+    target: "http://localhost:5000/api2", 
     changeOrigin: true,
-    pathRewrite: {
-      "^/api2": "/api2",  // Réécrit le chemin pour ajouter /api2 au serveur cible
-    },
   })
 
 );
