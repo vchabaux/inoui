@@ -10,7 +10,7 @@ const { createError } = require("./utils");
 const { initTransport } = require("./config/mail");
 require("./node-plugin/initialize");
 const { iconManagerServer } = require("@owlabio/icon-manager/server");
-const { createProxyMiddleware } = require("http-proxy-middleware");
+const { createProxyMiddleware, fixRequestBody  } = require("http-proxy-middleware");
 
 
 const app = express();
@@ -53,6 +53,9 @@ app.use(
   createProxyMiddleware({
     target: "http://localhost:5000/api2", 
     changeOrigin: true,
+    on: {
+      proxyReq: fixRequestBody,
+    },
   })
 
 );
