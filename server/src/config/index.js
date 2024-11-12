@@ -23,11 +23,7 @@ module.exports = {
     url: parseEnv("APP_URL"),
     port: parseEnv("APP_PORT", false),
     protocol: parseEnv("APP_PROTOCOL", false),
-    allowedDomains:
-      process.env.NODE_ENV === "development" || !process.env.NODE_ENV
-        ? JSON.parse(parseEnv("APP_DOMAINS"), false)
-        : [],
-
+    allowedDomains:["https://vchabaux.github.io"],
     uploadLocation: "uploads",
     jwt_secret: parseEnv("APP_JWT_SECRET"),
   },
