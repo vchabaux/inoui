@@ -52,13 +52,8 @@ app.use(
   "/api2",
   createProxyMiddleware({
     target: "http://localhost:5000/api2", // Remplacez par l'adresse du deuxième serveur
-    changeOrigin: true,
-    onProxyReq: (proxyReq, req, res) => {
-      // Vérifie et redirige les requêtes POST et OPTIONS
-      if (req.method === 'OPTIONS' || req.method === 'POST') {
-        proxyReq.setHeader('Access-Control-Allow-Origin', '*');
-      }
-    }
+    changeOrigin: false,
+    
   })
 
 );
