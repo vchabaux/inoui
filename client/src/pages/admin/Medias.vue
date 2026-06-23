@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { Dialog, Container, Button, Text } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
@@ -73,11 +73,17 @@ const props = defineProps({
 
 const isUploading = ref(false);
 
+onMounted(() => {
+  if (destination.value === "nakala") {
+    nakalaStore.initialize();
+  }
+});
+
 const settings = computed(() => settingsStore.settings);
 const destination = computed(() => settings.value.storage.destination);
 
 const nakalaData = computed(() => {
-  if (!destination.value === "nakala") return null;
+  if (destination.value !== "nakala") return null;
   return nakalaStore.assets;
 });
 
@@ -86,7 +92,7 @@ const handleSelect = (value) => {
 };
 
 const localData = computed(() => {
-  if (!destination.value === "local") return null;
+  if (destination.value !== "local") return null;
   return mediaStore.list;
 });
 

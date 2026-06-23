@@ -73,6 +73,7 @@ export const useNakalaStore = defineStore("nakala", () => {
   const collection = ref(null);
   const datas = ref([]);
   const searchResults = ref([]);
+  const searchLoading = ref(false);
   const loaded = ref(false);
   const loading = ref(true);
   const vocabLoaded = ref(false);
@@ -97,11 +98,26 @@ export const useNakalaStore = defineStore("nakala", () => {
   });
 
   async function search(value) {
-    /**
-     * TODO DEBOUNCE THE SEARCH
-     */
+    if (!value || !value.trim()) {
+      searchResults.value = [];
+      return;
+    }
 
-    console.log("This is the searchValue ==>", value);
+    const collectionId = settings.value.nakala.collection;
+    searchLoading.value = true;
+
+    try {
+      const url = `/nakala/collections/${collectionId}/datas?limit=20&search=${encodeURIComponent(value)}`;
+      const { data } = await api.get(url);
+      const formatted = formatDatas(data.data || []);
+      const assets = formatAssets(formatted);
+      searchResults.value = assets;
+    } catch (err) {
+      console.error("Nakala search error:", err);
+      searchResults.value = [];
+    } finally {
+      searchLoading.value = false;
+    }
   }
 
   function getLicense(code) {
@@ -348,6 +364,10 @@ export const useNakalaStore = defineStore("nakala", () => {
     loading.value = false;
   }
 
+  async function refresh() {
+    await getAll();
+  }
+
   function getById(identifier) {
     return datas.value.find((data) => data.identifier === identifier);
   }
@@ -419,9 +439,13 @@ export const useNakalaStore = defineStore("nakala", () => {
     vocabularies,
     vocabLoaded,
     datas,
+    searchResults,
+    searchLoading,
 
     getLicense,
     initialize,
+    refresh,
+    search,
     create,
     getById,
     deleteFile,

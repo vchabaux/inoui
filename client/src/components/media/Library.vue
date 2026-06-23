@@ -69,7 +69,8 @@
     </Container>
 
     <!-- List -->
-    <Container flow="row" class="library-list">
+    <Text v-if="isSearchLoading" class="search-loading">Searching...</Text>
+    <Container flow="row" class="library-list" v-else>
       <AssetCard
         v-for="asset in currentAssets"
         variant="contain"
@@ -114,7 +115,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onUnmounted } from "vue";
 import { Container, Button, Text, Field, Icon, Dialog } from "@owlabio/owl-ui";
 import AssetCard from "@/components/media/AssetCard.vue";
 import { useStore } from "@/stores";
@@ -181,12 +182,37 @@ const isEditForm = ref(false);
 const selectedItems = ref([]);
 const previewedItem = ref(null);
 
+let searchDebounceTimer = null;
+
+onUnmounted(() => {
+  if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+});
+
 const emits = defineEmits(["delete", "select"]);
 const hasSelected = computed(() => !!selectedItems.value.length);
 const canDelete = computed(() => authStore.isAdmin && !props.picker);
 
 const isNakala = computed(() => {
   return settingsStore.settings.storage.destination === "nakala";
+});
+
+const isSearchLoading = computed(() => {
+  return isNakala.value && nakalaStore.searchLoading;
+});
+
+watch(search, (value) => {
+  if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+
+  if (!isNakala.value) return;
+
+  if (!value || !value.trim()) {
+    nakalaStore.search("");
+    return;
+  }
+
+  searchDebounceTimer = setTimeout(() => {
+    nakalaStore.search(value);
+  }, 300);
 });
 
 const getAuthor = (id) => {
@@ -221,6 +247,12 @@ function filterByMimeType(asset) {
 }
 
 const currentAssets = computed(() => {
+  if (isNakala.value && nakalaStore.searchResults.length > 0) {
+    const results = nakalaStore.searchResults;
+    if (fileType.value.value === "all") return results;
+    return results.filter(filterByMimeType);
+  }
+
   if (fileType.value.value === "all") return props.data.filter(filterByTags);
   else return props.data.filter(filterByMimeType).filter(filterByTags);
 });
@@ -286,6 +318,12 @@ function selectItem(item) {
 </script>
 
 <style scoped>
+.search-loading {
+  padding: var(--size-4);
+  color: var(--color-muted);
+  font-style: italic;
+}
+
 .edit-form {
   margin-block-start: var(--size-8);
 }
