@@ -10,7 +10,7 @@
     <h2>Playlist tracks</h2>
     <Container variant="surface" stretched>
       <Text v-if="!tracksSelected.length">No track selected yet</Text>
-      <Each v-else :data="tracksSelected" v-slot="{ $value }" :is-recursive="false">
+      <template v-for="$value in tracksSelected" :key="$value._id">
         <Container class="row-selected">
           <Text :lines="1">{{ $value.name }}</Text>
           <Button aria-label="move up" title="move up" variant="text" size="s" :class="{ hidden: checkSwap('first', $value._id) }" @click="swapTrackUp($value._id)">
@@ -23,20 +23,20 @@
             <Icon name="xmark" />
           </Button>
         </Container>
-      </Each>
+      </template>
     </Container>
 
     <h2>Available tracks</h2>
     <Container variant="surface" stretched>
       <Text v-if="!tracksAvailable.length">Every published track is already in the playlist</Text>
-      <Each :data="tracksAvailable" v-slot="{ $value }" :is-recursive="false">
+      <template v-for="$value in tracksAvailable" :key="$value._id">
         <Container class="row-available">
           <Text :lines="1">{{ $value.name }}</Text>
           <Button aria-label="add to playlist" title="add to playlist" size="s" @click="addTrack($value._id)">
             <Icon name="plus" />
           </Button>
         </Container>
-      </Each>
+      </template>
     </Container>
   </Container>
 
@@ -50,7 +50,6 @@ import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/stores";
 import { Container, Field, Button, Icon, Text } from "@owlabio/owl-ui";
-import { Each } from "@owlabio/each-vue";
 
 const playlistStore = useStore("playlist");
 const trackStore = useStore("track");

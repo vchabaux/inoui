@@ -35,7 +35,7 @@
       <Search label="Add a point" @select="addPoint" defaultValue="" hint="you can also click on the map" />
 
       <Text v-if="!currentTrack?.children?.length"> No point yet </Text>
-      <Each v-else :data="currentTrack.children" :isRecursive="false" v-slot="{ $key, $value }">
+      <template v-for="($value, $key) in currentTrack.children" :key="$key">
         <div class="list-item">
           <Text :lines="1">{{ $key + 1 }} - {{ $value?.name }} </Text>
 
@@ -57,7 +57,7 @@
             </Button>
           </Container>
         </div>
-      </Each>
+      </template>
     </Container>
   </Container>
 </template>
@@ -66,7 +66,6 @@
 import { ref, computed } from "vue";
 import { Container, Field, Button, Icon, Text, Separator } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
-import { Each } from "@owlabio/each-vue";
 import { Search } from "@/components/mapbox";
 import FormDelete from "@/components/forms/FormDelete.vue";
 import Voice from "@/components/Voice.vue";

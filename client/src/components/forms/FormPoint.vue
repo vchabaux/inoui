@@ -74,12 +74,7 @@
       />
 
       <Text v-if="!currentPoint?.children?.length">No detour yet</Text>
-      <Each
-        v-else
-        :data="currentPoint.children"
-        :isRecursive="false"
-        v-slot="{ $key, $value }"
-      >
+      <template v-for="($value, $key) in currentPoint.children" :key="$key">
         <Container flow="row" class="list-item">
           <Text :lines="1">{{ $value?.name }} </Text>
 
@@ -108,7 +103,7 @@
             </Button>
           </Container>
         </Container>
-      </Each>
+      </template>
     </Container>
   </Container>
 </template>
@@ -124,7 +119,6 @@ import {
   Separator,
 } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
-import { Each } from "@owlabio/each-vue";
 import { Search } from "@/components/mapbox";
 import FormDelete from "@/components/forms/FormDelete.vue";
 import Voice from "@/components/Voice.vue";

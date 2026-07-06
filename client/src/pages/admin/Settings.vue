@@ -103,15 +103,17 @@
         @change="addLicense"
       />
 
-      <Text v-if="!selectedLicenses.length" class="license-item"
-        >No license yet</Text
-      >
-      <Each v-else :data="selectedLicenses" v-slot="{ $value }">
-        <Container flow="row-between">
-          <Text class="license-item">{{ $value.name }} </Text>
-          <Button @click="removeLicense($value)">x</Button>
-        </Container>
-      </Each>
+      <template v-if="!selectedLicenses.length">
+        <Text class="license-item">No license yet</Text>
+      </template>
+      <template v-else>
+        <template v-for="$value in selectedLicenses" :key="$value.code">
+          <Container flow="row-between">
+            <Text class="license-item">{{ $value.name }} </Text>
+            <Button @click="removeLicense($value)">x</Button>
+          </Container>
+        </template>
+      </template>
 
       <Container flow="row-between">
         <h3>Additional information</h3>
@@ -175,7 +177,6 @@ import {
   Separator,
 } from "@owlabio/owl-ui";
 import { v4 as uuidv4 } from "uuid";
-import { Each } from "@owlabio/each-vue";
 import { useStore } from "@/stores";
 import { mapStyles } from "@/utils/mapStyles";
 import FormDelete from "@/components/forms/FormDelete.vue";

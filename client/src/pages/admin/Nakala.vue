@@ -35,7 +35,7 @@
   >
     <template #details="{ item }">
       <Container>
-        <Each :data="item.files" v-slot="{ $value }">
+        <template v-for="$value in item.files" :key="$value.sha1">
           <Container flow="row">
             <Text>{{ $value.name }}</Text>
 
@@ -56,7 +56,7 @@
               <Icon name="trash-can" />
             </Button>
           </Container>
-        </Each>
+        </template>
       </Container>
     </template>
 
@@ -88,7 +88,6 @@ import Datable from "@owlabio/da-table";
 import { columnsNakala } from "@/utils/columns";
 import FormAssetNakala from "@/components/forms/FormAssetNakala.vue";
 import { useStore } from "@/stores";
-import { Each } from "@owlabio/each-vue";
 import { handleError } from "@/utils";
 import Voice from "@/components/Voice.vue";
 const nakalaStore = useStore("nakala");
