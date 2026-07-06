@@ -9,7 +9,7 @@ const MongoStore = require("connect-mongo");
 const { createError } = require("./utils");
 const { initTransport } = require("./config/mail");
 require("./node-plugin/initialize");
-const { iconManagerServer } = require("@owlabio/icon-manager/server");
+// const { iconManagerServer } = require("@owlabio/icon-manager/server"); // TODO Phase 4: réécrire avec FontAwesome
 const { createProxyMiddleware, fixRequestBody  } = require("http-proxy-middleware");
 
 
@@ -62,7 +62,7 @@ app.use(
 
 app.use("/api", require("./routes"));
 
-iconManagerServer.initRouters(app); // let's get awesome icons !
+// iconManagerServer.initRouters(app); // TODO Phase 4: réécrire avec FontAwesome
 
 app.use("/api/*", (_, __, next) => {
   next(createError(404, "router::not-found"));

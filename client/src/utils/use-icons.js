@@ -23,9 +23,12 @@ import {
   faVolumeHigh,
   faVolumeXmark,
   faXmark,
+  faHeadphones,
+  faVolumeOff,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { faEar, faEarDeaf } from "@fortawesome/pro-regular-svg-icons";
+// faEar (pro) → faHeadphones (free solid)
+// faEarDeaf (pro) → faVolumeOff (free solid)
 
 export {
   faArrowDown,
@@ -35,8 +38,8 @@ export {
   faBackward,
   faCrosshairs,
   faDrum,
-  faEar,
-  faEarDeaf,
+  faHeadphones,
+  faVolumeOff,
   faEye,
   faEyeSlash,
   faFilter,

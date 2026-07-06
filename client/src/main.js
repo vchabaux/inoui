@@ -6,9 +6,11 @@ import { createPinia } from "pinia";
 import App from "@/App.vue";
 import Layout from "@/layouts/Layout.vue";
 import { initRouter } from "@/router";
-import { initStoreCategory } from "@owlabio/category-manager";
+// TODO Phase 4: remplacer category-manager par store maison
+// import { initStoreCategory } from "@owlabio/category-manager";
 import { cnrs1, cnrs2 } from "@/locales/index.js";
-import { iconManagerPlugin } from "@owlabio/icon-manager/client";
+// TODO Phase 4: remplacer icon-manager par FontAwesome standard
+// import { iconManagerPlugin } from "@owlabio/icon-manager/client";
 
 const app = createApp(App);
 
@@ -21,13 +23,15 @@ const i18n = createI18n({
   messages: { cnrs1: cnrs1, cnrs2: cnrs2 },
 });
 
-initStoreCategory(api, "/nodes");
+// TODO Phase 4: réactiver avec le store category maison
+// initStoreCategory(api, "/nodes");
 
 
 app
   .use(pinia)
   .use(initRouter(app))
-  .use(iconManagerPlugin, { baseURL: import.meta.env.VITE_APP_BACKEND_URL })
+  // TODO Phase 4: réactiver avec FontAwesome standard
+  // .use(iconManagerPlugin, { baseURL: import.meta.env.VITE_APP_BACKEND_URL })
   .use(i18n)
   .component("Layout", Layout)
   .mount("#app");

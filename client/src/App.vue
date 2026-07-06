@@ -1,19 +1,24 @@
 <template>
-  <ScriptFontAwesome />
+  <!-- TODO Phase 4: remplacer ScriptFontAwesome par FontAwesome standard -->
   <Layout>
     <router-view />
   </Layout>
 </template>
 
 <script setup>
-import "@owlabio/owl-css/dist/style.css";
-import "@owlabio/owl-ui/dist/style.css";
-import "@owlabio/da-table/dist/style.css";
-import "@owlabio/category-manager/style.css";
-import "@owlabio/icon-manager/style";
+import "@/assets/owl-css-reset.css";
+// TODO Phase 3: remplacer owl-ui par PrimeVue
+// import "@owlabio/owl-ui/dist/style.css";
+// TODO Phase 4: remplacer da-table par PrimeVue DataTable
+// import "@owlabio/da-table/dist/style.css";
+// TODO Phase 4: remplacer category-manager par store maison
+// import "@owlabio/category-manager/style.css";
+// TODO Phase 4: remplacer icon-manager par FontAwesome standard
+// import "@owlabio/icon-manager/style";
 import "@/styles/theme.css";
 
-import { ScriptFontAwesome } from "@owlabio/icon-manager/client";
+// TODO Phase 4: remplacer ScriptFontAwesome par FontAwesome standard
+// import { ScriptFontAwesome } from "@owlabio/icon-manager/client";
 import { useStore } from "@/stores";
 import Layout from "@/layouts/Layout.vue";
 import { computed, watch } from "vue";

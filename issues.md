@@ -20,7 +20,7 @@ TEST Nakala:
 
 [Nakala - API](https://apitest.nakala.fr/doc)
 
-
+Sauvegarde du projet avec deépendances nde : dans dossier C:\Users\Utilisateur\Documents\docs projets\CREM INOUI\owl-boilerplate-main-20260702T091409Z-3-001\owl-boilerplate-main
 
 ## Prompt 1 — Visibilité et recherche des éléments Nakala dans l'éditeur de notices
 

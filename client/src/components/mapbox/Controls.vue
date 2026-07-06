@@ -161,7 +161,7 @@
           :class="{ '-active': controls.audio }"
           :aria-pressed="controls.audio"
           @click="emit('toggleAudio')">
-          <Icon :type="app === 'cnrs1' ? 'far' : 'fas'" :name="controls.audio ? app === 'cnrs1' ? 'ear' : 'volume-high' : app === 'cnrs1' ? 'ear-deaf' : 'volume-xmark'" />
+          <Icon :type="'fas'" :name="controls.audio ? app === 'cnrs1' ? 'headphones' : 'volume-high' : app === 'cnrs1' ? 'volume-off' : 'volume-xmark'" />
         </Button>
       </div>
 

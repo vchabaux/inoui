@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "seed:icons-prod": "cross-env NODE_ENV=production npm exec seed-icon-manager",
     "dev": "nodemon start.js",
     "prod": "cross-env NODE_ENV=production node start.js",
     "import:dist": "cp -r ../client/dist/* ./public/",
@@ -33,8 +32,6 @@
     "nodemon": "^2.0.16"
   },
   "dependencies": {
-    "@owlabio/backup-cron": "^0.0.22",
-    "@owlabio/icon-manager": "^1.0.22",
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "connect-mongo": "^4.6.0",
