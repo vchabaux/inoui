@@ -32,6 +32,9 @@ pids
 
 # other
 node_modules
+
+# nakala temporary uploads (written on file selection, cleaned up after 1h)
+uploads/temp/
 .cache
 .temp
 .env

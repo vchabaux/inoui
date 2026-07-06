@@ -218,7 +218,7 @@ export const useNakalaStore = defineStore("nakala", () => {
     };
   }
 
-  async function create(files, postData) {
+  async function create(files, postData, tempIds = []) {
     const settingsStore = useStore("settings");
     const collectionID = settingsStore.settings.nakala.collection;
 
@@ -231,16 +231,24 @@ export const useNakalaStore = defineStore("nakala", () => {
       keywords = [],
     } = postData;
 
-    const status = "published";
-    // const authors = {
-    //   // Set to null for anonymous
-    //   givenname: "Pascal",
-    //   surname: "Le Grand Frere",
-    //   //  orcid: // Optional
-    // };
-    // const creator = null;
-    // const created = null;
+    // ── TUS publish path (prompt 2b): files already on server via temp-upload ──
+    if (tempIds && tempIds.length > 0) {
+      const { data } = await api.post("/nakala/publish", {
+        tempIds,
+        collectionId: collectionID,
+        title,
+        description,
+        language,
+        license,
+        metas,
+        keywords,
+      });
+      await getAll();
+      return data;
+    }
 
+    // ── Legacy path: upload files then create data ──────────────────────────
+    const status = "published";
     const authors = null;
 
     const uploadedFiles = await upload(files);
@@ -265,16 +273,13 @@ export const useNakalaStore = defineStore("nakala", () => {
           },
           // REQUIRED - LICENSE
           {
-            // value: "CC-BY-4.0", // LICENSE CODE AND NOT URL
             value: license.code,
-            //lang: language,
-            typeUri: "http://www.w3.org/2001/XMLSchema#string", // ?? Default
+            typeUri: "http://www.w3.org/2001/XMLSchema#string",
             propertyUri: "http://nakala.fr/terms#license",
           },
           // REQUIRED - TYPE Required for Medias
           {
             value: "http://purl.org/coar/resource_type/c_c513",
-            //lang: language, // defaults France
             typeUri: "http://www.w3.org/2001/XMLSchema#anyURI",
             propertyUri: "http://nakala.fr/terms#type",
           },
@@ -288,7 +293,6 @@ export const useNakalaStore = defineStore("nakala", () => {
           // CREATED
           {
             value: null,
-            //lang: language,
             typeUri: null,
             propertyUri: "http://nakala.fr/terms#created",
           },

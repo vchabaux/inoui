@@ -31,6 +31,10 @@ const nakalaURIS = {
 // const nakalURL = "https://apitest.nakala.fr";
 const nakalURL = "https://api.nakala.fr";
 
+// Local temp-upload endpoint (must be mounted BEFORE the proxy so that
+// POST /nakala/temp-upload is handled here instead of being forwarded).
+baseRouter.use("/nakala", require("./nakalaTemp.routes"));
+
 baseRouter.use("/nakala", proxyHttp(nakalURL, proxyConfig));
 
 module.exports = baseRouter;
