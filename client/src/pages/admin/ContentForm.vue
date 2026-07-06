@@ -2,29 +2,28 @@
   <!-- Medias dialog -->
   <Dialog
     v-if="isMediaLibOpen"
-    id="assets"
-    :open="isMediaLibOpen"
+    v-model:visible="isMediaLibOpen"
     modal
-    @close="isMediaLibOpen = false"
+    @hide="isMediaLibOpen = false"
   >
     <Medias picker @select="addMedia" :mediaType="currentUploadType" />
   </Dialog>
 
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>{{ currentPage?.slug }}</h1>
-  </Container>
+  </div>
 
-  <Container width="m" centered>
-    <Container
+  <div class="width-m centered">
+    <div
       v-if="route.params.slug === 'intro'"
       tag="form"
-      stretched
+      class="stretched"
       @submit.prevent
     >
-      <Container stretched>
-        <Text tag="h2">Title screen</Text>
-        <Container flow="row" class="intro-media">
-          <Field
+      <div class="stretched">
+        <h2>Title screen</h2>
+        <div class="flow-row intro-media">
+          <InputText
             type="text"
             label="video"
             readonly
@@ -35,24 +34,23 @@
             title="upload"
             @click="openLibrary('video')"
           >
-            <Icon name="arrow-up-from-bracket" />
+            <i class="fa-solid fa-arrow-up-from-bracket" />
           </Button>
-        </Container>
-        <Field type="text" label="title" v-model="page.title" />
-        <Field
-          type="textarea"
+        </div>
+        <InputText type="text" label="title" v-model="page.title" />
+        <Textarea
           :rows="3"
           label="sub-title"
           v-model="page.subtitle"
         />
-      </Container>
+      </div>
 
-      <Separator v-if="app === 'cnrs2'" />
+      <Divider v-if="app === 'cnrs2'" />
 
-      <Container stretched v-if="app === 'cnrs2'">
-        <Text tag="h2">Text screen</Text>
-        <Container flow="row" class="intro-media">
-          <Field
+      <div class="stretched" v-if="app === 'cnrs2'">
+        <h2>Text screen</h2>
+        <div class="flow-row intro-media">
+          <InputText
             type="text"
             label="audio"
             readonly
@@ -63,74 +61,64 @@
             title="upload"
             @click="openLibrary('audio')"
           >
-            <Icon name="arrow-up-from-bracket" />
+            <i class="fa-solid fa-arrow-up-from-bracket" />
           </Button>
-        </Container>
-        <Field
+        </div>
+        <Textarea
           v-for="slot in textSlots"
-          type="textarea"
           :rows="5"
           :label="`text ${slot > 1 ? '(slide ' + slot + ')' : ''}`"
           v-model="page.content[slot - 1]"
         />
 
-        <Container class="-centered" flow="row">
-          <Button variant="outline" size="s" @click="textSlots++"
-            ><Icon name="plus"
+        <div class="-centered flow-row">
+          <Button outlined size="small" @click="textSlots++"
+            ><i class="fa-solid fa-plus"
           /></Button>
           <Button
             class="danger-btn"
-            variant="outline"
-            size="s"
+            outlined
+            size="small"
             @click="textSlots--"
-            ><Icon name="minus"
+            ><i class="fa-solid fa-minus"
           /></Button>
-        </Container>
-      </Container>
-    </Container>
+        </div>
+      </div>
+    </div>
 
-    <Container
+    <div
       v-else-if="route.params.slug === 'credits'"
       tag="form"
-      stretched
+      class="stretched"
       @submit.prevent
     >
       <Editor
-        label="Credits content"
-        hint="this will be displayed in the website footer"
         v-model="page.content"
       />
-    </Container>
+    </div>
 
-    <Container v-else tag="form" stretched @submit.prevent>
-      <Field type="text" label="Page title" v-model="page.title" />
+    <div v-else tag="form" class="stretched" @submit.prevent>
+      <InputText type="text" label="Page title" v-model="page.title" />
       <Editor
-        label="Page content"
         v-model="page.content"
         ref="editorRef"
-        mediaManagement="custom"
-        @upload="openLibrary"
       />
-    </Container>
+    </div>
 
-    <Container flow="row" class="-end save-btn">
+    <div class="flow-row -end save-btn">
       <Button @click="save">Save changes</Button>
-    </Container>
-  </Container>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import {
-  Dialog,
-  Container,
-  Field,
-  Editor,
-  Button,
-  Text,
-  Icon,
-  Separator,
-} from "@owlabio/owl-ui";
+import Dialog from "primevue/dialog";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import Editor from "primevue/editor";
+import Button from "primevue/button";
+import Divider from "primevue/divider";
 import Medias from "@/pages/admin/Medias.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/stores";
@@ -168,13 +156,6 @@ const openLibrary = (type) => {
 };
 
 function addMedia(value) {
-  /**
-   * Instead of having it hardcoded
-   * Can extract keys for the editorRef addX functions
-   * lowercase and remove the "add" in order to make it dynamic
-   * This is assuming editorRef will follow the addX pattern
-   */
-
   const addFunctions = {
     image: "addImage",
     video: "addVideo",

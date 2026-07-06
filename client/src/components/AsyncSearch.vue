@@ -1,30 +1,30 @@
 <template>
   <form class="search" @submit.prevent>
-    <Field type="text" :label="label" v-model="search" />
+    <InputText :placeholder="label" v-model="search" class="w-full" />
 
-    <Container tag="ul" class="search-list" stretched>
+    <ul class="search-list stretched">
       <li v-if="loading" class="search-spinner">
-        <Icon name="spinner" spin />
+        <i class="fa-solid fa-spinner fa-spin" />
       </li>
 
       <li v-for="(r, i) in results" :key="i">
         <Button
           class="search-item"
-          variant="text"
-          size="nested"
-          wide
+          text
+          size="small"
           @click="handleClick(r)"
         >
           {{ formatResult(r) }}
         </Button>
       </li>
-    </Container>
+    </ul>
   </form>
 </template>
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import { Container, Field, Button, Icon } from "@owlabio/owl-ui";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
 import { getProperty } from "@/utils";
 import axios from "axios";
 

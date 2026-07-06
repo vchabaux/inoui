@@ -1,27 +1,26 @@
 <template>
-  <Container class="voice-container" :class="type" variant="surface">
+  <div class="voice-container variant-surface" :class="type">
     <Button
       v-if="closable"
       class="voice-btn"
-      variant="text"
-      size="s"
+      text
+      size="small"
       aria-label="close"
       title="close"
       @click="handleClose"
     >
-      <Icon name="xmark" />
+      <i class="fa-solid fa-xmark" />
     </Button>
 
-    <Text
+    <span
       class="voice-message small-text"
-      variant="inherit"
       v-html="message"
-    ></Text>
-  </Container>
+    ></span>
+  </div>
 </template>
 
 <script setup>
-import { Container, Button, Icon, Text } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 
 defineProps({
   message: {

@@ -1,33 +1,34 @@
 <template>
-  <Container variant="dash-title">
+  <div class="variant-dash-title">
     <h1>Réinitialiser le mot de passe</h1>
-  </Container>
+  </div>
 
-  <Text class="small-text" v-if="!hasToken">No token provided</Text>
+  <p class="small-text" v-if="!hasToken">No token provided</p>
 
-  <Container tag="form" @submit.prevent stretched>
-    <Field
+  <form @submit.prevent class="stretched">
+    <label>Mot de passe</label>
+    <InputText
       v-model="password"
       type="password"
-      label="Mot de passe"
       autocomplete="new-password"
     />
-    <Field
+    <label>Confirmer le mot de passe</label>
+    <InputText
       v-model="confirmPassword"
       type="password"
-      label="Confirmer le mot de passe"
       autocomplete="new-password"
     />
-  </Container>
+  </form>
 
-  <Button wide :pending="submitting" @click="handleSubmit">Valider</Button>
+  <Button class="w-full" :loading="submitting" @click="handleSubmit">Valider</Button>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Container, Field, Button, Text } from "@owlabio/owl-ui";
 import { api } from "@/api/axios";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
 
 const route = useRoute();
 const router = useRouter();

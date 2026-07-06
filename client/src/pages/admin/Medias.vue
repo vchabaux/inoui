@@ -2,32 +2,33 @@
   <!-- Upload dialog -->
   <Dialog
     v-if="isUploading"
-    id="uploadMedia"
+    v-model:visible="isUploading"
     modal
-    :open="isUploading"
-    @close="isUploading = false"
+    @hide="isUploading = false"
   >
-    <Container variant="dash-title">
-      <Text tag="h2">Add files</Text>
-    </Container>
+    <template #header>
+      <div class="variant-dash-title">
+        <h2>Add files</h2>
+      </div>
+    </template>
 
-    <Container class="upload-forms">
+    <div class="upload-forms">
       <FormAssetLocal
         v-if="destination === 'local'"
         @upload="isUploading = false"
       />
       <FormAssetNakala v-else @upload="isUploading = false" />
-    </Container>
+    </div>
   </Dialog>
 
-  <Container>
+  <div>
     <!-- Header -->
-    <Container flow="row-between" variant="dash-title">
+    <div class="flow-row-between variant-dash-title">
       <h1>Medias {{ destination }}</h1>
       <Button @click="isUploading = true">Add files</Button>
-    </Container>
+    </div>
 
-    <Text v-if="!assets.length">Your library is empty</Text>
+    <p v-if="!assets.length">Your library is empty</p>
     <Library
       v-else
       :data="assets"
@@ -37,13 +38,14 @@
       @delete="handleDelete"
       @select="handleSelect"
     />
-  </Container>
+  </div>
 </template>
 
 <script setup>
 import { computed, ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { Dialog, Container, Button, Text } from "@owlabio/owl-ui";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
 import { useStore } from "@/stores";
 import FormAssetLocal from "@/components/forms/FormAssetLocal.vue";
 import FormAssetNakala from "@/components/forms/FormAssetNakala.vue";

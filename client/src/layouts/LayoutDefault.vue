@@ -1,5 +1,5 @@
 <template>
-  <Container class="app-shell" stretched>
+  <div class="app-shell stretched">
     <Header v-if="!isIntro" :open="isMenuOpen" @toggleMenu="isMenuOpen = !isMenuOpen" />
 
     <main :class="{ 'app-intro': isIntro }">
@@ -7,13 +7,12 @@
     </main>
 
     <Footer v-if="!isIntro" />
-  </Container>
+  </div>
 </template>
 
 <script setup>
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { Container } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 import Header from "@/layouts/Header.vue";
 import Footer from "@/layouts/Footer.vue";

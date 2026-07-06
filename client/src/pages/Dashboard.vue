@@ -1,40 +1,40 @@
 <template>
   <router-view />
   <template v-if="route.path === '/admin'">
-    <Container flow="row-between" variant="dash-title">
+    <div class="flow-row-between variant-dash-title">
       <h1>Dashboard</h1>
-    </Container>
+    </div>
 
-    <Text>
+    <p>
       The app is in beta: if you encounter a bug, please report to the dev team
-    </Text>
+    </p>
 
-    <Container flow="row" variant="surface">
-      <Container v-if="playlists && app === 'cnrs2'" class="card">
-        <Text class="count">{{ playlists.length }}</Text>
-        <Text>playlists</Text>
-      </Container>
-      <Container v-if="musicians && app === 'cnrs1'" class="card">
-        <Text class="count">{{ musicians.length }}</Text>
-        <Text>artists</Text>
-      </Container>
-      <Container v-if="tracks" class="card">
-        <Text class="count">{{ tracks.length }}</Text>
-        <Text>tracks</Text>
-      </Container>
-      <Container v-if="notices" class="card">
-        <Text class="count">{{ notices.length }}</Text>
-        <Text>notices</Text>
-      </Container>
-      <Container v-if="users" class="card">
-        <Text class="count">{{ users.length }}</Text>
-        <Text>users</Text>
-      </Container>
-      <Container v-if="medias" class="card">
-        <Text class="count">{{ medias.length }}</Text>
-        <Text>assets</Text>
-      </Container>
-    </Container>
+    <div class="flow-row variant-surface">
+      <div v-if="playlists && app === 'cnrs2'" class="card">
+        <span class="count">{{ playlists.length }}</span>
+        <p>playlists</p>
+      </div>
+      <div v-if="musicians && app === 'cnrs1'" class="card">
+        <span class="count">{{ musicians.length }}</span>
+        <p>artists</p>
+      </div>
+      <div v-if="tracks" class="card">
+        <span class="count">{{ tracks.length }}</span>
+        <p>tracks</p>
+      </div>
+      <div v-if="notices" class="card">
+        <span class="count">{{ notices.length }}</span>
+        <p>notices</p>
+      </div>
+      <div v-if="users" class="card">
+        <span class="count">{{ users.length }}</span>
+        <p>users</p>
+      </div>
+      <div v-if="medias" class="card">
+        <span class="count">{{ medias.length }}</span>
+        <p>assets</p>
+      </div>
+    </div>
   </template>
 </template>
 
@@ -42,7 +42,6 @@
 import { computed } from "vue";
 import { useStore } from "@/stores";
 import { useRoute } from "vue-router";
-import { Container, Text } from "@owlabio/owl-ui";
 
 const route = useRoute();
 const mediaStore = useStore("media");

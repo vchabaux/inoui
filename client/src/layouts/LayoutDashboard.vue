@@ -1,45 +1,51 @@
 <template>
-  <LayoutSidebar>
-    <template #sidebar>
-      <Sidebar :home="home" :links="links.sort((a, b) => a.name.localeCompare(b.name))" :user="user">
-        <template #footer>
-          <Container class="notifications" v-if="hasNotifications">
-            <Link size="s" path="/admin/tracks" variant="text" v-if="pending.tracks">
-              <template #start><Icon name="bell" /></template>
-              {{ pending.tracks }} tracks
-            </Link>
-            <Link size="s" path="/admin/notices" variant="text" v-if="pending.notices">
-              <template #start><Icon name="bell" /></template>
-              {{ pending.notices }} notices
-            </Link>
-          </Container>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <router-link :to="home.path" class="sidebar-title">{{ home.name }}</router-link>
+      </div>
+      <nav class="sidebar-nav">
+        <router-link v-for="link in links" :key="link.path" :to="link.path" class="sidebar-link" active-class="-active">{{ link.name }}</router-link>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="notifications flow-column" v-if="hasNotifications">
+          <router-link to="/admin/tracks" class="link-text text-sm" v-if="pending.tracks">
+            <i class="fa-solid fa-bell" />
+            {{ pending.tracks }} tracks
+          </router-link>
+          <router-link to="/admin/notices" class="link-text text-sm" v-if="pending.notices">
+            <i class="fa-solid fa-bell" />
+            {{ pending.notices }} notices
+          </router-link>
+        </div>
 
-          <Link wide path="/" target="_blank" class="app-link">
-            <template #end><Icon name="arrow-up-right-from-square" /></template>
-            Open app
-          </Link>
+        <a :href="'/' + ''" target="_blank" class="app-link w-full">
+          Open app
+          <i class="fa-solid fa-arrow-up-right-from-square" />
+        </a>
 
-          <Container flow="row-between">
-            <Link path="/admin/profile" variant="text">
-              {{ user.name }}
-              {{ !fullTimeAccount && expiresIn < 30 ? ` (${expiresIn}d left)` : "" }}
-            </Link>
+        <div class="flow-row-between">
+          <router-link to="/admin/profile" class="link-text">
+            {{ user.name }}
+            {{ !fullTimeAccount && expiresIn < 30 ? ` (${expiresIn}d left)` : "" }}
+          </router-link>
 
-            <Button aria-label="sign out" title="sign out" @click="signout" variant="text">
-              <Icon name="arrow-right-from-bracket" />
-            </Button>
-          </Container>
-        </template>
-      </Sidebar>
-    </template>
+          <Button aria-label="sign out" title="sign out" @click="signout" text>
+            <i class="fa-solid fa-arrow-right-from-bracket" />
+          </Button>
+        </div>
+      </div>
+    </aside>
 
-    <slot />
-  </LayoutSidebar>
+    <main class="dashboard-content">
+      <slot />
+    </main>
+  </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import { LayoutSidebar, Sidebar, Container, Button, Icon, Link } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 import { useStore } from "@/stores";
 import { getDateDiff } from "@/utils/time";
 
@@ -106,18 +112,75 @@ function signout() {
 .-astart {
   align-items: flex-start !important;
 }
-</style>
 
-<style scoped>
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background-color: var(--color-surface-neutral);
+  border-inline-end: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  padding: var(--size-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+}
+
+.sidebar-header {
+  padding-block-end: var(--size-4);
+  border-block-end: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+}
+
+.sidebar-title {
+  font-size: var(--size-5);
+  font-weight: bold;
+  color: var(--color-text-neutral);
+  text-decoration: none;
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+}
+
+.sidebar-link {
+  padding: var(--size-2) var(--size-4);
+  border-radius: var(--app-radius, var(--radius-2));
+  color: var(--color-text-neutral);
+  text-decoration: none;
+}
+
+.sidebar-link:hover {
+  background-color: var(--color-element-neutral);
+}
+
+.sidebar-link.-active {
+  background-color: var(--color-full-accent);
+  color: var(--color-text-inverted);
+}
+
+.sidebar-footer {
+  border-block-start: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  padding-block-start: var(--size-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+.dashboard-content {
+  padding: var(--size-8);
+  overflow-y: auto;
+}
+
 .notifications {
   gap: var(--size-1);
 }
 
 .app-link {
   justify-content: center;
-}
-
-.app-link :deep(.owl-link-label) {
-  color: var(--color-text-inverted);
 }
 </style>

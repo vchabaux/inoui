@@ -3,184 +3,135 @@
   <FormDelete :open="isDeleting" @cancel="clearThings" @delete="deleteMeta" />
 
   <!-- Medias dialog -->
-  <Dialog id="assets" :open="isPicking" modal @close="isPicking = false">
+  <Dialog v-model:visible="isPicking" modal @hide="isPicking = false">
     <Medias picker @select="selectAudio" mediaType="audio" />
   </Dialog>
 
-  <Container variant="dash-title" flow="row-between">
+  <div class="variant-dash-title flow-row-between">
     <h1>Settings</h1>
-  </Container>
+  </div>
 
   <h2>Global settings</h2>
-  <Container tag="section" variant="surface" stretched>
-    <Field
-      type="text"
-      label="App name"
-      v-model="appName"
-      hint="this will be displayed in the dashboard sidebar and in the app header"
-    />
+  <section class="variant-surface stretched">
+    <label>App name</label>
+    <InputText type="text" v-model="appName" />
+    <p class="text-sm text-fade">this will be displayed in the dashboard sidebar and in the app header</p>
 
-    <Container v-if="app === 'cnrs1'" flow="row" class="grid-line">
-      <Field
-        type="text"
-        label="app audio"
-        readonly
-        hint="this is the global ambiance audio"
-        v-model="appAudio"
-      />
-      <Button
-        class="fix0"
-        aria-label="pick a file"
-        title="pick a file"
-        @click="isPicking = true"
-      >
-        <Icon name="arrow-up-from-bracket" />
+    <div v-if="app === 'cnrs1'" class="flow-row grid-line">
+      <label>app audio</label>
+      <InputText type="text" readonly v-model="appAudio" />
+      <p class="text-sm text-fade">this is the global ambiance audio</p>
+      <Button class="fix0" aria-label="pick a file" title="pick a file" @click="isPicking = true">
+        <i class="fa-solid fa-arrow-up-from-bracket"></i>
       </Button>
-    </Container>
+    </div>
 
-    <Container flow="row" class="-equal">
-      <Field
-        type="number"
-        label="Audio radius (in meters)"
-        hint="Point audio will play within n meters"
-        v-model="distanceAudio"
-      />
-      <Field
-        type="number"
-        label="Discovery radius (in meters)"
-        hint="If hidden, a point will appear within n meters"
-        v-model="distanceMarker"
-      />
-    </Container>
-  </Container>
+    <div class="flow-row -equal">
+      <label>Audio radius (in meters)</label>
+      <InputNumber v-model="distanceAudio" />
+      <p class="text-sm text-fade">Point audio will play within n meters</p>
+      <label>Discovery radius (in meters)</label>
+      <InputNumber v-model="distanceMarker" />
+      <p class="text-sm text-fade">If hidden, a point will appear within n meters</p>
+    </div>
+  </section>
 
   <h2>Map settings</h2>
-  <Container tag="section" variant="surface" stretched>
-    <Container flow="row" class="mix">
-      <Field
-        type="select"
-        label="Map style"
-        :options="mapStyles"
-        :formatter="(v) => v.name"
-        v-model="_mapStyle"
-      />
+  <section class="variant-surface stretched">
+    <div class="flow-row mix">
+      <label>Map style</label>
+      <Select :options="mapStyles" optionLabel="name" v-model="_mapStyle" />
 
-      <Link variant="text" external path="https://www.mapbox.com/gallery/">
-        <template #end><Icon name="arrow-up-right-from-square" /></template>
+      <a href="https://www.mapbox.com/gallery/" target="_blank" class="link-text">
         Preview mapbox styles
-      </Link>
-    </Container>
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      </a>
+    </div>
 
-    <Container flow="row" class="-equal">
-      <Field type="number" label="latitude" v-model="mapCenter.lat" />
-      <Field type="number" label="longitude" v-model="mapCenter.lng" />
-      <Field type="number" label="Zoom" v-model="mapZoom" />
-    </Container>
-  </Container>
+    <div class="flow-row -equal">
+      <label>latitude</label>
+      <InputNumber v-model="mapCenter.lat" />
+      <label>longitude</label>
+      <InputNumber v-model="mapCenter.lng" />
+      <label>Zoom</label>
+      <InputNumber v-model="mapZoom" />
+    </div>
+  </section>
 
   <h2 v-if="isNakalaStorage">Nakala settings</h2>
-  <Container v-if="isNakalaStorage" tag="section" variant="surface" stretched>
-    <Field type="text" label="Api key" v-model="apiKey" />
-    <Field type="text" label="Collection ID" v-model="nakalaCollection" />
+  <section v-if="isNakalaStorage" class="variant-surface stretched">
+    <label>Api key</label>
+    <InputText type="text" v-model="apiKey" />
+    <label>Collection ID</label>
+    <InputText type="text" v-model="nakalaCollection" />
 
     <template v-if="vocabLoaded">
-      <Field
-        label="Language"
-        type="select"
-        :options="vocabularies.languages"
-        :formatter="(v) => v.label"
-        v-model="language"
-      />
+      <label>Language</label>
+      <Select :options="vocabularies.languages" optionLabel="label" v-model="language" />
 
       <h3 class="fix2">Licences</h3>
-      <Field
-        v-if="vocabularies.licenses"
-        type="select"
-        label="Add a license"
-        :options="filteredLicenses"
-        :formatter="(v) => v.name"
-        v-model="license"
-        @change="addLicense"
-      />
+      <template v-if="vocabularies.licenses">
+        <label>Add a license</label>
+        <Select :options="filteredLicenses" optionLabel="name" v-model="license" @change="addLicense" />
+      </template>
 
       <template v-if="!selectedLicenses.length">
-        <Text class="license-item">No license yet</Text>
+        <p class="license-item">No license yet</p>
       </template>
       <template v-else>
         <template v-for="$value in selectedLicenses" :key="$value.code">
-          <Container flow="row-between">
-            <Text class="license-item">{{ $value.name }} </Text>
+          <div class="flow-row-between">
+            <p class="license-item">{{ $value.name }} </p>
             <Button @click="removeLicense($value)">x</Button>
-          </Container>
+          </div>
         </template>
       </template>
 
-      <Container flow="row-between">
+      <div class="flow-row-between">
         <h3>Additional information</h3>
         <Button @click="addMeta">Add a field</Button>
-      </Container>
+      </div>
 
-      <Container v-for="meta in metas" :key="meta.id">
-        <Separator />
+      <div v-for="meta in metas" :key="meta.id">
+        <Divider />
 
-        <Container flow="row" class="mix">
-          <Field label="Name" type="text" v-model="meta.title" />
-          <Button
-            aria-label="delete"
-            title="delete"
-            variant="outline"
-            class="fix3 danger-btn"
-            @click="prepareDelete(meta.id)"
-            ><Icon name="trash-can"
-          /></Button>
-        </Container>
-        <Container flow="row" class="-equal">
-          <Field
-            type="text"
-            label="Default value"
-            v-model="meta.defaultValue"
-          />
-          <Field
-            type="select"
-            label="Property"
-            :options="vocabularies.properties"
-            :formatter="(v) => v.split('/').pop()"
-            v-model="meta.propertyUri"
-          />
-          <Field
-            type="select"
-            label="Type"
-            :options="vocabularies.metadatatypes"
-            :formatter="(v) => v.split('/').pop()"
-            v-model="meta.typeUri"
-          />
-        </Container>
-      </Container>
+        <div class="flow-row mix">
+          <label>Name</label>
+          <InputText type="text" v-model="meta.title" />
+          <Button aria-label="delete" title="delete" outlined class="fix3 danger-btn" @click="prepareDelete(meta.id)">
+            <i class="fa-solid fa-trash-can"></i>
+          </Button>
+        </div>
+        <div class="flow-row -equal">
+          <label>Default value</label>
+          <InputText type="text" v-model="meta.defaultValue" />
+          <label>Property</label>
+          <Select :options="vocabularies.properties" v-model="meta.propertyUri" />
+          <label>Type</label>
+          <Select :options="vocabularies.metadatatypes" v-model="meta.typeUri" />
+        </div>
+      </div>
     </template>
-  </Container>
+  </section>
 
-  <Container flow="row" class="-end">
-    <Button :pending="submitting" @click="submit">Save changes</Button>
-  </Container>
+  <div class="flow-row -end">
+    <Button :loading="submitting" @click="submit">Save changes</Button>
+  </div>
 </template>
 
 <script setup>
 import { computed, ref, watch } from "vue";
-import {
-  Dialog,
-  Field,
-  Button,
-  Container,
-  Text,
-  Link,
-  Icon,
-  Separator,
-} from "@owlabio/owl-ui";
 import { v4 as uuidv4 } from "uuid";
 import { useStore } from "@/stores";
 import { mapStyles } from "@/utils/mapStyles";
 import FormDelete from "@/components/forms/FormDelete.vue";
 import Medias from "@/pages/admin/Medias.vue";
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
+import InputText from "primevue/inputtext";
+import InputNumber from "primevue/inputnumber";
+import Select from "primevue/select";
+import Divider from "primevue/divider";
 
 const settingsStore = useStore("settings");
 const nakalaStore = useStore("nakala");
@@ -400,4 +351,8 @@ const submit = async () => {
 .license-item {
   padding-block: var(--size-1) !important;
 }
-</style>
+</style></think>The file looks complete. The bash artifacts at the end are just from the `tail` command output. Let me verify the file is clean:
+
+<｜DSML｜tool_calls>
+<｜DSML｜invoke name="Bash">
+<｜DSML｜parameter name="description" string="true">Check last 5 lines of Settings.vue

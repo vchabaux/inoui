@@ -1,29 +1,29 @@
 <template>
-  <Container :width="{ l: isPublic }" :class="{ 'app-page': isPublic }">
-    <Text v-if="isPublic" tag="h1" class="color-title" v-t="'notfound.title'">Page not found</Text>
-    <Container v-else variant="dash-title">
-      <Text tag="h1" class="color-title">Page not found</Text>
-    </Container>
+  <div :class="{ 'width-l': isPublic, 'app-page': isPublic }">
+    <h1 v-if="isPublic" class="color-title" v-t="'notfound.title'">Page not found</h1>
+    <div v-else class="variant-dash-title">
+      <h1 class="color-title">Page not found</h1>
+    </div>
 
-    <Text v-if="isPublic" v-t="'notfound.text'"></Text>
-    <Text v-else>The page you're looking for doesn't exist, it may have been deleted</Text>
+    <p v-if="isPublic" v-t="'notfound.text'"></p>
+    <p v-else>The page you're looking for doesn't exist, it may have been deleted</p>
 
-    <Container flow="row" v-if="isPublic">
-      <Button variant="outline" @click="router.go(-1)" v-t="'notfound.back'"></Button>
-      <Link :path="isPublic ? '/' : '/admin'" v-t="'notfound.home'"></Link>
-    </Container>
+    <div class="flow-row" v-if="isPublic">
+      <Button outlined @click="router.go(-1)" v-t="'notfound.back'"></Button>
+      <router-link :to="isPublic ? '/' : '/admin'" v-t="'notfound.home'"></router-link>
+    </div>
 
-    <Container flow="row" v-else>
-      <Button variant="outline" @click="router.go(-1)">Go back</Button>
-      <Link :path="isPublic ? '/' : '/admin'">Home</Link>
-    </Container>
-  </Container>
+    <div class="flow-row" v-else>
+      <Button outlined @click="router.go(-1)">Go back</Button>
+      <router-link :to="isPublic ? '/' : '/admin'">Home</router-link>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Container, Button, Link, Text } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 
 const route = useRoute();
 const router = useRouter();

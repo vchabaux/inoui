@@ -1,54 +1,55 @@
 <template>
-  <Dialog v-if="selectingImage" id="assets" modal :open="selectingImage" @close="clear">
+  <Dialog v-if="selectingImage" v-model:visible="selectingImage" modal @hide="clear">
     <Medias picker @select="handleMedia" mediaType="image" />
   </Dialog>
 
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>{{ isUpdate ? currentMusician?.name : "New musician" }}</h1>
-  </Container>
+  </div>
 
-  <Container tag="form" width="s" stretched centered>
+  <form class="width-s stretched centered">
     <h2>Artist information</h2>
 
     <!-- FIELDS -->
-    <Field type="text" name="name" label="Name" v-model="musician.name" required />
-    <Field type="textarea" name="description" label="Description" v-model="musician.description" />
-    <Field type="email" name="name" label="E-mail" v-model="musician.contact.email" />
-    <Field type="tel" name="name" label="Phone number" v-model="musician.contact.phone" />
+    <InputText type="text" name="name" label="Name" v-model="musician.name" required />
+    <Textarea name="description" label="Description" v-model="musician.description" />
+    <InputText type="email" name="name" label="E-mail" v-model="musician.contact.email" />
+    <InputText type="tel" name="name" label="Phone number" v-model="musician.contact.phone" />
 
-    <Container flow="row" class="file-btns">
-      <Container>
-        <Button wide @click="getImage('main')">
-          <template #start><Icon type="far" name="image" /></template>
+    <div class="flow-row file-btns">
+      <div>
+        <Button class="w-full" @click="getImage('main')">
+          <i class="fa-regular fa-image" />
           Image 1
         </Button>
 
-        <Image :src="musician.pictures.main" />
-      </Container>
+        <img :src="musician.pictures.main" alt="main" />
+      </div>
 
-      <Container>
-        <Button wide @click="getImage('secondary')">
-          <template #start><Icon type="far" name="image" /></template>
+      <div>
+        <Button class="w-full" @click="getImage('secondary')">
+          <i class="fa-regular fa-image" />
           Image 2
         </Button>
 
-        <Image :src="musician.pictures.secondary" />
-      </Container>
-    </Container>
-  </Container>
+        <img :src="musician.pictures.secondary" alt="secondary" />
+      </div>
+    </div>
+  </form>
 
-  <!-- IMAGE PREVIEW -->
-
-  <Container width="s" centered>
-    <Button wide @click="saveMusician" :pending="isSubmitting"> Save changes </Button>
-  </Container>
+  <div class="width-s centered">
+    <Button class="w-full" @click="saveMusician" :loading="isSubmitting"> Save changes </Button>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/stores";
-import { Dialog, Container, Field, Button, Icon, Text, Image } from "@owlabio/owl-ui";
+import Dialog from "primevue/dialog";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import Button from "primevue/button";
 import Medias from "@/pages/admin/Medias.vue";
 const musicianStore = useStore("musician");
 const router = useRouter();
@@ -114,9 +115,5 @@ async function saveMusician() {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: flex-start;
-}
-
-.file-btns .owl-button {
-  justify-content: center;
 }
 </style>

@@ -1,20 +1,23 @@
 <template>
-  <Dialog modal id="delete-modal" :open="open" @close="emit('cancel')">
-    <Container variant="dash-title">
-      <Text tag="h2">Are you sure ?</Text>
-    </Container>
+  <Dialog v-model:visible="open" modal @hide="emit('cancel')">
+    <template #header>
+      <div class="variant-dash-title">
+        <h2>Are you sure ?</h2>
+      </div>
+    </template>
 
-    <Text class="modal-text">When you delete items, they're gone forever</Text>
+    <p class="modal-text">When you delete items, they're gone forever</p>
 
-    <Container flow="row" class="-end">
-      <Button variant="outline" @click="emit('cancel', $event)"> Cancel </Button>
+    <div class="flow-row -end">
+      <Button outlined @click="emit('cancel', $event)"> Cancel </Button>
       <Button class="danger-btn" @click="emit('delete', $event)"> Delete </Button>
-    </Container>
+    </div>
   </Dialog>
 </template>
 
 <script setup>
-import { Dialog, Container, Text, Button } from "@owlabio/owl-ui";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
 
 const emit = defineEmits(["cancel", "delete"]);
 const props = defineProps({

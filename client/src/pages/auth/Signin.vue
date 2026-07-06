@@ -1,50 +1,50 @@
 <template>
-  <Container variant="dash-title">
+  <div class="variant-dash-title">
     <h1>Connection</h1>
-  </Container>
+  </div>
 
-  <Container v-if="error">
+  <div v-if="error">
     <Voice type="error" :message="error.message" @close="error = null" />
-  </Container>
+  </div>
 
-  <Container
-    tag="form"
-    stretched
-    @prevent.submit
+  <form
+    class="stretched"
+    @submit.prevent
     @keydown.enter="handleCredentials"
   >
-    <Field
-      label="e-mail"
+    <label>e-mail</label>
+    <InputText
       type="email"
       v-model="user.email"
       autocomplete="email"
     />
-    <Field
-      label="password"
+    <label>password</label>
+    <InputText
       type="password"
       v-model="user.password"
       autocomplete="current-password"
     />
 
-    <Button wide @click="handleCredentials" :pending="submitting">
+    <Button class="w-full" @click="handleCredentials" :loading="submitting">
       {{ `${submitting ? "Connection en cours" : "Se connecter"}` }}
     </Button>
 
-    <Container flow="row">
-      <Text>Mot de passe oublié ?</Text>
-      <Link class="link" path="/password-forgotten" variant="text">
+    <div class="flow-row">
+      <p>Mot de passe oublié ?</p>
+      <router-link to="/password-forgotten" class="link-text">
         Réinitialiser
-      </Link>
-    </Container>
-  </Container>
+      </router-link>
+    </div>
+  </form>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { Container, Field, Button, Link, Text } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 import Voice from "@/components/Voice.vue";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
 
 const user = ref({
   email: "",

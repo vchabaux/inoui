@@ -9,68 +9,69 @@
   <!-- Edit dialog -->
   <Dialog
     v-if="isEditForm"
-    id="edit-medias"
+    v-model:visible="isEditForm"
     modal
-    :open="isEditForm"
-    @close="isEditForm = false"
+    @hide="isEditForm = false"
   >
-    <Container variant="dash-title">
-      <Text tag="h2">Edit files</Text>
-    </Container>
+    <template #header>
+      <div class="variant-dash-title">
+        <h2>Edit files</h2>
+      </div>
+    </template>
 
-    <Container class="edit-form">
+    <div class="edit-form">
       <FormAssetNakala v-if="isNakala" :assets="selectedItems" />
       <FormAssetLocal v-else :assets="selectedItems" />
-    </Container>
+    </div>
   </Dialog>
 
   <!-- Library container -->
-  <Container class="library">
+  <div class="library">
     <!-- Header -->
-    <Container flow="row" class="library-header">
-      <Field type="text" label="Tag" v-model="search" />
-      <Field
+    <div class="flow-row library-header">
+      <InputText type="text" placeholder="Tag" v-model="search" />
+      <Select
         v-if="sortable"
-        label="Type"
-        type="select"
+        placeholder="Type"
         :options="types"
-        :formatter="(v) => v.name"
+        optionLabel="name"
+        optionValue="value"
         v-model="fileType"
       />
 
-      <Container flow="row" v-if="selectedItems.length">
+      <div class="flow-row" v-if="selectedItems.length">
         <Button
           aria-label="download selection"
           title="download selection"
-          variant="outline"
+          outlined
           @click="downloadSelection"
         >
-          <Icon name="download" />
+          <i class="fa-solid fa-download" />
         </Button>
         <Button
           aria-label="edit selection"
           title="edit selection"
-          variant="outline"
+          outlined
           @click="openEditForm"
         >
-          <Icon name="pen" />
+          <i class="fa-solid fa-pen" />
         </Button>
         <Button
           aria-label="delete selection"
           title="delete selection"
           v-if="canDelete"
           class="danger-btn"
-          variant="outline"
+          outlined
           @click="isDeleting = true"
         >
-          <Icon name="trash-can" />
+          <i class="fa-solid fa-trash-can" />
         </Button>
-      </Container>
-    </Container>
+      </div>
+    </div>
 
     <!-- List -->
-    <Text v-if="isSearchLoading" class="search-loading">Searching...</Text>
-    <Container flow="row" class="library-list" v-else>
+    <span v-if="isSearchLoading" class="search-loading">Searching...</span>
+    <div class="flow-row library-list" v-else>
       <AssetCard
         v-for="asset in currentAssets"
         variant="contain"
@@ -83,40 +84,40 @@
         @copy="copyLink"
         @select="selectItem"
       />
-    </Container>
+    </div>
 
     <!-- Preview -->
-    <Container
-      tag="aside"
+    <aside
       aria-label="preview panel"
       v-if="previewedItem"
-      variant="surface"
-      class="library-preview"
+      class="variant-surface library-preview"
       stretched
     >
-      <Container class="preview-title" flow="row" variant="dash-title">
+      <div class="preview-title flow-row variant-dash-title">
         <Button
           aria-label="close"
           title="close"
-          variant="text"
+          text
           @click="previewedItem = null"
-          icon
-          size="s"
+          size="small"
         >
-          <Icon name="xmark" />
+          <i class="fa-solid fa-xmark" />
         </Button>
-        <Text :lines="1" tag="h2">{{ previewedItem.originalname }} </Text>
-      </Container>
+        <h2 class="line-clamp-1">{{ previewedItem.originalname }} </h2>
+      </div>
 
       <FormAssetNakala v-if="isNakala" :assets="[previewedItem._id]" />
       <FormAssetLocal v-else :assets="[previewedItem._id]" />
-    </Container>
-  </Container>
+    </aside>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onUnmounted } from "vue";
-import { Container, Button, Text, Field, Icon, Dialog } from "@owlabio/owl-ui";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Select from "primevue/select";
 import AssetCard from "@/components/media/AssetCard.vue";
 import { useStore } from "@/stores";
 import FormAssetLocal from "@/components/forms/FormAssetLocal.vue";
@@ -216,10 +217,6 @@ watch(search, (value) => {
 });
 
 const getAuthor = (id) => {
-  /**
-   * Maybe this isnt needed
-   * Populate in the MediaService and format for Nakala.
-   */
   return userStore.findOne(id);
 };
 

@@ -2,49 +2,49 @@
   <AppSplash v-if="isSplash" @complete="isSplash = false" />
 
   <template v-else>
-    <Container v-if="step === 'title'" class="intro-container">
+    <div v-if="step === 'title'" class="intro-container">
       <video class="title-video" autoplay loop muted playsinline :src="content?.video" aria-hidden="true" />
-      <Text class="-first content" tag="h1" v-html="content.title"></Text>
-      <Text class="-second content" tag="h2" v-html="content.subtitle"></Text>
+      <h1 class="-first content" v-html="content.title"></h1>
+      <h2 class="-second content" v-html="content.subtitle"></h2>
 
-      <Button variant="text" :aria-label="$t('intro.next')" :title="$t('intro.next')" class="-third content intro-btn" @click="goForward">
-        <Icon name="forward" />
+      <Button text :aria-label="$t('intro.next')" :title="$t('intro.next')" class="-third content intro-btn" @click="goForward">
+        <i class="fa-solid fa-forward"></i>
       </Button>
-    </Container>
+    </div>
 
-    <Container v-else-if="app === 'cnrs2'" class="intro-container text-container">
+    <div v-else-if="app === 'cnrs2'" class="intro-container text-container">
       <audio v-if="hasAudio" autoplay :src="content?.audio" />
-      <Text class="-first content invisible" tag="h1" v-html="content.title"></Text>
+      <h1 class="-first content invisible" v-html="content.title"></h1>
 
-      <Container class="buttons" flow="row-between" width="l" centered stretched>
-        <Button :disabled="currentIndex === 0" variant="text" :aria-label="$t('intro.previous')" :title="$t('intro.previous')" class="content -second intro-btn" @click="goBackward">
-          <Icon name="backward" />
+      <div class="buttons flow-row-between width-l centered stretched">
+        <Button :disabled="currentIndex === 0" text :aria-label="$t('intro.previous')" :title="$t('intro.previous')" class="content -second intro-btn" @click="goBackward">
+          <i class="fa-solid fa-backward"></i>
         </Button>
         <Button
-          variant="text"
+          text
           :aria-label="$t('intro.audio')"
           :title="$t('intro.audio')"
           class="content intro-btn"
           :aria-pressed="hasAudio"
           @click="hasAudio = !hasAudio">
-          <Icon :name="hasAudio ? 'volume-high' : 'volume-xmark'" />
+          <i :class="hasAudio ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark'"></i>
         </Button>
-        <Button variant="text" :aria-label="$t('intro.next')" :title="$t('intro.next')" class="content -second intro-btn" @click="goForward">
-          <Icon name="forward" />
+        <Button text :aria-label="$t('intro.next')" :title="$t('intro.next')" class="content -second intro-btn" @click="goForward">
+          <i class="fa-solid fa-forward"></i>
         </Button>
-      </Container>
+      </div>
 
-      <Text variant="inverted" align="center" class="-first content text-content" v-html="content?.content?.[currentIndex]"></Text>
-    </Container>
+      <p class="-first content text-content text-inverted text-center" v-html="content?.content?.[currentIndex]"></p>
+    </div>
   </template>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { Container, Text, Button, Icon } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 import AppSplash from "@/pages/app/AppSplash.vue";
+import Button from "primevue/button";
 
 const router = useRouter();
 const settingsStore = useStore("settings");

@@ -1,5 +1,5 @@
 <template>
-  <Container tag="form" @submit.prevent width="s" stretched>
+  <form @submit.prevent class="width-s stretched">
     <Voice
       v-if="error"
       :message="error.message"
@@ -8,75 +8,66 @@
       @close="error = null"
     />
 
-    <Field
+    <InputText
       v-for="meta in assetMetas"
       :key="meta.title"
       v-model="meta.defaultValue"
-      :label="meta.title"
-      type="text"
+      :placeholder="meta.title"
     />
 
-    <Field type="text" label="name" v-model="title" />
+    <InputText type="text" placeholder="name" v-model="title" />
 
-    <Field
-      type="select"
-      label="License"
+    <Select
+      placeholder="License"
       v-model="selectedLicense"
       :options="licenses"
-      :formatter="(v) => v.name"
+      optionLabel="name"
+      optionValue="id"
     />
 
-    <Field
-      type="textarea"
+    <Textarea
       :rows="3"
-      label="Description"
+      placeholder="Description"
       name="description"
       v-model="description"
     />
 
-    <Field
+    <FileUpload
       ref="fileField"
-      type="file"
-      label="Files"
+      placeholder="Files"
       @change="checkUploadSize"
       multiple
-      preview
+      auto
       v-model="images"
     />
 
     <!-- TEMP UPLOAD: files are pushed to the server on selection -->
-    <Container
+    <div
       v-if="fileStatuses.length"
-      tag="div"
-      flow="column"
-      class="temp-upload"
+      class="flow-column temp-upload"
     >
-      <Container
+      <div
         v-if="uploadingFiles || uploadProgress > 0"
-        tag="div"
         class="temp-upload__progress"
       >
         <div
           class="temp-upload__bar"
           :style="{ width: uploadProgress + '%' }"
         ></div>
-      </Container>
+      </div>
 
-      <Container tag="ul" flow="column" class="temp-upload__list">
-        <Container
-          tag="li"
-          flow="row"
-          class="temp-upload__item"
+      <ul class="flow-column temp-upload__list">
+        <li
+          class="flow-row temp-upload__item"
           v-for="(file, i) in fileStatuses"
           :key="file.name + i"
         >
-          <Icon
+          <i
             v-if="file.status === 'uploading' || file.status === 'pending'"
-            name="spinner"
-            spin
+            class="fa-solid fa-spinner fa-spin"
           />
-          <Icon v-else-if="file.status === 'done'" name="check" />
-          <Icon v-else-if="file.status === 'error'" name="xmark" />
+          <i v-else-if="file.status === 'done'" class="fa-solid fa-check" />
+          <i v-else-if="file.status === 'error'" class="fa-solid fa-xmark" />
 
           <span class="temp-upload__name">{{ file.name }}</span>
 
@@ -87,21 +78,21 @@
           >
             Réessayer
           </Button>
-        </Container>
-      </Container>
-    </Container>
+        </li>
+      </ul>
+    </div>
 
-    <Field
-      type="checkbox"
+    <Checkbox
+      :binary="true"
+      v-model="withAuthor"
       label="this file has an author"
       name="author"
-      v-model="withAuthor"
     />
 
     <template v-if="withAuthor">
-      <Field
+      <InputText
         type="text"
-        label="Author name"
+        placeholder="Author name"
         name="authorName"
         v-model="author.name"
       />
@@ -117,11 +108,11 @@
     />
 
     <!-- SELECTED KEYWORDS -->
-    <Container tag="ul">
-      <Container tag="li" flow="row" v-for="(word, i) in keywords">
+    <ul>
+      <li class="flow-row" v-for="(word, i) in keywords">
         {{ word["@label"] }} <Button @click="removeKeyword(i)">X</Button>
-      </Container>
-    </Container>
+      </li>
+    </ul>
 
     <!-- ASSETS -->
     <AssetDetails
@@ -131,19 +122,24 @@
     />
 
     <!-- VALIDATION -->
-    <Text v-if="showUploadWaiting" class="temp-upload__waiting">
+    <span v-if="showUploadWaiting" class="temp-upload__waiting">
       Upload en cours, veuillez patienter...
-    </Text>
+    </span>
 
-    <Button wide class="upload-btn" :pending="isSubmitting" @click="upload">
+    <Button class="w-full upload-btn" :loading="isSubmitting" @click="upload">
       {{ isUpdate ? "Save" : "Add to nakala library" }}
     </Button>
-  </Container>
+  </form>
 </template>
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import { Container, Button, Field, Text, Icon } from "@owlabio/owl-ui";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import Select from "primevue/select";
+import Checkbox from "primevue/checkbox";
+import FileUpload from "primevue/fileupload";
 import Voice from "@/components/Voice.vue";
 import AssetDetails from "../media/AssetDetails.vue";
 import { useStore } from "@/stores";
@@ -154,6 +150,10 @@ import { api } from "@/api/axios";
 const props = defineProps({
   dataId: {
     type: String,
+    default: null,
+  },
+  assets: {
+    type: Array,
     default: null,
   },
 });
@@ -190,18 +190,14 @@ const isMulti = computed(() => Array.isArray(props.assets));
 
 nakalaStore.initVocabularies();
 
-// const assetMetas = computed(() => {
-//   return settingsStore.settings.nakala.assetMetas;
-// });
-
 const excludedMetas = [
-  "title", // Required
-  "created", // Required - hidden
-  "creator", // Required -hidden
-  "license", // Required - hidden
-  "description", // The description (optional)
-  "type", // If it's media or anything
-  "subject", // This is for keywords
+  "title",
+  "created",
+  "creator",
+  "license",
+  "description",
+  "type",
+  "subject",
 ];
 
 watch(
@@ -280,7 +276,6 @@ function formatMetas(metas, lang) {
   return metas.map((meta) => {
     return {
       value: meta.defaultValue,
-      // lang: lang,
       typeUri: meta.typeUri,
       propertyUri: meta.propertyUri,
     };
@@ -293,7 +288,6 @@ function checkUploadSize(event) {
 
   const files = Array.from(fileList);
 
-  // Alert on any file above the configured limit (default 2 GB).
   const oversized = files.filter((file) => file.size > MAX_FILE_SIZE);
   if (oversized.length) {
     const limitGb = Math.round((MAX_FILE_SIZE / 1024 / 1024 / 1024) * 10) / 10;
@@ -308,7 +302,6 @@ function checkUploadSize(event) {
   if (valid.length) startTempUpload(valid);
 }
 
-// Overall progress = bytes uploaded across every file in the batch.
 function computeOverallProgress() {
   const statuses = fileStatuses.value;
   if (!statuses.length) {
@@ -323,7 +316,6 @@ function computeOverallProgress() {
   uploadProgress.value = total ? Math.round((uploaded / total) * 100) : 0;
 }
 
-// Track an in-flight upload so the submit handler can wait for it.
 function track(promise) {
   pendingUploads.value.push(promise);
   uploadingFiles.value = true;
@@ -355,7 +347,6 @@ async function uploadSingleFile(file, index) {
     status.status = "done";
     status.progress = 100;
 
-    // Server returns one entry per file, all sharing the same tempId.
     const entry = Array.isArray(data) && data.length ? data[0] : data;
     if (entry) uploadedFiles.value.push(entry);
   } catch (err) {
@@ -377,7 +368,6 @@ function startTempUpload(files) {
   uploadedFiles.value = [];
   computeOverallProgress();
 
-  // Upload each file independently so they can be retried one by one.
   const promises = files.map((file, index) =>
     track(uploadSingleFile(file, index))
   );
@@ -412,7 +402,6 @@ function formatKeywords(keywords, lang) {
         : uri;
 
     return {
-      // lang,
       propertyUri,
       typeUri: typeUri,
       value: word["@label"],
@@ -425,8 +414,6 @@ function formatKeywords(keywords, lang) {
 const emits = defineEmits(["upload"]);
 
 const upload = async () => {
-  // Don't block the button, but let any temp upload still in flight finish
-  // before publishing (the publish step relies on the files being on disk).
   if (pendingUploads.value.length) {
     showUploadWaiting.value = true;
     await Promise.allSettled(pendingUploads.value);

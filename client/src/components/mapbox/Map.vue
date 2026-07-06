@@ -1,20 +1,18 @@
 <template>
-  <Container class="map-container">
-    <Container class="map-layer" tag="aside" aria-label="map side panel" variant="surface">
+  <div class="map-container">
+    <aside class="map-layer variant-surface" aria-label="map side panel">
       <slot name="layer"></slot>
-    </Container>
+    </aside>
 
     <div class="map-map">
       <RealMap :mapStyle="mapStyle" :center="center" :zoom="zoom" class="map-object" @loaded="handleMapLoad" />
-      <!-- <div id="map" class="map-object"></div> -->
       <slot></slot>
     </div>
-  </Container>
+  </div>
 </template>
 
 <script setup>
 import { provide, watch, shallowRef, ref } from "vue";
-import { Container } from "@owlabio/owl-ui";
 import RealMap from "./RealMap.vue";
 
 const props = defineProps({
@@ -31,7 +29,7 @@ const props = defineProps({
   },
   center: {
     type: Array,
-    default: [2.2153, 48.8924], // Nanterre
+    default: [2.2153, 48.8924],
   },
 });
 
@@ -53,12 +51,6 @@ provide("markers", markers);
 function handleMapLoad(map) {
   mapRef.value = map;
   mapRef.value.on("click", (event) => {
-    /**
-     * Only respond to the event of a map click.
-     * Otherwise clicking on markers will trigger a map click event.
-     * Tried event.stopPropagation() on the marker but the actual marker click event
-     * comes from a map click event (so after the map was clicked)
-     */
     if (event.originalEvent.target !== mapRef.value.getCanvas()) return;
     else {
       emits("click", event);
@@ -106,14 +98,6 @@ watch(
     mapRef.value.triggerRepaint();
   }
 );
-
-// watchEffect(() => {
-//   if (!mapRef.value) return;
-
-//   mapRef.value.flyTo({
-//     center: props.center
-//   });
-// })
 </script>
 
 <style scoped>

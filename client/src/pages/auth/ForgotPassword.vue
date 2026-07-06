@@ -1,24 +1,26 @@
 <template>
-  <Container variant="dash-title">
+  <div class="variant-dash-title">
     <h1>Réinitialiser le mot de passe</h1>
-  </Container>
+  </div>
 
-  <Text class="small-text" v-if="submitted">
+  <p class="small-text" v-if="submitted">
     Un e-mail contenant un lien vers le formulaire de réinitialisation de mot de
     passe vous a été envoyé.
-  </Text>
+  </p>
 
-  <Container tag="form" @submit.prevent stretched>
-    <Field v-model="email" label="Email" type="email" autocomplete="email" />
-  </Container>
+  <form @submit.prevent class="stretched">
+    <label>Email</label>
+    <InputText v-model="email" type="email" autocomplete="email" />
+  </form>
 
-    <Button wide :pending="submitting" @click="handleSubmit">Valider</Button>
+  <Button class="w-full" :loading="submitting" @click="handleSubmit">Valider</Button>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { Container, Button, Field, Text } from "@owlabio/owl-ui";
 import { api } from "@/api/axios";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
 
 const error = ref(null);
 const submitting = ref(false);

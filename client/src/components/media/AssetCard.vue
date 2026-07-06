@@ -1,32 +1,31 @@
 <template>
-  <Container class="asset-container" flow="row" :class="{ '-selected': selected }">
-    <Button :aria-label="file.originalname" :title="file.originalname" variant="text" class="asset-button" @click="emits('select', file)">
-      <Thumbnail :size="size" :variant="variant" :type="file.mimetype || file.mime_type" :src="file.url">
-        <template #footer>
-          <div class="media-card-footer">
-            <Text :lines="1" align="start">{{ file.originalname }}</Text>
-          </div>
-        </template>
-      </Thumbnail>
+  <div class="flow-row asset-container" :class="{ '-selected': selected }">
+    <Button :aria-label="file.originalname" :title="file.originalname" text class="asset-button" @click="emits('select', file)">
+      <img :src="file.url" :alt="file.originalname" class="thumbnail" />
+      <template #footer>
+        <div class="media-card-footer">
+          <span class="line-clamp-1 text-start">{{ file.originalname }}</span>
+        </div>
+      </template>
     </Button>
 
-    <Container class="asset-actions" flow="column">
-      <Button v-if="!picker" aria-label="delete" title="delete" variant="text" icon size="s" class="danger-btn" @click="emits('delete', $event, file)">
-        <Icon name="trash-can" />
+    <div class="flow-column asset-actions">
+      <Button v-if="!picker" aria-label="delete" title="delete" text size="small" class="danger-btn" @click="emits('delete', $event, file)">
+        <i class="fa-solid fa-trash-can" />
       </Button>
-      <Button v-if="!picker" aria-label="preview" title="preview" variant="text" icon size="s" @click="emits('preview', file)">
-        <Icon name="eye" />
+      <Button v-if="!picker" aria-label="preview" title="preview" text size="small" @click="emits('preview', file)">
+        <i class="fa-solid fa-eye" />
       </Button>
-      <Button aria-label="copy url" title="copy url" variant="text" icon size="s" :pending="isCopying" @click="copyFile(file)">
-        <Icon name="link" />
+      <Button aria-label="copy url" title="copy url" text size="small" :loading="isCopying" @click="copyFile(file)">
+        <i class="fa-solid fa-link" />
       </Button>
-    </Container>
-  </Container>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { Container, Thumbnail, Button, Icon, Text } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 
 const emits = defineEmits(["preview", "delete", "copy", "select"]);
 
@@ -95,14 +94,10 @@ function formatSize(size) {
   border: 0;
 }
 
-:deep(.owl-thumbnail) {
-  border-start-end-radius: 0;
-  border-end-end-radius: 0;
-  border-inline-end: 0;
-}
-
-:deep(.owl-button) {
-  border-radius: 0;
+.thumbnail {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .asset-actions {
@@ -112,10 +107,6 @@ function formatSize(size) {
   border: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
   gap: 0;
   justify-content: space-between;
-}
-
-.asset-actions :deep(.owl-button) {
-  padding: var(--size-1);
 }
 
 .media-card-footer {

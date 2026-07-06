@@ -1,55 +1,56 @@
 <template>
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>{{ isUpdate ? currentPlaylist?.name : "New playlist" }}</h1>
-  </Container>
+  </div>
 
-  <Container tag="form" width="s" stretched centered>
+  <form class="width-s stretched centered">
     <h2>Playlist information</h2>
-    <Field type="text" name="name" label="Name" v-model="playlist.name" required />
+    <InputText type="text" name="name" placeholder="Name" v-model="playlist.name" required />
 
     <h2>Playlist tracks</h2>
-    <Container variant="surface" stretched>
-      <Text v-if="!tracksSelected.length">No track selected yet</Text>
+    <div class="variant-surface stretched">
+      <span v-if="!tracksSelected.length">No track selected yet</span>
       <template v-for="$value in tracksSelected" :key="$value._id">
-        <Container class="row-selected">
-          <Text :lines="1">{{ $value.name }}</Text>
-          <Button aria-label="move up" title="move up" variant="text" size="s" :class="{ hidden: checkSwap('first', $value._id) }" @click="swapTrackUp($value._id)">
-            <Icon name="chevron-up" />
+        <div class="row-selected">
+          <span class="line-clamp-1">{{ $value.name }}</span>
+          <Button aria-label="move up" title="move up" text size="small" :class="{ hidden: checkSwap('first', $value._id) }" @click="swapTrackUp($value._id)">
+            <i class="fa-solid fa-chevron-up" />
           </Button>
-          <Button aria-label="move down" title="move down" variant="text" size="s" :class="{ hidden: checkSwap('down', $value._id) }" @click="swapTrackDown($value._id)">
-            <Icon name="chevron-down" />
+          <Button aria-label="move down" title="move down" text size="small" :class="{ hidden: checkSwap('down', $value._id) }" @click="swapTrackDown($value._id)">
+            <i class="fa-solid fa-chevron-down" />
           </Button>
-          <Button aria-label="remove from playlist" title="remove from playlist" variant="outline" size="s" @click="removeTrack($value._id)">
-            <Icon name="xmark" />
+          <Button aria-label="remove from playlist" title="remove from playlist" outlined size="small" @click="removeTrack($value._id)">
+            <i class="fa-solid fa-xmark" />
           </Button>
-        </Container>
+        </div>
       </template>
-    </Container>
+    </div>
 
     <h2>Available tracks</h2>
-    <Container variant="surface" stretched>
-      <Text v-if="!tracksAvailable.length">Every published track is already in the playlist</Text>
+    <div class="variant-surface stretched">
+      <span v-if="!tracksAvailable.length">Every published track is already in the playlist</span>
       <template v-for="$value in tracksAvailable" :key="$value._id">
-        <Container class="row-available">
-          <Text :lines="1">{{ $value.name }}</Text>
-          <Button aria-label="add to playlist" title="add to playlist" size="s" @click="addTrack($value._id)">
-            <Icon name="plus" />
+        <div class="row-available">
+          <span class="line-clamp-1">{{ $value.name }}</span>
+          <Button aria-label="add to playlist" title="add to playlist" size="small" @click="addTrack($value._id)">
+            <i class="fa-solid fa-plus" />
           </Button>
-        </Container>
+        </div>
       </template>
-    </Container>
-  </Container>
+    </div>
+  </form>
 
-  <Container width="s" centered>
-    <Button wide @click="savePlaylist" :pending="isSubmitting"> Save changes </Button>
-  </Container>
+  <div class="width-s centered">
+    <Button class="w-full" @click="savePlaylist" :loading="isSubmitting"> Save changes </Button>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/stores";
-import { Container, Field, Button, Icon, Text } from "@owlabio/owl-ui";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
 
 const playlistStore = useStore("playlist");
 const trackStore = useStore("track");

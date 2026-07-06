@@ -1,7 +1,7 @@
 <template>
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>Categories</h1>
-  </Container>
+  </div>
 
   <Categories
     editable
@@ -25,7 +25,6 @@ export default {
 
 <script setup>
 import { computed, ref } from "vue";
-import { Container } from "@owlabio/owl-ui";
 import { Categories, useStoreCategory } from "@owlabio/category-manager";
 import { IconPicker } from "@owlabio/icon-manager/client";
 import { useStore } from "@/stores";

@@ -1,150 +1,150 @@
 <template>
   <!-- Actions -->
-  <Container class="map-actions" flow="row-between">
+  <div class="map-actions flow-row-between">
     <!-- NARRATION : back to entry points -->
-    <Button v-if="controls.back" class="map-back color-btn" :aria-label="$t('controls.back')" :title="$t('controls.back')" @click="emit('back')">
-      <Icon name="arrow-left" />
+    <Button v-if="controls.back" class="map-back color-btn" :aria-label="$t('controls.back')" :title="$t('controls.back')" @click="emit('back')" text>
+      <i class="fa-solid fa-arrow-left" />
     </Button>
 
     <!-- CLASSIC : filters -->
-    <Container v-if="controls.mode === 'classic'" class="map-filter-zone" stretched @keyup.escape="emit('toggleFilters')">
+    <div v-if="controls.mode === 'classic'" class="map-filter-zone stretched" @keyup.escape="emit('toggleFilters')">
       <Button
         class="map-filter-toggle color-btn"
         :aria-label="$t('controls.filters')"
         :title="$t('controls.filters')"
         :class="{ '-active': controls.filters }"
         :aria-pressed="controls.filters"
-        @click="emit('toggleFilters')">
-        <Icon name="filter" />
+        @click="emit('toggleFilters')" text>
+        <i class="fa-solid fa-filter" />
       </Button>
 
-      <Container tag="aside" class="map-filters" :class="{ invisible: !controls.filters }">
+      <aside class="map-filters" :class="{ invisible: !controls.filters }">
         <!-- MEDIA FILTER -->
-        <Container class="map-filter">
-          <Container class="filter-menu" flow="row-between">
-            <Text class="filter-title" v-t="'controls.titletypes'"></Text>
+        <div class="map-filter">
+          <div class="filter-menu flow-row-between">
+            <span class="filter-title" v-t="'controls.titletypes'"></span>
             <Button
-              variant="text"
-              size="nested"
+              text
+              size="small"
               class="reset-btn"
               :aria-label="$t('controls.buttontypes')"
               :title="$t('controls.buttontypes')"
               :disabled="!filterType.length"
-              @click="emit('resetFilter', 'type')">
-              <Icon name="arrow-rotate-left" />
+              @click="emit('resetFilter', 'type')" text>
+              <i class="fa-solid fa-arrow-rotate-left" />
             </Button>
-          </Container>
+          </div>
 
-          <Container tag="ul" class="filter-list" stretched>
+          <ul class="filter-list stretched">
             <li v-for="(type, i) in types" :key="`type-${i}`">
               <Button
-                size="s"
-                wide
-                pill
+                size="small"
+                class="w-full"
+                rounded
                 class="filter-btn"
                 :class="{ '-active': filterType.includes(type) }"
-                :variant="filterType.includes(type) ? 'plain' : 'text'"
+                :text="!filterType.includes(type)"
                 :aria-pressed="filterType.includes(type)"
-                @click="emit('filter', 'type', type)">
-                <template #start><Icon :type="type === 'image' ? 'far' : null" :name="getIconName(type)" /></template>
+                @click="emit('filter', 'type', type)" text>
+                <i v-if="type === 'image'" class="fa-regular fa-image" />
+                <i v-else :class="getIconName(type)" />
                 {{ formatType(type) }}
               </Button>
             </li>
-          </Container>
-        </Container>
+          </ul>
+        </div>
 
         <!-- MUSICIANS FILTER -->
-        <Container v-if="app === 'cnrs1'" class="map-filter">
-          <Container class="filter-menu" flow="row-between">
-            <Text class="filter-title" v-t="'controls.titlemusicians'"></Text>
+        <div v-if="app === 'cnrs1'" class="map-filter">
+          <div class="filter-menu flow-row-between">
+            <span class="filter-title" v-t="'controls.titlemusicians'"></span>
             <Button
-              variant="text"
-              size="nested"
+              text
+              size="small"
               class="reset-btn"
               :aria-label="$t('controls.buttonmusicians')"
               :title="$t('controls.buttonmusicians')"
               :disabled="!filterMus.length"
-              @click="emit('resetFilter', 'mus')">
-              <Icon name="arrow-rotate-left" />
+              @click="emit('resetFilter', 'mus')" text>
+              <i class="fa-solid fa-arrow-rotate-left" />
             </Button>
-          </Container>
+          </div>
 
-          <Container tag="ul" class="filter-list" stretched>
+          <ul class="filter-list stretched">
             <li v-for="(mus, i) in musicians" :key="`mus-${i}`">
               <Button
-                size="s"
-                wide
-                pill
+                size="small"
+                class="w-full"
+                rounded
                 class="filter-btn"
                 :class="{ '-active': filterMus.includes(mus._id) }"
-                :variant="filterMus.includes(mus._id) ? 'plain' : 'text'"
+                :text="!filterMus.includes(mus._id)"
                 :aria-pressed="filterMus.includes(mus._id)"
-                @click="emit('filter', 'mus', mus._id)">
+                @click="emit('filter', 'mus', mus._id)" text>
                 {{ mus.name }}
               </Button>
             </li>
-          </Container>
-        </Container>
+          </ul>
+        </div>
 
         <!-- CATEGORY FILTER -->
-        <Container class="map-filter">
-          <Container class="filter-menu" flow="row-between">
-            <Text class="filter-title" v-t="'controls.titlecategories'"></Text>
+        <div class="map-filter">
+          <div class="filter-menu flow-row-between">
+            <span class="filter-title" v-t="'controls.titlecategories'"></span>
             <Button
-              variant="text"
-              size="nested"
+              text
+              size="small"
               class="reset-btn"
               :aria-label="$t('controls.buttoncategories')"
               :title="$t('controls.buttoncategories')"
               :disabled="!filterCat.length"
-              @click="emit('resetFilter', 'cat')">
-              <Icon name="arrow-rotate-left" />
+              @click="emit('resetFilter', 'cat')" text>
+              <i class="fa-solid fa-arrow-rotate-left" />
             </Button>
-          </Container>
+          </div>
 
-          <Container tag="ul" class="filter-list" flow="row">
+          <ul class="filter-list flow-row">
             <li v-for="(cat, i) in categories" :key="`cat-${i}`">
               <Button
-                size="s"
-                pill
+                size="small"
+                rounded
                 class="filter-btn"
                 :class="{ '-active': filterCat.includes(cat._id) }"
-                :variant="filterCat.includes(cat._id) ? 'plain' : 'text'"
+                :text="!filterCat.includes(cat._id)"
                 :aria-pressed="filterCat.includes(cat._id)"
-                @click="emit('filter', 'cat', cat._id)">
-                <template v-if="cat.attributes?.icon" #start><Icon :type="getType(type)" :name="cat.attributes?.icon?.name" /></template>
+                @click="emit('filter', 'cat', cat._id)" text>
+                <template v-if="cat.attributes?.icon" #start><i :class="getTypeClass(cat.attributes?.icon?.type) + ' fa-' + cat.attributes?.icon?.name" /></template>
                 {{ cat.name }}
               </Button>
             </li>
-          </Container>
-        </Container>
-      </Container>
-    </Container>
+          </ul>
+        </div>
+      </aside>
+    </div>
 
     <!-- HELP -->
-    <Button class="map-help color-btn" :aria-label="$t('controls.help')" :title="$t('controls.help')" @click="emit('help')">
-      <Icon name="question" />
+    <Button class="map-help color-btn" :aria-label="$t('controls.help')" :title="$t('controls.help')" @click="emit('help')" text>
+      <i class="fa-solid fa-question" />
     </Button>
 
     <!-- TOP ACTIONS -->
-    <Container class="map-top-actions">
+    <div class="map-top-actions">
       <!-- MODE TOGGLE -->
       <Button
         class="map-mode-toggle color-btn"
         :aria-label="controls.mode === 'narration' ? $t('controls.free') : $t('controls.itinerary')"
         :title="controls.mode === 'narration' ? $t('controls.free') : $t('controls.itinerary')"
-        @click="emit('toggleMode')">
-        <Icon :name="controls.mode === 'narration' ? 'location-dot' : 'route'" shake />
+        @click="emit('toggleMode')" text>
+        <i :class="controls.mode === 'narration' ? 'fa-solid fa-location-dot' : 'fa-solid fa-route'" class="fa-shake" />
       </Button>
 
       <!-- AUDIO TOGGLE -->
       <div class="map-audio">
         <div class="-signal" :class="{ '-visible': controls.mode === 'narration' && !controls.back && !controls.audio }">
-          <Icon
+          <i
             :aria-label="$t('controls.soundon')"
             :title="$t('controls.soundon')"
-            name="arrow-down"
-            bounce
+            class="fa-solid fa-arrow-down fa-bounce"
             style="
               --fa-bounce-start-scale-x: 1;
               --fa-bounce-start-scale-y: 1;
@@ -160,8 +160,8 @@
           :title="$t('controls.sound')"
           :class="{ '-active': controls.audio }"
           :aria-pressed="controls.audio"
-          @click="emit('toggleAudio')">
-          <Icon :type="'fas'" :name="controls.audio ? app === 'cnrs1' ? 'headphones' : 'volume-high' : app === 'cnrs1' ? 'volume-off' : 'volume-xmark'" />
+          @click="emit('toggleAudio')" text>
+          <i :class="'fa-solid' + ' fa-' + (controls.audio ? app === 'cnrs1' ? 'headphones' : 'volume-high' : app === 'cnrs1' ? 'volume-off' : 'volume-xmark')" />
         </Button>
       </div>
 
@@ -173,29 +173,29 @@
         :title="$t('controls.accessible')"
         :class="{ '-active': !controls.isDetective }"
         :aria-pressed="!controls.isDetective"
-        @click="emit('toggleDetective')">
-        <Icon :name="controls.isDetective ? 'eye-slash' : 'eye'" />
+        @click="emit('toggleDetective')" text>
+        <i :class="controls.isDetective ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" />
       </Button>
-    </Container>
+    </div>
 
     <!-- BOTTOM ACTIONS -->
     <div class="map-bottom-actions">
-      <Button class="color-btn" :aria-label="$t('controls.zoomin')" :title="$t('controls.zoomin')" @click="emit('zoom', 'in')">
-        <Icon name="plus" />
+      <Button class="color-btn" :aria-label="$t('controls.zoomin')" :title="$t('controls.zoomin')" @click="emit('zoom', 'in')" text>
+        <i class="fa-solid fa-plus" />
       </Button>
-      <Button class="color-btn" :aria-label="$t('controls.zoomout')" :title="$t('controls.zoomout')" @click="emit('zoom', 'out')">
-        <Icon name="minus" />
+      <Button class="color-btn" :aria-label="$t('controls.zoomout')" :title="$t('controls.zoomout')" @click="emit('zoom', 'out')" text>
+        <i class="fa-solid fa-minus" />
       </Button>
-      <Button class="color-btn" :aria-label="$t('controls.center')" :title="$t('controls.center')" @click="emit('center')">
-        <Icon name="crosshairs" />
+      <Button class="color-btn" :aria-label="$t('controls.center')" :title="$t('controls.center')" @click="emit('center')" text>
+        <i class="fa-solid fa-crosshairs" />
       </Button>
     </div>
-  </Container>
+  </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import { Container, Button, Text, Icon } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 import { useStore } from "@/stores";
 import { useStoreCategory } from "@owlabio/category-manager";
 
@@ -248,20 +248,20 @@ function formatType(value) {
 }
 
 function getIconName(type) {
-  return type === "audio" ? "music" : type === "video" ? "film" : type === "image" ? "image" : "font";
+  return type === "audio" ? "fa-solid fa-music" : type === "video" ? "fa-solid fa-film" : type === "image" ? "fa-regular fa-image" : "fa-solid fa-font";
 }
 
-function getType(value) {
+function getTypeClass(type) {
   const styles = {
-    solid: "fas",
-    regular: "far",
-    light: "fal",
-    duotone: "fad",
-    brand: "fab",
-    thin: "fat",
+    solid: "fa-solid",
+    regular: "fa-regular",
+    light: "fa-light",
+    duotone: "fa-duotone",
+    brand: "fa-brands",
+    thin: "fa-thin",
   };
 
-  return styles[value];
+  return styles[type] || "fa-solid";
 }
 
 categoriesStores.getRoots();

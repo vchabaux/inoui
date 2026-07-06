@@ -1,12 +1,11 @@
 <template>
-  <Container v-if="credits?.content" tag="footer">
-    <Text variant="fade" align="center" v-html="credits?.content"></Text>
-  </Container>
+  <footer v-if="credits?.content">
+    <p class="text-fade text-center" v-html="credits?.content"></p>
+  </footer>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import { Container, Text } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 
 const pageStore = useStore("page");

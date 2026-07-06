@@ -6,66 +6,67 @@
   <FormDelete :open="isDeleting" @cancel="clearThings" @delete="deleteNotice" />
 
   <!-- Header -->
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>Notices</h1>
-    <Link path="/admin/notices/new">New notice</Link>
-  </Container>
+    <router-link to="/admin/notices/new" class="link-text">New notice</router-link>
+  </div>
 
   <!-- Filters -->
-  <Container flow="row">
-    <Field class="notices-filter" label="status" type="select" v-model="filter.status" placeholder="-" :options="['all', 'draft', 'pending', 'published']" />
+  <div class="flow-row">
+    <Select class="notices-filter" label="status" v-model="filter.status" :options="['all', 'draft', 'pending', 'published']" />
 
-    <Field class="notices-filter" label="author" type="select" v-model="filter.author" placeholder="-" :options="['all', ...authors]" />
+    <Select class="notices-filter" label="author" v-model="filter.author" :options="['all', ...authors]" />
 
-    <Field class="notices-filter" label="media type" type="select" v-model="filter.mediaTypes" placeholder="-" :options="['all', 'text', 'image', 'audio', 'video']" />
-  </Container>
+    <Select class="notices-filter" label="media type" v-model="filter.mediaTypes" :options="['all', 'text', 'image', 'audio', 'video']" />
+  </div>
 
   <!-- List -->
   <DaTable class="fix-table" :data="filtered" :columns="columnsNotices" layout="2fr 1fr 1fr" expandable>
     <template #row-controls="{ item }">
-      <Button aria-label="preview" title="preview" size="s" @click="previewNotice(item._id)">
-        <Icon name="eye" />
+      <Button aria-label="preview" title="preview" size="small" @click="previewNotice(item._id)">
+        <i class="fa-solid fa-eye" />
       </Button>
-      <Link aria-label="edit" title="edit" v-if="getPermission(item)" variant="outline" size="s" :path="`/admin/notices/${item._id}`">
-        <Icon name="pen" />
-      </Link>
+      <router-link aria-label="edit" title="edit" v-if="getPermission(item)" class="link-outline text-sm" :to="`/admin/notices/${item._id}`">
+        <i class="fa-solid fa-pen" />
+      </router-link>
       <Button
         v-if="getPermission(item)"
         aria-label="delete"
         title="delete"
-        size="s"
-        variant="outline"
+        size="small"
+        outlined
         class="danger-btn"
-        :pending="isSubmitting"
+        :loading="isSubmitting"
         @click="prepareDelete(item._id)">
-        <Icon name="trash-can" />
+        <i class="fa-solid fa-trash-can" />
       </Button>
     </template>
 
     <template #details="{ item }">
-      <Container>
-        <Text tag="h2" class="notice-update-title">Notice information</Text>
+      <div>
+        <h2 class="notice-update-title">Notice information</h2>
         <div>
-          <Text class="small-text">Created by {{ item.author.email }}</Text>
-          <Text class="small-text" v-if="item.updates.length"> Last updated by {{ item.updates[item.updates.length - 1].author.email }} </Text>
+          <span class="small-text">Created by {{ item.author.email }}</span>
+          <span class="small-text" v-if="item.updates.length"> Last updated by {{ item.updates[item.updates.length - 1].author.email }} </span>
         </div>
 
         <template v-if="item.updates.length">
-          <Text tag="h2" class="notice-update-title">Edit history</Text>
+          <h2 class="notice-update-title">Edit history</h2>
           <ul>
             <li v-for="update in [...item.updates].reverse()">
-              <Text class="small-text"> {{ formatDateShort(update.date) }}, {{ formatTime(update.date) }} by {{ update.author.email }} </Text>
+              <span class="small-text"> {{ formatDateShort(update.date) }}, {{ formatTime(update.date) }} by {{ update.author.email }} </span>
             </li>
           </ul>
         </template>
-      </Container>
+      </div>
     </template>
   </DaTable>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import { Link, Container, Button, Text, Icon, Field } from "@owlabio/owl-ui";
+import Button from "primevue/button";
+import Select from "primevue/select";
 import Notice from "@/components/notice/Notice.vue";
 import FormDelete from "@/components/forms/FormDelete.vue";
 import DaTable from "@owlabio/da-table";

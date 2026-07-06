@@ -2,6 +2,8 @@ import { api } from "@/api/axios";
 import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
 import { createPinia } from "pinia";
+import PrimeVue from "primevue/config";
+import "primeicons/primeicons.css";
 
 import App from "@/App.vue";
 import Layout from "@/layouts/Layout.vue";
@@ -33,5 +35,6 @@ app
   // TODO Phase 4: réactiver avec FontAwesome standard
   // .use(iconManagerPlugin, { baseURL: import.meta.env.VITE_APP_BACKEND_URL })
   .use(i18n)
+  .use(PrimeVue)
   .component("Layout", Layout)
   .mount("#app");

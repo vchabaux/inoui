@@ -1,5 +1,5 @@
 <template>
-  <Container tag="form" @submit.prevent width="s">
+  <form @submit.prevent class="width-s">
     <template v-if="!isUpdate">
       <!-- VOICE -->
       <Voice
@@ -12,51 +12,51 @@
 
       <!-- FORM -->
       <h2>Files</h2>
-      <Field
+      <FileUpload
         ref="fileField"
         v-model="files"
         label="Files"
-        type="file"
-        preview
         multiple
+        auto
       />
     </template>
 
-    <Container class="list" stretched>
+    <div class="list stretched">
       <h2>Tags</h2>
-      <Field
+      <InputText
         type="text"
-        label="Add a tag"
+        placeholder="Add a tag"
         v-model="currentTag"
         @keydown.enter="handleAddTag"
       />
 
-      <Container flow="row" variant="surface">
-        <Text class="small-text" v-if="!tags.length">No tag yet</Text>
+      <div class="flow-row variant-surface">
+        <span class="small-text" v-if="!tags.length">No tag yet</span>
         <Tag v-else v-for="tag in tags" :key="tag" :label="tag" />
-      </Container>
+      </div>
 
       <AssetDetails
         v-if="isMulti"
         v-for="assetId in assets"
         :file="getAsset(assetId)"
       />
-    </Container>
+    </div>
 
     <Button
-      wide
-      :pending="isSubmitting"
-      class="upload-btn"
+      class="w-full upload-btn"
+      :loading="isSubmitting"
       @click="isUpdate ? updateTags() : handleSubmit()"
     >
       {{ isUpdate ? "Save" : "Add to the library" }}
     </Button>
-  </Container>
+  </form>
 </template>
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import { Container, Field, Button, Text } from "@owlabio/owl-ui";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+import FileUpload from "primevue/fileupload";
 import { useStore } from "@/stores";
 import Tag from "@/components/Tag.vue";
 import AssetDetails from "@/components/media/AssetDetails.vue";

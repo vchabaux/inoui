@@ -1,26 +1,29 @@
 <template>
-  <Container variant="dash-title">
+  <div class="variant-dash-title">
     <h1>Bienvenue</h1>
-  </Container>
+  </div>
 
   <Voice v-if="error" :message="error.message" type="error" @close="error = null" />
 
-  <Text class="small-text">Veuillez créer votre mot de passe afin de continuer</Text>
-  <Link v-if="showResetLink" wide path="/password-forgotten"> Renvoyer un lien par e-mail </Link>
+  <p class="small-text">Veuillez créer votre mot de passe afin de continuer</p>
+  <router-link v-if="showResetLink" to="/password-forgotten" class="w-full"> Renvoyer un lien par e-mail </router-link>
 
-  <Container tag="form" @submit.prevent stretched>
-    <Field v-model="password" type="password" label="Mot de passe" />
-    <Field v-model="confirmPassword" type="password" label="Confirmer le mot de passe" />
-    <Button wide :pending="submitting" @click="handleSubmit">Valider</Button>
-  </Container>
+  <form @submit.prevent class="stretched">
+    <label>Mot de passe</label>
+    <InputText v-model="password" type="password" />
+    <label>Confirmer le mot de passe</label>
+    <InputText v-model="confirmPassword" type="password" />
+    <Button class="w-full" :loading="submitting" @click="handleSubmit">Valider</Button>
+  </form>
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Voice from "@/components/Voice.vue";
-import { Container, Field, Button, Link, Text } from "@owlabio/owl-ui";
 import { api } from "@/api/axios";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
 
 const route = useRoute();
 const router = useRouter();

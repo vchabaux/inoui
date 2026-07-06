@@ -3,61 +3,64 @@
   <Notice v-if="currentNotice" :noticeId="currentNotice?._id" :open="isPreviewing" @close="isPreviewing = false" />
 
   <!-- Medias dialog -->
-  <Dialog v-if="isMediaLibOpen" id="assets" :open="isMediaLibOpen" modal @close="isMediaLibOpen = false">
+  <Dialog v-if="isMediaLibOpen" v-model:visible="isMediaLibOpen" modal @hide="isMediaLibOpen = false">
     <Medias picker @select="addMedia" :mediaType="currentUploadType" />
   </Dialog>
 
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>
       {{ isUpdate ? `${notice?.title} (${notice?.status})` : "New notice" }}
     </h1>
     <Button v-if="isUpdate" aria-label="preview" @click="isPreviewing = true"> Preview </Button>
-  </Container>
+  </div>
 
-  <Container tag="form" width="l" stretched centered @submit.prevent>
+  <form class="width-l stretched centered" @submit.prevent>
     <h2>Notice information</h2>
-    <Field label="title" type="text" v-model="notice.title" autofocus ref="inputRef" />
-    <Field class="notice-checkbox" label="the title is visible in the notice" type="checkbox" v-model="notice.hasTitle" />
-    <Editor label="content" v-model="notice.content" ref="editorRef" mediaManagement="custom" @upload="openLibrary" />
+    <InputText label="title" type="text" v-model="notice.title" autofocus ref="inputRef" />
+    <div class="notice-checkbox">
+      <Checkbox :binary="true" v-model="notice.hasTitle" />
+      <label>the title is visible in the notice</label>
+    </div>
+    <Editor v-model="notice.content" ref="editorRef" />
 
-    <Container class="notice-config-container" stretched>
+    <div class="notice-config-container stretched">
       <h2>Categories</h2>
-      <Text class="small-text" variant="fade"> Categories allow the user to filter points on the map. The main category icon is displayed in the point </Text>
-      <Container tag="ul" variant="surface" class="notice-config-list" flow="row">
+      <span class="small-text text-fade"> Categories allow the user to filter points on the map. The main category icon is displayed in the point </span>
+      <ul class="variant-surface notice-config-list flow-row">
         <li v-if="!notice.categories.length">No category yet</li>
         <Tag v-for="(category, i) in notice.categories" :key="i" tag="li" :label="getCategory(category._id)?.name" @delete="removeCategory(category)" />
-      </Container>
+      </ul>
       <Categories :favorite="favCat._id" @star="favCategory" @select="addCategory" />
-    </Container>
+    </div>
 
-    <Container class="notice-config-container" stretched>
+    <div class="notice-config-container stretched">
       <h2>References</h2>
-      <Text class="small-text" variant="fade"> References are displayed at the bottom of the notice</Text>
-      <Field v-if="filteredNotices.length" label="Select a notice" type="select" :options="filteredNotices" @change="addReference" :formatter="(n) => n.title" />
-      <Container tag="ul" variant="surface" class="notice-config-list" stretched>
+      <span class="small-text text-fade"> References are displayed at the bottom of the notice</span>
+      <Select v-if="filteredNotices.length" label="Select a notice" :options="filteredNotices" @change="addReference" optionLabel="title" />
+      <ul class="variant-surface notice-config-list stretched">
         <li v-if="!notice.references.length">No reference yet</li>
         <li v-for="(reference, i) in references" :key="i">
-          <Container flow="row-between">
-            <Text>{{ reference.title }}</Text>
-            <Button aria-label="remove" title="remove" variant="outline" size="s" @click="removeReference(reference)">
-              <Icon name="xmark" />
+          <div class="flow-row-between">
+            <span>{{ reference.title }}</span>
+            <Button aria-label="remove" title="remove" outlined size="small" @click="removeReference(reference)">
+              <i class="fa-solid fa-xmark" />
             </Button>
-          </Container>
+          </div>
         </li>
-      </Container>
-    </Container>
-  </Container>
+      </ul>
+    </div>
+  </form>
 
-  <Container v-if="currentNotice?.original || currentNotice?.status === 'published'" width="l" centered flow="row" class="-end">
-    <Text v-if="currentNotice?.original">You are working on a copy of {{ noticeStore.findOne(currentNotice.original)?.title }}</Text>
-    <Text v-if="currentNotice?.status === 'published'">This notice is currently online</Text>
-  </Container>
-  <Container centered stretched width="s">
+  <div v-if="currentNotice?.original || currentNotice?.status === 'published'" class="width-l centered flow-row -end">
+    <span v-if="currentNotice?.original">You are working on a copy of {{ noticeStore.findOne(currentNotice.original)?.title }}</span>
+    <span v-if="currentNotice?.status === 'published'">This notice is currently online</span>
+  </div>
+  <div class="centered stretched width-s">
     <Voice v-if="error" :type="error.type" :message="error.message" :closable="true" @close="error = null" />
-  </Container>
+  </div>
 
-  <Container width="l" centered flow="row" class="-end">
-    <Button variant="outline" @click="save('draft')">
+  <div class="width-l centered flow-row -end">
+    <Button outlined @click="save('draft')">
       {{ getText("draft") }}
     </Button>
     <Button v-if="!isAdmin" @click="save('pending')">
@@ -66,12 +69,17 @@
     <Button v-else @click="save('published')">
       {{ getText("published") }}
     </Button>
-  </Container>
+  </div>
 </template>
 
 <script setup>
 import { computed, ref, onMounted } from "vue";
-import { Text, Field, Editor, Button, Container, Icon, Dialog } from "@owlabio/owl-ui";
+import InputText from "primevue/inputtext";
+import Checkbox from "primevue/checkbox";
+import Select from "primevue/select";
+import Editor from "primevue/editor";
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
 import Notice from "@/components/notice/Notice.vue";
 import Tag from "@/components/Tag.vue";
 import Medias from "@/pages/admin/Medias.vue";
@@ -184,13 +192,6 @@ function openLibrary(type) {
 }
 
 function addMedia(value) {
-  /**
-   * Instead of having it hardcoded
-   * Can extract keys for the editorRef addX functions
-   * lowercase and remove the "add" in order to make it dynamic
-   * This is assuming editorRef will follow the addX pattern
-   */
-
   const addFunctions = {
     image: "addImage",
     video: "addVideo",
@@ -238,8 +239,6 @@ function addReference(e, reference) {
 function removeReference(reference) {
   notice.value.references.splice(notice.value.references.indexOf(reference._id), 1);
 }
-
-// save process
 
 function getMediaTypes(content) {
   const types = [];
@@ -289,44 +288,20 @@ async function save(goal) {
   let status = notice.value.status;
   notice.value.mediaTypes = getMediaTypes(notice.value.content);
 
-  /* ==== IS UPDATE SCENARIOS
-    If the notice is NOT a copy :
-        --> UPDATE
-        From draft to all (user & admin)
-        From pending to pending (user) / to draft or published (admin)
-        From published to published (admin)
-
-        --> COPY
-        From pending to draft (user)
-        From published to draft or pending (user) / to draft (admin)
-
-    If the notice IS a copy :
-        --> UPDATE
-        From draft to draft (user & admin)
-        From draft to pending IF OG IS NOT PENDING (user)
-
-        --> REPLACE
-        From draft to pending IF OG IS PENDING (user)
-        From whatever to published IF OG IS PUBLISHED (admin)
-  **/
-
   try {
     if (isUpdate.value) {
-      // COPY
       if ((status === "published" && goal !== "published") || (status === "pending" && goal === "draft" && !isAdmin.value)) {
         await copyNotice();
         router.push("/admin/notices");
         return;
       }
 
-      // REPLACE
       if (currentNotice.value.original && goal !== "draft") {
         await replaceNotice(goal);
         router.push("/admin/notices");
         return;
       }
 
-      // UPDATE
       await updateNotice(goal);
       router.push("/admin/notices");
     } else {
@@ -356,9 +331,5 @@ onMounted(() => inputRef.value && inputRef.value.componentRef.domRef.focus());
 
 .notice-config-list {
   gap: var(--size-2);
-}
-
-:deep(.owl-dialog-content) {
-  width: auto;
 }
 </style>

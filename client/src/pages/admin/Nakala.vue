@@ -1,20 +1,22 @@
 <template>
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>Données Nakala</h1>
     <Button @click="handleAddMedia">New data</Button>
-  </Container>
+  </div>
 
-  <Dialog id="form-nakala" modal @close="clear" :open="isFormNakalaOpen">
-    <Container variant="dash-title">
-      <Text tag="h2">Add files</Text>
-    </Container>
+  <Dialog v-model:visible="isFormNakalaOpen" modal @hide="clear">
+    <template #header>
+      <div class="variant-dash-title">
+        <h2>Add files</h2>
+      </div>
+    </template>
 
-    <Container class="upload-forms">
+    <div class="upload-forms">
       <FormAssetNakala
         :dataId="dataToEdit"
         @upload="isFormNakalaOpen = false"
       />
-    </Container>
+    </div>
   </Dialog>
 
   <Voice
@@ -34,41 +36,39 @@
     :expandable="true"
   >
     <template #details="{ item }">
-      <Container>
+      <div>
         <template v-for="$value in item.files" :key="$value.sha1">
-          <Container flow="row">
-            <Text>{{ $value.name }}</Text>
+          <div class="flow-row">
+            <span>{{ $value.name }}</span>
 
-            <Thumbnail
-              size="s"
-              variant="contain"
-              :type="$value.mediaType"
+            <img
+              size="small"
               :src="$value.url"
-            >
-            </Thumbnail>
+              alt="file"
+            />
 
             <Button
-              size="s"
+              size="small"
               aria-label="delete"
               title="delete"
               @click="handleDeleteFile(item, $value)"
             >
-              <Icon name="trash-can" />
+              <i class="fa-solid fa-trash-can" />
             </Button>
-          </Container>
+          </div>
         </template>
-      </Container>
+      </div>
     </template>
 
     <template #row-controls="{ item }">
       <Button
-        variant="outline"
-        size="s"
+        outlined
+        size="small"
         aria-label="edit"
         title="edit"
         @click="handleEdit(item)"
       >
-        <Icon name="pen" />
+        <i class="fa-solid fa-pen" />
       </Button>
     </template>
   </Datable>
@@ -76,14 +76,8 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import {
-  Container,
-  Button,
-  Icon,
-  Dialog,
-  Thumbnail,
-  Text,
-} from "@owlabio/owl-ui";
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
 import Datable from "@owlabio/da-table";
 import { columnsNakala } from "@/utils/columns";
 import FormAssetNakala from "@/components/forms/FormAssetNakala.vue";
@@ -128,10 +122,6 @@ function handleAddMedia() {
 </script>
 
 <style scoped>
-:deep(.owl-dialog-content) {
-  width: min(100ch, calc(100vw - 2rem)) !important;
-}
-
 :deep(form) {
   width: 100% !important;
 }

@@ -1,14 +1,15 @@
 <template>
-  <LayoutColumn width="small" floating>
+  <div class="layout-column">
     <slot />
-  </LayoutColumn>
+  </div>
 </template>
 
-<script setup>
-import { LayoutColumn } from "@owlabio/owl-ui";
-</script>
-
 <style scoped>
+.layout-column {
+  max-width: 600px;
+  margin-inline: auto;
+}
+
 :deep(.page-content) {
   justify-items: stretch;
 }

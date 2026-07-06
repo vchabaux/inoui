@@ -1,20 +1,19 @@
 <template>
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>Content</h1>
-  </Container>
+  </div>
 
   <DaTable class="fix-table" :data="pages" :columns="columnsContent" layout="1fr 1fr">
     <template #row-controls="{ item }">
-      <Link aria-label="edit" title="edit" variant="outline" size="s" :path="`/admin/content/${item.slug}`">
-        <Icon name="pen" />
-      </Link>
+      <router-link aria-label="edit" title="edit" class="link-outline text-sm" :to="`/admin/content/${item.slug}`">
+        <i class="fa-solid fa-pen" />
+      </router-link>
     </template>
   </DaTable>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import { Link, Container, Icon } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 import DaTable from "@owlabio/da-table";
 import {columnsContent} from "@/utils/columns";

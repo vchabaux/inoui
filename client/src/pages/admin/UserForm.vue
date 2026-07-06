@@ -1,60 +1,60 @@
 <template>
-  <Container flow="row-between" variant="dash-title">
+  <div class="variant-dash-title flow-row-between">
     <h1>{{ isUpdate ? user.name : "New user" }}</h1>
-  </Container>
+  </div>
 
-  <Container tag="form" width="s" stretched centered @submit.prevent>
+  <form class="width-s stretched centered" @submit.prevent>
     <h2>User information</h2>
-    <Field label="name" type="text" v-model="name" />
-    <Field label="e-mail" type="email" v-model="email" />
-  </Container>
+    <label>name</label>
+    <InputText type="text" v-model="name" />
+    <label>e-mail</label>
+    <InputText type="email" v-model="email" />
+  </form>
 
-  <Container tag="form" width="s" stretched centered @submit.prevent>
+  <form class="width-s stretched centered" @submit.prevent>
     <h2>User permissions</h2>
-    <Field
-      label="role"
+    <label>role</label>
+    <Select
       :options="Object.keys(roles).map((key) => roles[key])"
       v-model="role"
-      type="select"
     />
-    <Field
-      label="This is a temporary member"
-      type="checkbox"
-      v-model="isTemporary"
-    />
-    <Field
-      v-if="isTemporary"
-      label="Expiration date"
-      type="date"
-      v-model="_expiresAt"
-    />
-  </Container>
+    <label>This is a temporary member</label>
+    <Checkbox v-model="isTemporary" :binary="true" />
+    <template v-if="isTemporary">
+      <label>Expiration date</label>
+      <DatePicker v-model="_expiresAt" />
+    </template>
+  </form>
 
-  <Container centered width="s">
+  <div class="centered width-s">
     <Voice
       v-if="Object.keys(errors).length"
       type="error"
       :message="Object.values(errors).join(`<br>`)"
     />
     <Button
-      wide
+      class="w-full"
       @click="save"
-      :pending="isSubmitting"
+      :loading="isSubmitting"
       :disabled="!!Object.keys(errors).length"
     >
       {{ isUpdate ? "Save changes" : "Send an invitation" }}
     </Button>
-  </Container>
+  </div>
 </template>
 
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { ref, computed, watchEffect } from "vue";
-import { Field, Button, Container } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 import Voice from "@/components/Voice.vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Select from "primevue/select";
+import Checkbox from "primevue/checkbox";
+import DatePicker from "primevue/datepicker";
 
 const route = useRoute();
 const router = useRouter();

@@ -1,7 +1,7 @@
 <template>
-  <Dialog id="help" open modal class="tutorial">
+  <Dialog v-model:visible="open" modal class="tutorial">
     <template #header>
-      <Text tag="h2">{{app === 'cnrs1' ? "Guide d'exploration" : "Exploring the transmedia map"}}</Text>
+      <h2>{{app === 'cnrs1' ? "Guide d'exploration" : "Exploring the transmedia map"}}</h2>
     </template>
 
     <Tuto1 v-if="app === 'cnrs1'" :hasDetectiveMode="hasDetectiveMode" />
@@ -11,7 +11,7 @@
 
 <script setup>
 import { computed } from "vue";
-import { Dialog, Text } from "@owlabio/owl-ui";
+import Dialog from "primevue/dialog";
 import { useStore } from "@/stores";
 import Tuto1 from "./Tuto1.vue";
 import Tuto2 from "./Tuto2.vue";
@@ -20,16 +20,17 @@ const settingsStore = useStore("settings");
 const app = computed(() => settingsStore.project);
 
 const props = defineProps({
+  open: Boolean,
   hasDetectiveMode: Boolean,
 });
 </script>
 
 <style scoped>
-:deep(.owl-dialog-content) {
+:deep(.p-dialog-content) {
   width: min(80ch, 90vw) !important;
 }
 
-:deep(.owl-dialog-body) {
+:deep(.p-dialog-content) {
   display: grid;
   gap: var(--size-6);
 }

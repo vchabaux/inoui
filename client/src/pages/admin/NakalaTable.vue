@@ -1,21 +1,18 @@
 <template>
   <h3>{{ currentParam.type }}</h3>
 
-  <!-- <img
-        src="https://apitest.nakala.fr/data/10.34847/nkl.cc97i088.v1/50d3d9eb2d4cc4d09ab85990f98d69ec008926e2?bearer=b68c997f2728d2477b7a64ba1504864c5e944596abbc6d5694e0a9a6229bed7c" /> -->
-
   <pre>{{ JSON.stringify(foo, null, 2) }}</pre>
 
-  <Field type="select" label="Meta-datas types" :options="metaDataTypes" v-model="selectedMeta" />
-  <Field type="select" label="Licenses" :options="licenses" :formatter="(v) => v.name" v-model="selectedLicense" />
-  <Field type="select" label="Data types" :options="dataTypes" v-model="selectedDataType" />
-  <Field type="select" label="Properties" :options="properties" v-model="selectedProperty" />
+  <Select label="Meta-datas types" :options="metaDataTypes" v-model="selectedMeta" />
+  <Select label="Licenses" :options="licenses" optionLabel="name" v-model="selectedLicense" />
+  <Select label="Data types" :options="dataTypes" v-model="selectedDataType" />
+  <Select label="Properties" :options="properties" v-model="selectedProperty" />
 </template>
 
 <script setup>
 import { computed, ref } from "@vue/reactivity";
 import { useRoute } from "vue-router";
-import { Field } from "@owlabio/owl-ui";
+import Select from "primevue/select";
 import { useStore } from "@/stores";
 
 const route = useRoute();

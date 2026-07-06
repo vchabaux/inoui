@@ -1,17 +1,16 @@
 <template>
-  <Container variant="dash-title">
+  <div class="variant-dash-title">
     <h1>Confirmation</h1>
-  </Container>
+  </div>
 
-  <Text>Félicitations ! Votre compte a bien été créé</Text>
+  <p>Félicitations ! Votre compte a bien été créé</p>
 
-  <Link wide path="/auth/signin">Se connecter</Link>
+  <router-link to="/auth/signin" class="w-full">Se connecter</router-link>
 </template>
 
 <script setup>
 import { onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Container, Link, Text } from "@owlabio/owl-ui";
 import { api } from "@/api/axios";
 
 const route = useRoute();

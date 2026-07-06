@@ -7,40 +7,40 @@
   />
 
   <!-- Form -->
-  <Container class="form-container">
-    <Container v-if="isSaving" class="-saving">
-      <Icon name="check" />
-    </Container>
+  <div class="form-container">
+    <div v-if="isSaving" class="-saving">
+      <i class="fa-solid fa-check" />
+    </div>
 
     <!-- Information -->
-    <Container stretched class="form-header">
-      <Container flow="row-between">
+    <div class="stretched form-header">
+      <div class="flow-row-between">
         <Button
           aria-label="go back"
           title="go back"
-          variant="text"
-          size="s"
+          text
+          size="small"
           @click="goBack"
         >
-          <template #start><Icon name="arrow-left" /></template>
+          <i class="fa-solid fa-arrow-left" />
           Go back
         </Button>
-      </Container>
+      </div>
 
-      <Text tag="h2">Point information</Text>
-      <Separator />
-      <Container v-if="error" width="s" stretched centered>
+      <h2>Point information</h2>
+      <Divider />
+      <div v-if="error" class="width-s stretched centered">
         <Voice
           :message="error.message"
           :type="error.type"
           closable
           @close="error = null"
         />
-      </Container>
+      </div>
 
-      <Field
+      <InputText
         type="text"
-        label="name"
+        placeholder="name"
         v-model="currentPoint.name"
         @change="savePoint"
       />
@@ -49,75 +49,69 @@
         @select="updatePoint"
         :defaultValue="currentPoint.attributes.placeName"
       />
-      <Field
+      <Select
         label="notice"
-        type="select"
         :options="[{ _id: '', title: '-' }, ...notices]"
-        :formatter="(v) => v.title"
+        optionLabel="title"
+        optionValue="_id"
         v-model="currentPoint.attributes.notice"
         @change="savePoint"
       />
-    </Container>
+    </div>
 
     <!-- Content -->
-    <Container v-if="depth < 4" stretched class="form-list">
-      <Text tag="h2">Point detours</Text>
-      <Separator />
+    <div v-if="depth < 4" class="stretched form-list">
+      <h2>Point detours</h2>
+      <Divider />
 
       <!-- Detours -->
-      <Field
+      <InputText
         style="flex: 1"
         type="text"
-        label="detour name"
+        placeholder="detour name"
         v-model="newDetour"
         @keyup.enter="addDetour"
       />
 
-      <Text v-if="!currentPoint?.children?.length">No detour yet</Text>
+      <span v-if="!currentPoint?.children?.length">No detour yet</span>
       <template v-for="($value, $key) in currentPoint.children" :key="$key">
-        <Container flow="row" class="list-item">
-          <Text :lines="1">{{ $value?.name }} </Text>
+        <div class="flow-row list-item">
+          <span class="line-clamp-1">{{ $value?.name }} </span>
 
-          <Container flow="row" class="list-actions">
+          <div class="flow-row list-actions">
             <Button
               aria-label="edit"
               title="edit"
-              variant="outline"
-              size="s"
-              icon
+              outlined
+              size="small"
               @click="editDetour($value)"
             >
-              <Icon name="pen" />
+              <i class="fa-solid fa-pen" />
             </Button>
 
             <Button
               class="danger-btn"
               aria-label="delete"
               title="delete"
-              variant="outline"
-              size="s"
-              icon
+              outlined
+              size="small"
               @click="prepareDelete($value._id)"
             >
-              <Icon name="trash-can" />
+              <i class="fa-solid fa-trash-can" />
             </Button>
-          </Container>
-        </Container>
+          </div>
+        </div>
       </template>
-    </Container>
-  </Container>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, watchEffect, computed } from "vue";
-import {
-  Container,
-  Field,
-  Button,
-  Icon,
-  Text,
-  Separator,
-} from "@owlabio/owl-ui";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Select from "primevue/select";
+import Divider from "primevue/divider";
 import { useStore } from "@/stores";
 import { Search } from "@/components/mapbox";
 import FormDelete from "@/components/forms/FormDelete.vue";

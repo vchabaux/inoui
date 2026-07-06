@@ -8,82 +8,80 @@
   />
 
   <!-- Medias dialog -->
-  <Dialog id="assets" :open="isPicking" modal @close="isPicking = false">
+  <Dialog v-model:visible="isPicking" modal @hide="isPicking = false">
     <Medias picker @select="selectAudio" mediaType="audio" />
   </Dialog>
 
   <!-- Detective dialog -->
   <Dialog
-    id="detective"
-    :open="isLearningDetective"
+    v-model:visible="isLearningDetective"
     modal
-    @close="isLearningDetective = false"
+    @hide="isLearningDetective = false"
   >
     <template #header>
-      <Text tag="h2">Detective mode</Text>
+      <h2>Detective mode</h2>
     </template>
 
-    <Container>
-      <Text class="small-text">
+    <div>
+      <p class="small-text">
         A track can be hidden : when the user is in
         {{ app === "cnrs1" ? "exploration" : "itinerary" }} mode, and moves the
         map (mobile) or the cursor (desktop), they will hear the audio
         associated with the track. The closer they get to the entry point, the
         louder the audio will play. This is a fantastic way to provide a fun,
         interactive experience for your visitors
-      </Text>
+      </p>
 
-      <Text class="small-text">
+      <p class="small-text">
         You can choose to hide some tracks and show others, of course. Don't
         worry about accessibility : when the detective mode is enabled, the user
         can disable it and use the accessible
         {{ app === "cnrs1" ? "exploration" : "itinerary" }} mode instead (all
         entry points are visible on the map)
-      </Text>
+      </p>
 
-      <Button wide @click="isLearningDetective = false">Okay</Button>
-    </Container>
+      <Button class="w-full" @click="isLearningDetective = false">Okay</Button>
+    </div>
   </Dialog>
 
   <!-- Path dialog -->
   <Dialog
-    id="path"
-    :open="isLearningPath"
+    v-model:visible="isLearningPath"
     modal
-    @close="isLearningPath = false"
+    @hide="isLearningPath = false"
   >
     <template #header>
-      <Text tag="h2">Type of path</Text>
+      <h2>Type of path</h2>
     </template>
 
-    <Container>
-      <Text class="small-text"
+    <div>
+      <p class="small-text"
         >The path between two points of the track can either be a straight line
-        (left image), or follow the road (right image)</Text
+        (left image), or follow the road (right image)</p
       >
 
-      <Container class="path-images" flow="row">
-        <Image
+      <div class="path-images flow-row">
+        <img
           src="/images/map-path-crow.png"
           alt="map: the path between two points is a straight line (convenient to assess distances and relative location)"
         />
-        <Image
+        <img
           src="/images/map-path-road.png"
           alt="map: the path between two points is the walking route (convenient to explore the track in the real world)"
         />
-      </Container>
+      </div>
 
-      <Text variant="fade" class="small-text"
+      <p class="small-text text-fade"
         >A path following the road needs to be updated before publication in
-        order to reflect recent changes (50 000 requests a month)</Text
+        order to reflect recent changes (50 000 requests a month)</p
       >
 
-      <Button wide @click="isLearningPath = false">Okay</Button>
-    </Container>
+      <Button class="w-full" @click="isLearningPath = false">Okay</Button>
+    </div>
   </Dialog>
 
   <!-- Header -->
-  <Container flow="row-between" variant="dash-title">
+  <div class="variant-dash-title flow-row-between">
     <h1>
       {{
         isUpdate
@@ -91,9 +89,9 @@
           : "New track"
       }}
     </h1>
-  </Container>
+  </div>
 
-  <Container stretched width="s" centered>
+  <div class="stretched width-s centered">
     <Voice
       v-if="error"
       type="error"
@@ -101,129 +99,128 @@
       @close="error = null"
       :closable="true"
     />
-  </Container>
+  </div>
 
   <!-- 1. Name -->
   <template v-if="!isUpdate">
-    <Container width="s" stretched centered>
+    <div class="width-s stretched centered">
       <h2>Track information</h2>
-      <Field
-        label="name"
+      <label>name</label>
+      <InputText
         type="text"
         required
         v-model="newTrack.name"
         @keyup.enter="createTrack"
       />
-    </Container>
+    </div>
 
-    <Container width="s" centered>
-      <Button wide @click="createTrack">Save</Button>
-    </Container>
+    <div class="width-s centered">
+      <Button class="w-full" @click="createTrack">Save</Button>
+    </div>
   </template>
 
   <!-- 2. Content -->
   <template v-else>
-    <Container v-if="currentTrack" width="l" centered stretched>
+    <div v-if="currentTrack" class="width-l centered stretched">
       <h2>Track information</h2>
 
-      <Container flow="row" class="grid-auto">
-        <Field type="text" label="name" v-model="currentTrack.name" />
+      <div class="flow-row grid-auto">
+        <label>name</label>
+        <InputText type="text" v-model="currentTrack.name" />
 
-        <Container flow="row" class="hidden-info">
-          <Field
-            type="checkbox"
-            label="the track is hidden"
+        <div class="flow-row hidden-info">
+          <Checkbox
+            :binary="true"
             v-model="currentTrack.attributes.isHidden"
           />
+          <label>the track is hidden</label>
           <Button
             aria-label="more info"
             title="more info"
-            variant="outline"
-            size="s"
-            pill
+            outlined
+            size="small"
+            rounded
             class="info-btn"
             @click="isLearningDetective = true"
           >
-            <Icon name="info" />
+            <i class="fa-solid fa-info"></i>
           </Button>
-        </Container>
-      </Container>
+        </div>
+      </div>
 
-      <Field
+      <Select
         v-if="app === 'cnrs1'"
-        type="select"
-        label="artist"
         :options="[{ _id: '', name: '-' }, ...musicians]"
-        :formatter="(v) => v.name"
+        optionLabel="name"
         :modelValue="selectedMusician"
         @change="selectMusician"
       />
 
-      <Container flow="row" class="grid-line">
-        <Field
-          v-if="currentTrack.attributes.media"
-          type="text"
-          label="audio"
-          readonly
-          hint="the audio will be played when the user approaches the entry point"
-          v-model="
-            currentTrack.attributes.media.url.split('/')[
-              currentTrack.attributes.media.url.split('/').length - 1
-            ]
-          "
-        />
+      <div class="flow-row grid-line">
+        <template v-if="currentTrack.attributes.media">
+          <label>audio</label>
+          <InputText
+            type="text"
+            readonly
+            v-model="
+              currentTrack.attributes.media.url.split('/')[
+                currentTrack.attributes.media.url.split('/').length - 1
+              ]
+            "
+          />
+          <p class="text-sm text-fade">the audio will be played when the user approaches the entry point</p>
+        </template>
         <Button
           class="fix1"
           aria-label="pick a file"
           title="pick a file"
           @click="isPicking = true"
         >
-          <Icon name="arrow-up-from-bracket" />
+          <i class="fa-solid fa-arrow-up-from-bracket"></i>
         </Button>
-      </Container>
+      </div>
 
-      <Container flow="row-between">
-        <Container flow="row">
-          <Field
-            type="color"
+      <div class="flow-row-between">
+        <div class="flow-row">
+          <label>color</label>
+          <ColorPicker
             class="fix2"
-            label="color"
             v-model="currentTrack.attributes.color"
           />
-          <Field
-            type="checkbox"
-            label="the track points are not linked"
+          <Checkbox
+            :binary="true"
             v-model="currentTrack.attributes.transparence"
           />
-        </Container>
+          <label>the track points are not linked</label>
+        </div>
 
-        <Container flow="row">
-          <Field
-            type="checkbox"
-            label="the track path follows the road"
+        <div class="flow-row">
+          <Checkbox
+            :binary="true"
             v-model="currentTrack.attributes.isWalking"
             @change="toggleWalkingPath"
           />
+          <label>the track path follows the road</label>
           <Button
             aria-label="more info"
             title="more info"
-            variant="outline"
-            size="s"
-            pill
+            outlined
+            size="small"
+            rounded
             class="info-btn"
             @click="isLearningPath = true"
           >
-            <Icon name="info" />
+            <i class="fa-solid fa-info"></i>
           </Button>
           <Button v-if="currentTrack.attributes.isWalking" @click="getPath">
             Update path
           </Button>
-        </Container>
-      </Container>
+        </div>
+      </div>
 
       <!-- Actions -->
-      <Container flow="row" class="-end">
-        <Button variant="outline" @click="save('draft')">
+      <div class="flow-row -end">
+        <Button outlined @click="save('draft')">
           {{ getText("draft") }}
         </Button>
         <Button v-if="!isAdmin" @click="save('pending')">
@@ -232,8 +229,8 @@
         <Button v-else @click="save('published')">
           {{ getText("published") }}
         </Button>
-      </Container>
-    </Container>
+      </div>
+    </div>
 
     <Map
       v-if="currentTrack && currentNode"
@@ -303,15 +300,6 @@ import axios from "axios";
 import { computed, ref } from "vue";
 import { getDirections } from "@/api/mapbox.js";
 import { useRoute, useRouter } from "vue-router";
-import {
-  Dialog,
-  Container,
-  Image,
-  Field,
-  Button,
-  Icon,
-  Text,
-} from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 import { Layer, Map, Marker, Path } from "@/components/mapbox";
 import FormTrack from "@/components/forms/FormTrack.vue";
@@ -320,6 +308,12 @@ import Notice from "@/components/notice/Notice.vue";
 import Medias from "@/pages/admin/Medias.vue";
 import Voice from "@/components/Voice.vue";
 import { handleError } from "@/utils";
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
+import InputText from "primevue/inputtext";
+import Select from "primevue/select";
+import Checkbox from "primevue/checkbox";
+import ColorPicker from "primevue/colorpicker";
 
 const route = useRoute();
 const router = useRouter();
@@ -736,9 +730,6 @@ async function save(goal) {
 }
 
 @media (max-width: 767px) {
-  .grid-auto {
-  }
-
   .hidden-info {
     margin-block: var(--size-2);
   }

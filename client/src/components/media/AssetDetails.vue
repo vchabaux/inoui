@@ -1,18 +1,12 @@
 <template>
-  <Container flow="row" class="media-container">
-    <Thumbnail size="m" variant="contain" type="image" :src="file.url">
-      <template #footer>
-        <Text class="small-text" align="center"
-          >{{ file.mediaType }} - {{ formatSize(file.size) }}</Text
-        >
-      </template>
-    </Thumbnail>
+  <div class="flow-row media-container">
+    <img :src="file.url" alt="file thumbnail" class="thumbnail" />
 
-    <Container>
-      <Text>{{ file.originalname }}</Text>
+    <div>
+      <p>{{ file.originalname }}</p>
 
-      <Text class="small-text" v-if="!file.tags?.length">No tag yet</Text>
-      <Container v-else variant="surface" flow="row">
+      <span class="small-text" v-if="!file.tags?.length">No tag yet</span>
+      <div v-else class="variant-surface flow-row">
         <Tag
           v-for="(tag, index) in file.tags"
           :key="index"
@@ -20,13 +14,12 @@
           :label="tag"
           @delete="removeTag(tag)"
         />
-      </Container>
-    </Container>
-  </Container>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { Container, Thumbnail, Text } from "@owlabio/owl-ui";
 import Tag from "@/components/Tag.vue";
 
 const props = defineProps({
@@ -54,6 +47,11 @@ const removeTag = (tagName) => {
 <style scoped>
 .media-container {
   align-items: flex-start;
+}
+
+.thumbnail {
+  width: 200px;
+  height: auto;
 }
 
 .media-details {

@@ -3,56 +3,58 @@
   <FormDelete :open="isDeleting" @cancel="clearThings" @delete="deleteTrack" />
 
   <!-- Header -->
-  <Container flow="row-between" variant="dash-title">
+  <div class="variant-dash-title flow-row-between">
     <h1>Tracks</h1>
-    <Link path="/admin/tracks/new">New track</Link>
-  </Container>
+    <router-link to="/admin/tracks/new">New track</router-link>
+  </div>
 
   <!-- Filters -->
-  <Container flow="row" class="tracks-filters">
-    <Field class="tracks-filter" label="status" type="select" v-model="filter.status" placeholder="-" :options="['all', 'draft', 'pending', 'published']" />
-  </Container>
+  <div class="flow-row tracks-filters">
+    <label>status</label>
+    <Select class="tracks-filter" v-model="filter.status" :options="['all', 'draft', 'pending', 'published']" placeholder="-" />
+  </div>
 
   <!-- List -->
   <DaTable expandable class="fix-table" :data="filtered" layout="1fr 0.5fr 0.5fr 0.5fr" :columns="columnsTracks">
     <template #row-controls="{ item }">
-      <Link aria-label="edit" title="edit" v-if="getPermission(item)" variant="outline" size="s" :path="`/admin/tracks/${item._id}`">
-        <Icon name="pen" />
-      </Link>
-      <Button v-if="getPermission(item)" class="danger-btn" aria-label="delete" title="delete" variant="outline" size="s" @click="prepareDelete(item._id)">
-        <Icon name="trash-can" />
+      <router-link :to="`/admin/tracks/${item._id}`" class="link-outline text-sm" aria-label="edit" title="edit" v-if="getPermission(item)">
+        <i class="fa-solid fa-pen"></i>
+      </router-link>
+      <Button v-if="getPermission(item)" class="danger-btn" aria-label="delete" title="delete" outlined size="small" @click="prepareDelete(item._id)">
+        <i class="fa-solid fa-trash-can"></i>
       </Button>
     </template>
 
     <template #details="{ item }">
-      <Container>
-        <Text tag="h2" class="tracks-details-title">Track information</Text>
+      <div>
+        <h2 class="tracks-details-title">Track information</h2>
         <div>
-          <Text class="small-text"> Created by: {{ item.attributes.author?.email }} </Text>
-          <Text class="small-text">Created on {{ new Date(item.createdAt).toLocaleDateString() }}</Text>
-          <Text class="small-text">Updated on {{ new Date(item.updatedAt).toLocaleDateString() }}</Text>
+          <p class="small-text"> Created by: {{ item.attributes.author?.email }} </p>
+          <p class="small-text">Created on {{ new Date(item.createdAt).toLocaleDateString() }}</p>
+          <p class="small-text">Updated on {{ new Date(item.updatedAt).toLocaleDateString() }}</p>
         </div>
 
-        <Text tag="h2" class="tracks-details-title">Track points</Text>
+        <h2 class="tracks-details-title">Track points</h2>
 
-        <Text v-if="!item.children.length">Nothing for now</Text>
+        <p v-if="!item.children.length">Nothing for now</p>
         <ul>
           <li v-for="point in item.children">
-            <Text class="small-text"> {{ point.name }} - "{{ point.attributes?.notice?.title }}"</Text>
+            <p class="small-text"> {{ point.name }} - "{{ point.attributes?.notice?.title }}"</p>
           </li>
         </ul>
-      </Container>
+      </div>
     </template>
   </DaTable>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import { Link, Container, Button, Text, Icon, Field } from "@owlabio/owl-ui";
 import DaTable from "@owlabio/da-table";
 import { columnsTracks } from "@/utils/columns";
 import { useStore } from "@/stores";
 import FormDelete from "@/components/forms/FormDelete.vue";
+import Button from "primevue/button";
+import Select from "primevue/select";
 
 const trackStore = useStore("track");
 const playlistStore = useStore("playlist");

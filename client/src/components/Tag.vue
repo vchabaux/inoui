@@ -1,14 +1,14 @@
 <template>
-  <Container class="tag-container" :tag="tag" flow="row">
-    <Text class="tag-text" variant="inverted"># {{ label }}</Text>
-    <Button class="tag-btn" aria-label="remove" title="remove" variant="plain" size="nested" @click="emits('delete')">
-      <Icon name="xmark" />
+  <div class="tag-container flow-row" :is="tag">
+    <span class="tag-text text-inverted"># {{ label }}</span>
+    <Button class="tag-btn" aria-label="remove" title="remove" text size="small" @click="emits('delete')">
+      <i class="fa-solid fa-xmark" />
     </Button>
-  </Container>
+  </div>
 </template>
 
 <script setup>
-import { Button, Container, Icon, Text } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 
 const emits = defineEmits(["delete"]);
 

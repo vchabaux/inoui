@@ -1,23 +1,24 @@
 <template>
   <form class="search" @submit.prevent>
-    <Field type="text" :label="label" :hint="hint" v-model="search" />
+    <InputText type="text" :placeholder="label" v-model="search" />
 
-    <Container tag="ul" class="search-list" stretched>
+    <ul class="search-list stretched">
       <li v-if="loading" class="search-spinner">
-        <Icon name="spinner" spin />
+        <i class="fa-solid fa-spinner fa-spin" />
       </li>
 
       <li v-for="(place, i) in results" :key="i">
-        <Button class="search-item" variant="text" size="nested" wide @click="handleClick(place)">
+        <Button class="search-item" text size="small" @click="handleClick(place)">
           {{ place.place_name }}
         </Button>
       </li>
-    </Container>
+    </ul>
   </form>
 </template>
 
 <script setup>
-import { Container, Field, Icon, Button } from "@owlabio/owl-ui";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
 import { useSearch } from "@/hooks";
 
 const props = defineProps({

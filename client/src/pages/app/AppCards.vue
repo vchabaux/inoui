@@ -1,26 +1,26 @@
 <template>
-  <Container width="l" class="app-page">
+  <div class="width-l app-page">
     <!-- Preview dialog -->
     <Notice v-if="isOpen" :noticeId="currentNoticeId" :open="isOpen" @close="isOpen = false" />
 
-    <Text tag="h1" class="color-title">Fiches pédagogiques</Text>
+    <h1 class="color-title">Fiches pédagogiques</h1>
 
-    <Container tag="ul" stretched>
+    <ul class="stretched">
       <li v-for="card in cards">
-        <Button class="card" variant="text" wide @click="previewNotice(card._id)">
-          <Text>{{ card.title }}</Text>
+        <Button class="card w-full" text @click="previewNotice(card._id)">
+          <span>{{ card.title }}</span>
         </Button>
       </li>
-    </Container>
-  </Container>
+    </ul>
+  </div>
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
-import { Container, Text, Button } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 import { useStoreCategory } from "@owlabio/category-manager";
 import Notice from "@/components/notice/Notice.vue";
+import Button from "primevue/button";
 
 const settingsStore = useStore("settings");
 const noticeStore = useStore("notice");

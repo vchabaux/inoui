@@ -1,10 +1,10 @@
 <template>
-  <Dialog :id="noticeId" modal :open="open">
+  <Dialog v-model:visible="open" modal>
     <template #header v-if="notice?.hasTitle">
-      <Container flow="row">
-        <Icon name="location-dot" />
-        <Text class="notice-title">{{ notice?.title }}</Text>
-      </Container>
+      <div class="flow-row">
+        <i class="fa-solid fa-location-dot" />
+        <span class="notice-title">{{ notice?.title }}</span>
+      </div>
     </template>
 
     <div class="notice-raw" v-html="notice?.content"></div>
@@ -32,7 +32,7 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import { Dialog, Container, Text, Icon } from "@owlabio/owl-ui";
+import Dialog from "primevue/dialog";
 import { useStore } from "@/stores";
 import NoticeNav from "./NoticeNav.vue";
 import NoticeRef from "./NoticeRef.vue";
@@ -104,25 +104,5 @@ function showNext(newId) {
 
 :global(video) {
   width: 100%;
-}
-
-:deep(.owl-dialog-content) {
-  width: 95vw !important;
-}
-
-:deep(.owl-dialog-btn) {
-  position: fixed !important;
-  inset-block-start: var(--size-2);
-  z-index: 2;
-}
-
-:deep(.owl-dialog-header) {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 1;
-}
-
-:deep(.owl-dialog-body) {
-  overflow-y: auto;
 }
 </style>

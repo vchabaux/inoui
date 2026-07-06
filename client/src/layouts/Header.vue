@@ -1,71 +1,71 @@
 <template>
-  <Container tag="header" flow="row-between" stretched :class="{'-accent' : app === 'cnrs2'}">
-    <Container flow="row" stretched>
-      <Container class="header-title -uppercase" :class="{ 'img-title': app === 'cnrs2' }" flow="row">
-        <Link v-if="app === 'cnrs1'" variant="text" class="header-link" path="/">{{ settings?.name }}</Link>
-        <RouterLink v-else to="/"><Image src="/cnrs2-logo.jpg" alt="São José" width="150" /></RouterLink>
-      </Container>
+  <header class="flow-row-between stretched" :class="{'-accent' : app === 'cnrs2'}">
+    <div class="flow-row stretched">
+      <div class="header-title -uppercase flow-row" :class="{ 'img-title': app === 'cnrs2' }">
+        <router-link v-if="app === 'cnrs1'" class="header-link link-text" to="/">{{ settings?.name }}</router-link>
+        <router-link v-else to="/"><img src="/cnrs2-logo.jpg" alt="São José" width="150" /></router-link>
+      </div>
 
-      <Container class="desktop-nav" tag="nav" flow="row" stretched>
-        <Container class="header-nav" tag="ul" flow="row" stretched>
-          <Container flow="row" tag="li" stretched>
-            <Link variant="text" class="header-link" active-class="-active" path="/" v-t="'header.map'"></Link>
-          </Container>
-          <Container flow="row" tag="li" stretched>
-            <Link variant="text" class="header-link" active-class="-active" path="/more/about" v-t="'header.about'"></Link>
-          </Container>
-          <Container v-if="app === 'cnrs1'" flow="row" tag="li" stretched>
-            <Link variant="text" class="header-link" active-class="-active" path="/more/musicians">Artistes</Link>
-          </Container>
-          <Container v-if="app === 'cnrs1'" flow="row" tag="li" stretched>
-            <Link variant="text" class="header-link" active-class="-active" path="/more/cards">Fiches pédagogiques</Link>
-          </Container>
-          <Container v-else flow="row" tag="li" stretched>
-            <Link variant="text" class="header-link" active-class="-active" path="/more/itineraries">Itineraries</Link>
-          </Container>
-        </Container>
-      </Container>
-    </Container>
+      <nav class="desktop-nav flow-row stretched">
+        <ul class="header-nav flow-row stretched">
+          <li class="flow-row stretched">
+            <router-link class="header-link link-text" active-class="-active" to="/" v-t="'header.map'"></router-link>
+          </li>
+          <li class="flow-row stretched">
+            <router-link class="header-link link-text" active-class="-active" to="/more/about" v-t="'header.about'"></router-link>
+          </li>
+          <li v-if="app === 'cnrs1'" class="flow-row stretched">
+            <router-link class="header-link link-text" active-class="-active" to="/more/musicians">Artistes</router-link>
+          </li>
+          <li v-if="app === 'cnrs1'" class="flow-row stretched">
+            <router-link class="header-link link-text" active-class="-active" to="/more/cards">Fiches pédagogiques</router-link>
+          </li>
+          <li v-else class="flow-row stretched">
+            <router-link class="header-link link-text" active-class="-active" to="/more/itineraries">Itineraries</router-link>
+          </li>
+        </ul>
+      </nav>
+    </div>
 
-    <Container class="header-extra desktop-extra" flow="row" stretched>
-      <Link path="/intro" variant="text"> {{ app === 'cnrs1' ? 'Bande annonce' : 'Intro' }} </Link>
-    </Container>
+    <div class="header-extra desktop-extra flow-row stretched">
+      <router-link to="/intro" class="link-text"> {{ app === 'cnrs1' ? 'Bande annonce' : 'Intro' }} </router-link>
+    </div>
 
-    <Container class="mobile-menu" flow="row" stretched>
-      <Button aria-label="open menu" title="open menu" variant="text" wide @click="emit('toggleMenu')">
-        <Icon name="bars" />
+    <div class="mobile-menu flow-row stretched">
+      <Button aria-label="open menu" title="open menu" text class="w-full" @click="emit('toggleMenu')">
+        <i class="fa-solid fa-bars" />
       </Button>
 
-      <Container v-if="open" class="mobile-nav" @keyup.escape="emit('toggleMenu')">
-        <Container class="header-nav" tag="ul">
-          <Container tag="li">
-            <Link wide variant="text" class="header-link" active-class="-active" path="/" v-t="'header.map'"></Link>
-          </Container>
-          <Container tag="li">
-            <Link wide variant="text" class="header-link" active-class="-active" path="/more/about" v-t="'header.about'"></Link>
-          </Container>
-          <Container v-if="app === 'cnrs1'" tag="li">
-            <Link wide variant="text" class="header-link" active-class="-active" path="/more/musicians">Artistes</Link>
-          </Container>
-          <Container v-if="app === 'cnrs1'" tag="li">
-            <Link wide variant="text" class="header-link" active-class="-active" path="/more/cards">Fiches pédagogiques</Link>
-          </Container>
-          <Container v-else tag="li">
-            <Link wide variant="text" class="header-link" active-class="-active" path="/more/itineraries">Itineraries</Link>
-          </Container>
-        </Container>
+      <div v-if="open" class="mobile-nav" @keyup.escape="emit('toggleMenu')">
+        <ul class="header-nav">
+          <li>
+            <router-link class="w-full header-link link-text" active-class="-active" to="/" v-t="'header.map'"></router-link>
+          </li>
+          <li>
+            <router-link class="w-full header-link link-text" active-class="-active" to="/more/about" v-t="'header.about'"></router-link>
+          </li>
+          <li v-if="app === 'cnrs1'">
+            <router-link class="w-full header-link link-text" active-class="-active" to="/more/musicians">Artistes</router-link>
+          </li>
+          <li v-if="app === 'cnrs1'">
+            <router-link class="w-full header-link link-text" active-class="-active" to="/more/cards">Fiches pédagogiques</router-link>
+          </li>
+          <li v-else>
+            <router-link class="w-full header-link link-text" active-class="-active" to="/more/itineraries">Itineraries</router-link>
+          </li>
+        </ul>
 
-        <Container class="header-extra" flow="row">
-          <Link path="/intro" variant="text"> {{ app === 'cnrs1' ? 'Bande annonce' : 'Intro' }} </Link>
-        </Container>
-      </Container>
-    </Container>
-  </Container>
+        <div class="header-extra flow-row">
+          <router-link to="/intro" class="link-text"> {{ app === 'cnrs1' ? 'Bande annonce' : 'Intro' }} </router-link>
+        </div>
+      </div>
+    </div>
+  </header>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import { Container, Button, Link, Icon, Image } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 import { useStore } from "@/stores";
 
 const settingsStore = useStore("settings");
@@ -90,10 +90,6 @@ function setPublicLang(lang) {
 </script>
 
 <style scoped>
-:deep(.owl-container) {
-  gap: 0;
-}
-
 .-accent {
   font-family: var(--app-font-title);
 }

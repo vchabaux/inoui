@@ -3,19 +3,19 @@
   <FormDelete :open="isDeleting" @cancel="clearThings" @delete="deleteMusician" />
 
   <!-- Header -->
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>Artists</h1>
-    <Link path="/admin/musicians/new">New artist</Link>
-  </Container>
+    <router-link to="/admin/musicians/new" class="link-text">New artist</router-link>
+  </div>
 
   <!-- List -->
   <Datable :data="musicians" :columns="columnsMusicians" selectionKey="_id" layout="2fr 1fr 1fr">
     <template #row-controls="{ item }">
-      <Link aria-label="edit" title="edit" size="s" variant="outline" :path="`/admin/musicians/${item._id}`">
-        <Icon name="pen" />
-      </Link>
-      <Button aria-label="delete" title="delete" size="s" variant="outline" class="danger-btn" :pending="isSubmitting" @click="openDialogDelete(item._id)">
-        <Icon name="trash-can" />
+      <router-link aria-label="edit" title="edit" class="link-outline text-sm" :to="`/admin/musicians/${item._id}`">
+        <i class="fa-solid fa-pen" />
+      </router-link>
+      <Button aria-label="delete" title="delete" size="small" outlined class="danger-btn" :loading="isSubmitting" @click="openDialogDelete(item._id)">
+        <i class="fa-solid fa-trash-can" />
       </Button>
     </template>
   </Datable>
@@ -24,7 +24,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useStore } from "@/stores";
-import { Container, Button, Link, Icon } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 import Datable from "@owlabio/da-table";
 import { columnsMusicians } from "@/utils/columns";
 import FormDelete from "@/components/forms/FormDelete.vue";

@@ -1,14 +1,13 @@
 <template>
-  <Container width="l" class="app-page">
-    <Text tag="h1" class="color-title">{{ page?.title }}</Text>
+  <div class="width-l app-page">
+    <h1 class="color-title">{{ page?.title }}</h1>
 
-    <Container v-html="page?.content" />
-  </Container>
+    <div v-html="page?.content" />
+  </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import { Container, Text } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 import { useRoute } from "vue-router";
 

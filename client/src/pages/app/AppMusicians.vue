@@ -1,52 +1,50 @@
 <template>
-  <Container width="l" class="app-page">
-    <Text tag="h1" class="color-title">Artistes</Text>
+  <div class="width-l app-page">
+    <h1 class="color-title">Artistes</h1>
 
-    <Container class="musicians">
-      <Container class="musician-container" v-for="mus in musiciansList">
-        <Container
+    <div class="musicians">
+      <div class="musician-container" v-for="mus in musiciansList">
+        <div
           class="musician-title"
           :style="{ '--color': mus.color ? mus.color : '#888888' }"
         >
           <div class="musician-color" />
-          <Text tag="h2">{{ mus.name }}</Text>
+          <h2>{{ mus.name }}</h2>
           <div class="musician-color" />
-        </Container>
+        </div>
 
-        <Container class="musician-image">
-          <Image
+        <div class="musician-image">
+          <img
             :src="mus.pictures?.main"
             :alt="mus.name"
-            fluid
             @mouseover="updateImg($event, mus.pictures?.secondary)"
             @mouseleave="updateImg($event, mus.pictures?.main)"
           />
-        </Container>
+        </div>
 
-        <Container>
-          <Text class="musician-description" v-html="mus.description" />
+        <div>
+          <p class="musician-description" v-html="mus.description" />
 
-          <Container class="musician-details" flow="row-between">
-            <Container>
-              <Text v-if="mus.contact?.email">{{ mus.contact?.email }}</Text>
-              <Text v-if="mus.contact?.phone">{{ mus.contact?.phone }}</Text>
-            </Container>
+          <div class="musician-details flow-row-between">
+            <div>
+              <p v-if="mus.contact?.email">{{ mus.contact?.email }}</p>
+              <p v-if="mus.contact?.phone">{{ mus.contact?.phone }}</p>
+            </div>
 
-            <Container>
-              <Link variant="outline" :path="`/?musician=${mus._id}`"
-                >Explorer son parcours</Link
+            <div>
+              <router-link :to="`/?musician=${mus._id}`" class="link-outline"
+                >Explorer son parcours</router-link
               >
-            </Container>
-          </Container>
-        </Container>
-      </Container>
-    </Container>
-  </Container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import { Container, Image, Text, Link } from "@owlabio/owl-ui";
 import { useStore } from "@/stores";
 
 const musicianStore = useStore("musician");

@@ -3,68 +3,70 @@
   <FormDelete :open="isDeleting" @cancel="isDeleting = false" @delete="deletePoint" />
 
   <!-- Form -->
-  <Container class="form-container">
-    <Container v-if="isSaving" class="-saving">
-      <Icon name="check" />
-    </Container>
+  <div class="form-container">
+    <div v-if="isSaving" class="-saving">
+      <i class="fa-solid fa-check" />
+    </div>
 
     <!-- Information -->
-    <Container stretched class="form-header">
-      <Container v-if="isDetour" flow="row-between">
-        <Button aria-label="go back" title="go back" variant="text" size="s" @click="goBack">
-          <template #start><Icon name="arrow-left" /></template>
+    <div class="stretched form-header">
+      <div v-if="isDetour" class="flow-row-between">
+        <Button aria-label="go back" title="go back" text size="small" @click="goBack">
+          <i class="fa-solid fa-arrow-left" />
           Go back
         </Button>
-      </Container>
+      </div>
 
       <template v-if="isDetour">
-        <Text tag="h2">Detour information</Text>
-        <Separator />
-        <Field type="text" label="name" v-model="currentTrack.name" @change="saveTrack" />
+        <h2>Detour information</h2>
+        <Divider />
+        <InputText type="text" placeholder="name" v-model="currentTrack.name" @change="saveTrack" />
       </template>
 
       <Voice v-if="error" :message="error.data.message" type="error" is-closable @close="error = null" />
-    </Container>
+    </div>
 
     <!-- Content -->
-    <Container tag="form" stretched @submit.prevent>
-      <Text tag="h2">{{ isDetour ? "Detour points" : "Track points" }}</Text>
-      <Separator />
+    <form class="stretched" @submit.prevent>
+      <h2>{{ isDetour ? "Detour points" : "Track points" }}</h2>
+      <Divider />
 
       <!-- Points -->
       <Search label="Add a point" @select="addPoint" defaultValue="" hint="you can also click on the map" />
 
-      <Text v-if="!currentTrack?.children?.length"> No point yet </Text>
+      <span v-if="!currentTrack?.children?.length"> No point yet </span>
       <template v-for="($value, $key) in currentTrack.children" :key="$key">
         <div class="list-item">
-          <Text :lines="1">{{ $key + 1 }} - {{ $value?.name }} </Text>
+          <span class="line-clamp-1">{{ $key + 1 }} - {{ $value?.name }} </span>
 
-          <Container flow="row" class="list-actions">
-            <Button aria-label="move up" title="move up" @click="movePoint('up', $key)" class="caret-up" variant="text" size="s" :class="{ hidden: $key <= 0 }">
-              <Icon name="chevron-up" type="fas" />
+          <div class="flow-row list-actions">
+            <Button aria-label="move up" title="move up" @click="movePoint('up', $key)" class="caret-up" text size="small" :class="{ hidden: $key <= 0 }">
+              <i class="fa-solid fa-chevron-up" />
             </Button>
 
-            <Button aria-label="move down" title="move down" @click="movePoint('down', $key)" class="caret-down" :class="{ hidden: $key === currentTrack.children.length - 1 }" variant="text" size="s">
-              <Icon name="chevron-down" type="fas" />
+            <Button aria-label="move down" title="move down" @click="movePoint('down', $key)" class="caret-down" :class="{ hidden: $key === currentTrack.children.length - 1 }" text size="small">
+              <i class="fa-solid fa-chevron-down" />
             </Button>
 
-            <Button aria-label="edit" title="edit" variant="outline" size="s" @click="editPoint($value)">
-              <Icon name="pen" type="fas" />
+            <Button aria-label="edit" title="edit" outlined size="small" @click="editPoint($value)">
+              <i class="fa-solid fa-pen" />
             </Button>
 
-            <Button aria-label="delete" title="delete" class="danger-btn" variant="outline" size="s" @click="prepareDelete($value._id)">
-              <Icon name="trash-can" type="fas" />
+            <Button aria-label="delete" title="delete" class="danger-btn" outlined size="small" @click="prepareDelete($value._id)">
+              <i class="fa-solid fa-trash-can" />
             </Button>
-          </Container>
+          </div>
         </div>
       </template>
-    </Container>
-  </Container>
+    </form>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import { Container, Field, Button, Icon, Text, Separator } from "@owlabio/owl-ui";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Divider from "primevue/divider";
 import { useStore } from "@/stores";
 import { Search } from "@/components/mapbox";
 import FormDelete from "@/components/forms/FormDelete.vue";

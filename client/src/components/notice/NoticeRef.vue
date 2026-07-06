@@ -1,23 +1,23 @@
 <template>
-  <Container v-if="references?.length || prevTitle" class="notice-references" variant="surface">
-    <Button v-if="prevTitle" size="s" @click="emit('prev')">
-      <template #start><Icon name="arrow-left" /></template>
+  <div v-if="references?.length || prevTitle" class="notice-references variant-surface">
+    <Button v-if="prevTitle" size="small" @click="emit('prev')">
+      <i class="fa-solid fa-arrow-left" />
       {{ prevTitle }}
     </Button>
 
-    <Text v-if="references?.length" v-t="'noticeref.title'"></Text>
+    <span v-if="references?.length" v-t="'noticeref.title'"></span>
     <ul v-if="references?.length">
       <li v-for="(reference, i) in references" :key="i">
-        <Button class="notice-reference" variant="text" @click="emit('next', reference._id)">
+        <Button class="notice-reference" text @click="emit('next', reference._id)">
           {{ reference?.title }}
         </Button>
       </li>
     </ul>
-  </Container>
+  </div>
 </template>
 
 <script setup>
-import { Container, Text, Button, Icon } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 const emit = defineEmits(["prev", "next"]);
 
 const props = defineProps({

@@ -102,10 +102,136 @@ ul, ol {
   --color: inherit;
   --color-text-fix: inherit;
 
-  /* --- App-specific (overridden by theme) --- */
-  --app-radius: 0;
-  --app-border: var(--border-1);
-  --app-font-title: sans-serif;
-  --app-font-body: sans-serif;
-  --text-fix: 0;
+	/* --- App-specific (overridden by theme) --- */
+	--app-radius: 0;
+	--app-border: var(--border-1);
+	--app-font-title: sans-serif;
+	--app-font-body: sans-serif;
+	--text-fix: 0;
 }
+
+/* ============================================================
+   Utility classes — remplacement des props owl-ui Container
+   ============================================================ */
+
+/* Flow (flex direction) */
+.flow-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--size-2);
+}
+.flow-row-between {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--size-2);
+}
+.flow-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sizing */
+.stretched {
+  width: 100%;
+}
+.centered {
+  margin-inline: auto;
+}
+.width-s {
+  max-width: 35rem;
+}
+.width-m {
+  max-width: 50rem;
+}
+.width-l {
+  max-width: 80rem;
+}
+
+/* Variants */
+.variant-dash-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--size-4) var(--size-6);
+  border-block-end: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  background-color: var(--color-surface-neutral);
+  gap: var(--size-2);
+}
+.variant-surface {
+  background-color: var(--color-surface-neutral);
+  border: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  border-radius: var(--app-radius, var(--radius-2));
+  padding: var(--size-4);
+  gap: var(--size-2);
+}
+
+/* Gap utilities */
+.gap-0 { gap: 0; }
+.gap-1 { gap: var(--size-1); }
+.gap-2 { gap: var(--size-2); }
+.gap-4 { gap: var(--size-4); }
+.gap-6 { gap: var(--size-6); }
+.gap-8 { gap: var(--size-8); }
+.gap-10 { gap: var(--size-10); }
+.gap-12 { gap: var(--size-12); }
+
+/* Padding utilities */
+.p-1 { padding: var(--size-1); }
+.p-2 { padding: var(--size-2); }
+.p-4 { padding: var(--size-4); }
+.p-6 { padding: var(--size-6); }
+.p-8 { padding: var(--size-8); }
+
+/* Text utilities */
+.text-fade { color: var(--color-text-fade); }
+.text-inverted { color: var(--color-text-inverted); }
+.text-center { text-align: center; }
+.text-start { text-align: start; }
+.text-sm { font-size: var(--size-3-5); }
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Link utilities */
+.link-text {
+  color: inherit;
+  text-decoration: none;
+}
+.link-text:hover {
+  text-decoration: underline;
+}
+.link-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--size-2) var(--size-4);
+  border: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  border-radius: var(--app-radius, var(--radius-2));
+  text-decoration: none;
+  color: inherit;
+}
+.link-outline:hover {
+  background-color: var(--color-element-neutral);
+}
+
+/* Text utilities */
+.text-fade { color: var(--color-text-fade); }
+.text-inverted { color: var(--color-text-inverted); }
+.text-center { text-align: center; }
+.text-start { text-align: start; }
+.text-sm { font-size: var(--size-3-5); }
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.w-full { width: 100%; }
+
+

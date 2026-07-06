@@ -1,69 +1,64 @@
 <template>
-  <Container class="notice-nav">
-    <Container class="notice-prev">
-      <Button v-if="navigation?.prevTrack && app === 'cnrs2'" wide class="nav-track" variant="text" @click="emit('navigate', 'track', navigation?.prevTrack)">
-        <template #start><Icon name="route" /></template>
+  <div class="notice-nav">
+    <div class="notice-prev">
+      <Button v-if="navigation?.prevTrack && app === 'cnrs2'" class="w-full nav-track" text @click="emit('navigate', 'track', navigation?.prevTrack)">
+        <i class="fa-solid fa-route" />
         {{ navigation?.prevTrack?.name }}
       </Button>
       <Button
         v-if="navigation?.prevPoint"
-        wide
-        class="nav-point"
-        variant="text"
+        class="w-full nav-point"
+        text
         @click="emit('navigate', 'point', navigation?.prevPoint)"
         :aria-label="$t('noticenav.prevpoint')"
         :title="$t('noticenav.prevpoint')">
-        <Icon name="backward-step" />
+        <i class="fa-solid fa-backward-step" />
       </Button>
       <Button
         v-if="navigation?.prevDetour"
-        wide
-        class="nav-detour"
-        variant="text"
+        class="w-full nav-detour"
+        text
         @click="emit('navigate', 'point', navigation?.prevDetour)"
         :aria-label="$t('noticenav.prevdetour')"
         :title="$t('noticenav.prevdetour')">
-        <Icon name="backward" />
+        <i class="fa-solid fa-backward" />
       </Button>
-    </Container>
+    </div>
 
-    <Container class="notice-next">
-      <Link wide v-if="navigation?.finish && app === 'cnrs2'" class="nav-track" variant="text" path="/more/about">
-        <template #end><Icon name="link" /></template>
+    <div class="notice-next">
+      <router-link v-if="navigation?.finish && app === 'cnrs2'" class="w-full nav-track link-text" to="/more/about">
+        <i class="fa-solid fa-link" />
         {{$t('noticenav.about')}}
-      </Link>
-      <Button wide v-if="navigation?.nextTrack && app === 'cnrs2'" class="nav-track" variant="text" @click="emit('navigate', 'track', navigation?.nextTrack)">
-        <template #end><Icon name="route" /></template>
+      </router-link>
+      <Button class="w-full nav-track" v-if="navigation?.nextTrack && app === 'cnrs2'" text @click="emit('navigate', 'track', navigation?.nextTrack)">
+        <i class="fa-solid fa-route" />
         {{ navigation?.nextTrack?.name }}
       </Button>
       <Button
-        wide
+        class="w-full nav-point"
         v-if="navigation?.nextPoint"
-        class="nav-point"
-        variant="text"
+        text
         @click="emit('navigate', 'point', navigation?.nextPoint)"
         :aria-label="$t('noticenav.nextpoint')"
-        :title="$t('noticenav.nextpoint')"
-        point>
-        <Icon name="forward-step" />
+        :title="$t('noticenav.nextpoint')">
+        <i class="fa-solid fa-forward-step" />
       </Button>
       <Button
-        wide
+        class="w-full nav-detour"
         v-if="navigation?.nextDetour"
-        class="nav-detour"
-        variant="text"
+        text
         @click="emit('navigate', 'point', navigation?.nextDetour)"
         :aria-label="$t('noticenav.nextdetour')"
         :title="$t('noticenav.nextdetour')">
-        <Icon name="forward" />
+        <i class="fa-solid fa-forward" />
       </Button>
-    </Container>
-  </Container>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import { Container, Text, Button, Link, Icon } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 import { useStore } from "@/stores";
 
 const settingsStore = useStore("settings");
@@ -101,14 +96,14 @@ const props = defineProps({
   border: var(--app-border, var(--border-1)) dashed var(--color-full-accent) !important;
 }
 
-.notice-prev :deep(.owl-button),
-.notice-prev :deep(.owl-link) {
+.notice-prev :deep(.p-button),
+.notice-prev .link-text {
   justify-self: start !important;
   width: max-content;
 }
 
-.notice-next :deep(.owl-button),
-.notice-next :deep(.owl-link) {
+.notice-next :deep(.p-button),
+.notice-next .link-text {
   justify-self: end !important;
   width: max-content;
 }

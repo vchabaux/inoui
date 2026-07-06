@@ -3,10 +3,10 @@
   <FormDelete :open="isDeleting" @cancel="clearThings" @delete="deletePlaylist" />
 
   <!-- Header -->
-  <Container flow="row-between" variant="dash-title">
+  <div class="flow-row-between variant-dash-title">
     <h1>Playlists</h1>
-    <Link path="/admin/playlists/new">New playlist</Link>
-  </Container>
+    <router-link to="/admin/playlists/new" class="link-text">New playlist</router-link>
+  </div>
 
   <!-- List -->
   <Datable :data="playlists" :columns="columnsPlaylists" selectionKey="_id" layout="2fr 1fr 1fr">
@@ -15,22 +15,22 @@
         :variant="currentPlaylist === item._id ? 'plain' : 'outline'"
         aria-label="make this playlist the one used in the app"
         title="make this playlist the one used in the app"
-        size="s"
+        size="small"
         @click="usePlaylist(item)">
-        <Icon name="star" />
+        <i class="fa-solid fa-star" />
       </Button>
-      <Link aria-label="edit" title="edit" size="s" variant="outline" :path="`/admin/playlists/${item._id}`">
-        <Icon name="pen" />
-      </Link>
+      <router-link aria-label="edit" title="edit" class="link-outline text-sm" :to="`/admin/playlists/${item._id}`">
+        <i class="fa-solid fa-pen" />
+      </router-link>
       <Button
         aria-label="delete"
         title="delete"
-        size="s"
-        variant="outline"
+        size="small"
+        outlined
         class="danger-btn"
-        :pending="isSubmitting"
+        :loading="isSubmitting"
         @click="openDialogDelete(item._id)">
-        <Icon name="trash-can" />
+        <i class="fa-solid fa-trash-can" />
       </Button>
     </template>
   </Datable>
@@ -39,7 +39,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useStore } from "@/stores";
-import { Container, Button, Link, Icon } from "@owlabio/owl-ui";
+import Button from "primevue/button";
 import Datable from "@owlabio/da-table";
 import {columnsPlaylists} from "@/utils/columns";
 import FormDelete from "@/components/forms/FormDelete.vue";
