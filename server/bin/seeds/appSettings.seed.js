@@ -18,6 +18,7 @@ const seedAppSettings = async (project) => {
     const created = await AppSettings.create(data);
 
     console.log(created);
+    process.exit();
   } catch (err) {
     console.error(err);
     process.exit();

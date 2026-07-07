@@ -2,7 +2,7 @@ const config = require("../../src/config");
 
 exports.notices = [
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Noir 1",
     hasTitle: true,
     categories: [],
@@ -14,7 +14,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Noir 2",
 
     hasTitle: true,
@@ -29,7 +29,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Noir 3",
     hasTitle: true,
     categories: [],
@@ -43,7 +43,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Noir 4",
     hasTitle: true,
     categories: [],
@@ -57,7 +57,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Noir 5",
     hasTitle: true,
     categories: [],
@@ -71,7 +71,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Noir 6",
     hasTitle: true,
     categories: [],
@@ -85,7 +85,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Noir 1^",
     hasTitle: true,
     categories: [],
@@ -98,7 +98,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Noir 5^",
     hasTitle: true,
     categories: [],
@@ -112,7 +112,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Corail 1",
     hasTitle: true,
     categories: [],
@@ -126,7 +126,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Corail 2",
     hasTitle: true,
     categories: [],
@@ -140,7 +140,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Corail 3",
     hasTitle: true,
     categories: [],
@@ -154,7 +154,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Corail 4",
     hasTitle: true,
     categories: [],
@@ -168,7 +168,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Or 1",
     hasTitle: true,
     categories: [],
@@ -182,7 +182,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Or 2",
     hasTitle: true,
     categories: [],
@@ -196,7 +196,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Or 3",
     hasTitle: true,
     categories: [],
@@ -210,7 +210,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Or 4",
     hasTitle: true,
     categories: [],
@@ -224,7 +224,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Or 5",
     hasTitle: true,
     categories: [],
@@ -238,7 +238,7 @@ exports.notices = [
     __v: 0,
   },
   {
-    author: "650abd66609eaa278202c0fa",
+    author: "jean@gmail.com",
     title: "Or 6",
     hasTitle: true,
     categories: [],

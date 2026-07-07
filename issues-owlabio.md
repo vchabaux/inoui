@@ -233,3 +233,90 @@ Rollup failed to resolve import "quill" from "node_modules/primevue/editor/index
 5. **À la fin de chaque phase**, vérifier la compilation (même si ça ne marche pas encore, les erreurs doivent être cohérentes avec le travail restant).
 6. **Ne pas supprimer les dossiers `node_modules` existants** avant la Phase 5 — ils contiennent icon-manager qui est fonctionnel.
 7. **garder une trace des erreurs** dans un fichier `errors-phaseX.md` pour les corriger itérativement.
+
+---
+
+### Phase 6 — Initialisation de la base de données
+
+#### Contexte
+Le build compile, mais la base de données MongoDB est vide. Laragon fournit MongoDB sur `localhost:27017`. Le serveur est configuré pour utiliser `mongodb://127.0.0.1:27017/inoui` (fichier `server/.env.development`).
+
+Des scripts de seed existent déjà dans `server/bin/seeds/` mais :
+1. Ils doivent être exécutés un par un manuellement
+2. Les données de `notices.js` avaient des ObjectIds d'auteurs invalides (hardcodés) — corrigé
+3. Il manquait un utilisateur admin avec un mot de passe simple pour les tests — ajouté
+4. Il manquait un script "tout-en-un" pour initialiser la base en une commande — créé
+
+#### Actions
+
+1. **Corriger les données de seed `notices.js`** :
+   - Remplacer les `author: "650abd66609eaa278202c0fa"` (ObjectId invalide) par des emails existants (`jean@gmail.com`) pour que le script de seed resolve correctement les références.
+   - ✅ Fait
+
+2. **Ajouter un utilisateur admin de test dans `users.js`** :
+   ```js
+   {
+     email: "admin@test.com",
+     name: "Admin Test",
+     password: bcrypt.hashSync("admin123", config.auth.SALT),
+     role: "superadmin",
+     verified: true,
+     expiresAt: null,
+   }
+   ```
+   ✅ Fait
+
+3. **Créer le script maître `seed-all.js`** :
+   Un script `server/bin/seeds/seed-all.js` qui exécute tous les seeds dans l'ordre :
+   1. `users` — crée les utilisateurs
+   2. `appSettings` — crée les paramètres de l'app (prend le projet en argument)
+   3. `notices` — crée les notices (dépend des users)
+   4. `tracks` — crée les tracks/points (arbre Node)
+   5. `pages` — crée les pages
+   6. `musicians` — crée les musiciens
+   ✅ Fait
+
+4. **Ajouter la commande npm** :
+   ```json
+   "seed:all": "node ./bin/seeds/seed-all.js"
+   ```
+   ✅ Fait
+
+#### Procédure d'initialisation
+
+1. **Démarrer MongoDB** via Laragon :
+   - Ouvrir Laragon → Menu → Database → MongoDB (ou cliquer sur "Start All" si MongoDB est listé dans les services)
+   - Vérifier que MongoDB tourne sur `localhost:27017`
+
+2. **Exécuter le seed complet** (une seule commande) :
+   ```bash
+   cd server && npm run seed:all
+   ```
+   Pour le projet cnrs2 :
+   ```bash
+   cd server && npm run seed:all cnrs2
+   ```
+
+3. **Démarrer le serveur** :
+   ```bash
+   cd server && npm run dev
+   ```
+
+4. **Démarrer le client** (dans un autre terminal) :
+   ```bash
+   cd client && npm run dev
+   ```
+
+5. **Se connecter** avec les identifiants de test :
+   - **Admin** : `admin@test.com` / `admin123` (rôle: superadmin)
+   - **Superadmin** : `jean@gmail.com` / `Foobarbaz123@`
+   - **Admin** : `maria@gmail.com` / `Foobarbaz123@`
+
+#### Fichiers modifiés
+
+| Fichier | Action |
+|---------|--------|
+| `server/bin/data/users.js` | Ajout utilisateur admin de test (`admin@test.com` / `admin123`) |
+| `server/bin/data/notices.js` | Correction des ObjectIds d'auteurs → emails |
+| `server/bin/seeds/seed-all.js` | **Nouveau** — script maître qui exécute tous les seeds |
+| `server/package.json` | Ajout scripts `seed:all` et `seed:all-prod` |

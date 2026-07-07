@@ -46,4 +46,12 @@ exports.users = [
     verified: true,
     expiresAt: null,
   },
+  {
+    email: "admin@test.com",
+    name: "Admin Test",
+    password: bcrypt.hashSync("admin123", config.auth.SALT),
+    role: "superadmin",
+    verified: true,
+    expiresAt: null,
+  },
 ];
