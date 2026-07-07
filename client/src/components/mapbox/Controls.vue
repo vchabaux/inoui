@@ -30,7 +30,7 @@
               :aria-label="$t('controls.buttontypes')"
               :title="$t('controls.buttontypes')"
               :disabled="!filterType.length"
-              @click="emit('resetFilter', 'type')" text>
+              @click="emit('resetFilter', 'type')">
               <i class="fa-solid fa-arrow-rotate-left" />
             </Button>
           </div>
@@ -39,13 +39,12 @@
             <li v-for="(type, i) in types" :key="`type-${i}`">
               <Button
                 size="small"
-                class="w-full"
                 rounded
-                class="filter-btn"
+                class="w-full filter-btn"
                 :class="{ '-active': filterType.includes(type) }"
                 :text="!filterType.includes(type)"
                 :aria-pressed="filterType.includes(type)"
-                @click="emit('filter', 'type', type)" text>
+                @click="emit('filter', 'type', type)">
                 <i v-if="type === 'image'" class="fa-regular fa-image" />
                 <i v-else :class="getIconName(type)" />
                 {{ formatType(type) }}
@@ -65,7 +64,7 @@
               :aria-label="$t('controls.buttonmusicians')"
               :title="$t('controls.buttonmusicians')"
               :disabled="!filterMus.length"
-              @click="emit('resetFilter', 'mus')" text>
+              @click="emit('resetFilter', 'mus')">
               <i class="fa-solid fa-arrow-rotate-left" />
             </Button>
           </div>
@@ -74,13 +73,12 @@
             <li v-for="(mus, i) in musicians" :key="`mus-${i}`">
               <Button
                 size="small"
-                class="w-full"
                 rounded
-                class="filter-btn"
+                class="w-full filter-btn"
                 :class="{ '-active': filterMus.includes(mus._id) }"
                 :text="!filterMus.includes(mus._id)"
                 :aria-pressed="filterMus.includes(mus._id)"
-                @click="emit('filter', 'mus', mus._id)" text>
+                @click="emit('filter', 'mus', mus._id)">
                 {{ mus.name }}
               </Button>
             </li>
@@ -98,7 +96,7 @@
               :aria-label="$t('controls.buttoncategories')"
               :title="$t('controls.buttoncategories')"
               :disabled="!filterCat.length"
-              @click="emit('resetFilter', 'cat')" text>
+              @click="emit('resetFilter', 'cat')">
               <i class="fa-solid fa-arrow-rotate-left" />
             </Button>
           </div>
@@ -112,7 +110,7 @@
                 :class="{ '-active': filterCat.includes(cat._id) }"
                 :text="!filterCat.includes(cat._id)"
                 :aria-pressed="filterCat.includes(cat._id)"
-                @click="emit('filter', 'cat', cat._id)" text>
+                @click="emit('filter', 'cat', cat._id)">
                 <template v-if="cat.attributes?.icon" #start><i :class="getTypeClass(cat.attributes?.icon?.type) + ' fa-' + cat.attributes?.icon?.name" /></template>
                 {{ cat.name }}
               </Button>
@@ -197,10 +195,10 @@
 import { computed } from "vue";
 import Button from "primevue/button";
 import { useStore } from "@/stores";
-import { useStoreCategory } from "@owlabio/category-manager";
+import { useCategoryStore } from "@/stores/categories";
 
 const settingsStore = useStore("settings");
-const categoriesStores = useStoreCategory();
+const categoriesStores = useCategoryStore();
 const musicianStore = useStore("musician");
 const app = computed(() => settingsStore.project);
 

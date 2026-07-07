@@ -18,13 +18,13 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useStore } from "@/stores";
-import { useStoreCategory } from "@owlabio/category-manager";
+import { useCategoryStore } from "@/stores/categories";
 import Notice from "@/components/notice/Notice.vue";
 import Button from "primevue/button";
 
 const settingsStore = useStore("settings");
 const noticeStore = useStore("notice");
-const categoryStore = useStoreCategory();
+const categoryStore = useCategoryStore();
 
 const app = computed(() => settingsStore.project);
 

@@ -165,30 +165,62 @@ Remplacer les composants owl-ui par leurs équivalents PrimeVue dans TOUS les fi
 - `:lines="1"` sur Text → à gérer avec CSS `line-clamp`
 - `tag="h1"` sur Text → remplacer par `<h1>` directement
 
-### Phase 4 — da-table + category-manager + icon-manager
+### Phase 4 — da-table + category-manager + icon-manager ✅ (terminée)
 
 1. **da-table** : Remplacer les imports de `@owlabio/da-table` par les `DataTable` de PrimeVue dans les pages admin. Configurer colonnes, tri, pagination.
+   → Fait : création d'un wrapper `client/src/components/DaTable.vue` qui expose la même API, 7 pages admin modifiées.
 
 2. **category-manager** :
    - Créer un store Pinia `client/src/stores/categories.js` avec les mêmes méthodes que `useStoreCategory`
-   - Créer un composant `Categories.vue` (celui de la page admin `/admin/categories`) qui remplace le composant `<Categories>` importé
-   - Adapter `Controls.vue` pour utiliser le nouveau store
-   - Adapter `main.js` pour initialiser le store
+   - Créer un composant `Categories.vue` (page admin) qui remplace le composant `<Categories>` importé
+   - Adapter `Controls.vue`, `AppCards.vue`, `AppMap.vue` pour utiliser le nouveau store
+   → Fait : store créé + composant arbre `Categories.vue` + sous-composant récursif `CategoryNode.vue`.
 
 3. **icon-manager** :
-   - Remplacer `ScriptFontAwesome` dans `App.vue` par l'initialisation FontAwesome standard
-   - Remplacer `iconManagerPlugin` dans `main.js` par l'installation FA
    - Remplacer `IconPicker` dans `Categories.vue` par un sélecteur d'icône FA maison
    - Remplacer `IconManager` dans `Icons.vue` par une page admin utilisant l'API FA directement
+   → Fait : `IconPicker.vue` + `Icons.vue` réécrit.
 
-### Phase 5 — Nettoyage et build
+4. **Bugs préexistants corrigés** (hérités de la Phase 3) :
+   - `Settings.vue` : fichier corrompu par des artéfacts — réécrit
+   - `Controls.vue` : attributs dupliqués (`text`, `class`) — nettoyage
+   - `Notice.vue`, `Tuto.vue`, `FormDelete.vue` : `v-model:visible="open"` sur prop — corrigé
 
-1. **Supprimer les dépendances @owlabio du package.json** (client et server)
-2. **Installer PrimeVue** et ses dépendances : `npm install primevue primeicons`
-3. **Installer** `@fortawesome/vue-fontawesome`, `@fortawesome/fontawesome-svg-core`, `@fortawesome/free-solid-svg-icons`, `@fortawesome/free-regular-svg-icons`
-4. **Supprimer le .npmrc** (plus besoin des registres privés @owlabio et @fortawesome)
-5. **Lancer `npm install`** pour installer toutes les nouvelles dépendances
-6. **Compiler avec `npm run build`**
+### Phase 5 — Nettoyage final et build
+
+#### Contexte
+Le build compile **100 modules** sans aucune référence `@owlabio`. La seule erreur restante est :
+```
+Rollup failed to resolve import "quill" from "node_modules/primevue/editor/index.mjs"
+```
+`quill` est la bibliothèque d'édition de texte riche utilisée par PrimeVue Editor.
+
+#### Actions
+
+1. **Installer `quill`** (dépendance manquante de PrimeVue Editor) :
+   ```bash
+   cd client && npm install quill
+   ```
+
+2. **Supprimer le stub `quill`** créé temporairement pendant la Phase 4 :
+   ```bash
+   rm client/src/stubs/quill.js
+   ```
+
+3. **Supprimer l'alias `quill`** dans `client/vite.config.js` (si ajouté pendant la Phase 4) :
+   - Retirer `quill: path.resolve(__dirname, "./src/stubs/quill.js")` de `resolve.alias`
+
+4. **Lancer le build final** :
+   ```bash
+   cd client && npm run build
+   ```
+
+5. **Vérifier la compilation** : `npm run build` doit réussir sans erreur.
+
+6. **Commiter** après build réussi :
+   ```bash
+   git add -A && git commit -m "phase 5: nettoyage final - installation quill, build OK"
+   ```
 
 ---
 

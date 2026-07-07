@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="open" modal class="tutorial">
+  <Dialog :visible="open" modal class="tutorial" @hide="$emit('close')">
     <template #header>
       <h2>{{app === 'cnrs1' ? "Guide d'exploration" : "Exploring the transmedia map"}}</h2>
     </template>

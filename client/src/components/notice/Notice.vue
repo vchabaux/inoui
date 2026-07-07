@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="open" modal>
+  <Dialog :visible="open" modal @hide="$emit('close')">
     <template #header v-if="notice?.hasTitle">
       <div class="flow-row">
         <i class="fa-solid fa-location-dot" />

@@ -78,7 +78,7 @@
 import { ref, computed } from "vue";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
-import Datable from "@owlabio/da-table";
+import Datable from "@/components/DaTable.vue";
 import { columnsNakala } from "@/utils/columns";
 import FormAssetNakala from "@/components/forms/FormAssetNakala.vue";
 import { useStore } from "@/stores";

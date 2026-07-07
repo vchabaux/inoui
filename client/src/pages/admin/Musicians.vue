@@ -25,7 +25,7 @@
 import { computed, ref } from "vue";
 import { useStore } from "@/stores";
 import Button from "primevue/button";
-import Datable from "@owlabio/da-table";
+import Datable from "@/components/DaTable.vue";
 import { columnsMusicians } from "@/utils/columns";
 import FormDelete from "@/components/forms/FormDelete.vue";
 

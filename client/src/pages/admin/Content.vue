@@ -15,7 +15,7 @@
 <script setup>
 import { computed } from "vue";
 import { useStore } from "@/stores";
-import DaTable from "@owlabio/da-table";
+import DaTable from "@/components/DaTable.vue";
 import {columnsContent} from "@/utils/columns";
 
 const pageStore = useStore("page");

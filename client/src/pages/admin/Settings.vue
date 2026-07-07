@@ -351,8 +351,4 @@ const submit = async () => {
 .license-item {
   padding-block: var(--size-1) !important;
 }
-</style></think>The file looks complete. The bash artifacts at the end are just from the `tail` command output. Let me verify the file is clean:
-
-<｜DSML｜tool_calls>
-<｜DSML｜invoke name="Bash">
-<｜DSML｜parameter name="description" string="true">Check last 5 lines of Settings.vue
+</style>

@@ -49,7 +49,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import DaTable from "@owlabio/da-table";
+import DaTable from "@/components/DaTable.vue";
 import { columnsTracks } from "@/utils/columns";
 import { useStore } from "@/stores";
 import FormDelete from "@/components/forms/FormDelete.vue";

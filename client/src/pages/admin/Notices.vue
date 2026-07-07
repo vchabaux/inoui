@@ -69,7 +69,7 @@ import Button from "primevue/button";
 import Select from "primevue/select";
 import Notice from "@/components/notice/Notice.vue";
 import FormDelete from "@/components/forms/FormDelete.vue";
-import DaTable from "@owlabio/da-table";
+import DaTable from "@/components/DaTable.vue";
 import { columnsNotices } from "@/utils/columns";
 import { formatDateShort, formatTime } from "@/utils/time";
 import { useStore } from "@/stores";

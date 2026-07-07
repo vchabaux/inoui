@@ -24,14 +24,15 @@ export default {
 </script>
 
 <script setup>
-import { computed, ref } from "vue";
-import { Categories, useStoreCategory } from "@owlabio/category-manager";
-import { IconPicker } from "@owlabio/icon-manager/client";
+import { computed, ref, onMounted } from "vue";
+import Categories from "@/components/Categories.vue";
+import IconPicker from "@/components/IconPicker.vue";
+import { useCategoryStore } from "@/stores/categories";
 import { useStore } from "@/stores";
 
 
 const noticeStore = useStore("notice");
-const storeCategory = useStoreCategory();
+const storeCategory = useCategoryStore();
 
 //state
 const showPicker = ref(false);
@@ -72,15 +73,16 @@ async function deleteCategory(category) {
     patient.categories = patient.categories.filter((c) => c !== category._id);
     noticeStore.update(patient._id, patient);
   });
+  await storeCategory.deleteNode(category._id);
 }
+
+onMounted(() => {
+  storeCategory.initialize();
+});
 </script>
 
 <style scoped>
 #category-manager {
   width: 100%;
-}
-
-:deep(.owl-container > .owl-button:nth-of-type(4)) {
-  color: crimson !important;
 }
 </style>

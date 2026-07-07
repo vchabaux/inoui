@@ -153,9 +153,9 @@ import Notice from "@/components/notice/Notice.vue";
 import Controls from "@/components/mapbox/Controls.vue";
 import Tuto from "@/components/Tuto.vue";
 import { useAudios } from "@/hooks/useAudios";
-import { useStoreCategory } from "@owlabio/category-manager";
+import { useCategoryStore } from "@/stores/categories";
 
-const categoriesStores = useStoreCategory();
+const categoriesStores = useCategoryStore();
 const settingsStore = useStore("settings");
 const playlistStore = useStore("playlist");
 const trackStore = useStore("track");

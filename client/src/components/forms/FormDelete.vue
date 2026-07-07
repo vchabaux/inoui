@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="open" modal @hide="emit('cancel')">
+  <Dialog :visible="open" modal @hide="emit('cancel')">
     <template #header>
       <div class="variant-dash-title">
         <h2>Are you sure ?</h2>
