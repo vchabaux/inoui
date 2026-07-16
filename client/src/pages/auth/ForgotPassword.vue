@@ -9,8 +9,8 @@
   </p>
 
   <form @submit.prevent class="stretched">
-    <label>Email</label>
-    <InputText v-model="email" type="email" autocomplete="email" />
+    <label for="email">Email</label>
+    <InputText id="email" v-model="email" type="email" autocomplete="email" />
   </form>
 
   <Button class="w-full" :loading="submitting" @click="handleSubmit">Valider</Button>

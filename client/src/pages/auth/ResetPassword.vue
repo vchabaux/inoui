@@ -6,14 +6,16 @@
   <p class="small-text" v-if="!hasToken">No token provided</p>
 
   <form @submit.prevent class="stretched">
-    <label>Mot de passe</label>
+    <label for="password">Mot de passe</label>
     <InputText
+      id="password"
       v-model="password"
       type="password"
       autocomplete="new-password"
     />
-    <label>Confirmer le mot de passe</label>
+    <label for="confirmPassword">Confirmer le mot de passe</label>
     <InputText
+      id="confirmPassword"
       v-model="confirmPassword"
       type="password"
       autocomplete="new-password"

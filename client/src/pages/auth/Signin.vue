@@ -12,14 +12,16 @@
     @submit.prevent
     @keydown.enter="handleCredentials"
   >
-    <label>e-mail</label>
+    <label for="email">e-mail</label>
     <InputText
+      id="email"
       type="email"
       v-model="user.email"
       autocomplete="email"
     />
-    <label>password</label>
+    <label for="password">password</label>
     <InputText
+      id="password"
       type="password"
       v-model="user.password"
       autocomplete="current-password"

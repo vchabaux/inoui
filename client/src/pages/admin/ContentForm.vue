@@ -23,9 +23,10 @@
       <div class="stretched">
         <h2>Title screen</h2>
         <div class="flow-row intro-media">
+          <label for="video">video</label>
           <InputText
+            id="video"
             type="text"
-            label="video"
             readonly
             v-model="page.video.split('/')[page.video.split('/').length - 1]"
           />
@@ -37,10 +38,12 @@
             <i class="fa-solid fa-arrow-up-from-bracket" />
           </Button>
         </div>
-        <InputText type="text" label="title" v-model="page.title" />
+        <label for="title">title</label>
+        <InputText id="title" type="text" v-model="page.title" />
+        <label for="subtitle">sub-title</label>
         <Textarea
+          id="subtitle"
           :rows="3"
-          label="sub-title"
           v-model="page.subtitle"
         />
       </div>
@@ -50,9 +53,10 @@
       <div class="stretched" v-if="app === 'cnrs2'">
         <h2>Text screen</h2>
         <div class="flow-row intro-media">
+          <label for="audio">audio</label>
           <InputText
+            id="audio"
             type="text"
-            label="audio"
             readonly
             v-model="page.audio.split('/')[page.audio.split('/').length - 1]"
           />
@@ -64,11 +68,11 @@
             <i class="fa-solid fa-arrow-up-from-bracket" />
           </Button>
         </div>
+        <label :for="`text-${i}`">text {{ slot > 1 ? '(slide ' + slot + ')' : '' }}</label>
         <Textarea
-          v-for="slot in textSlots"
+          :id="`text-${i}`"
           :rows="5"
-          :label="`text ${slot > 1 ? '(slide ' + slot + ')' : ''}`"
-          v-model="page.content[slot - 1]"
+          v-model="page.content[i]"
         />
 
         <div class="-centered flow-row">

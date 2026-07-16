@@ -13,4 +13,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    host: "inoui.localhost",
+    port: 3000,
+  },
 });

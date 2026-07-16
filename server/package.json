@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon start.js",
+    "dev": "cross-env NODE_ENV=development nodemon start.js",
     "prod": "cross-env NODE_ENV=production node start.js",
     "import:dist": "cp -r ../client/dist/* ./public/",
     "fix:tracks-prod": "cross-env NODE_ENV=production node ./bin/seeds/fix-tracks.js",

@@ -253,10 +253,6 @@ function getTypeClass(type) {
   const styles = {
     solid: "fa-solid",
     regular: "fa-regular",
-    light: "fa-light",
-    duotone: "fa-duotone",
-    brand: "fa-brands",
-    thin: "fa-thin",
   };
 
   return styles[type] || "fa-solid";

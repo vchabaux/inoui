@@ -12,6 +12,7 @@ import { useStore } from "@/stores";
 import Layout from "@/layouts/Layout.vue";
 import { computed, watch } from "vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import { faCompass as faCompassSolid, faMap as faMapSolid } from "@fortawesome/free-solid-svg-icons";
 import * as icons from "@/utils/use-icons";
 
 const settingsStore = useStore("settings");
@@ -38,7 +39,7 @@ playlistStore.initialize();
 pageStore.initialize();
 musicianStore.initialize();
 
-library.add(icons);
+library.add(icons, faCompassSolid, faMapSolid);
 
 watch(
   () => settings.value,
@@ -67,10 +68,6 @@ pre {
 
 .danger-btn {
   --color-full-accent: crimson !important;
-}
-
-.owl-dialog-content {
-  width: min(50ch, 100vw) !important;
 }
 
 .upload-forms {

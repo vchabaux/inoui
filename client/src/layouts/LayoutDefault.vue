@@ -28,11 +28,13 @@ const isIntro = computed(() => route.path === "/intro");
 if (app.value === "cnrs1") {
   import("@/styles/cnrs1.css");
   document.querySelector("html").lang = "fr";
+  document.querySelector("body").classList.remove("light");
   document.querySelector("body").classList.add("dark");
   locale.value = "cnrs1";
 } else {
   import("@/styles/cnrs2.css");
   document.querySelector("html").lang = "en";
+  document.querySelector("body").classList.remove("dark");
   document.querySelector("body").classList.add("light");
   locale.value = "cnrs2";
 }
@@ -48,11 +50,13 @@ watch(
     if (app === "cnrs1") {
       import("@/styles/cnrs1.css");
       document.querySelector("html").lang = "fr";
+      document.querySelector("body").classList.remove("light");
       document.querySelector("body").classList.add("dark");
       locale.value = "cnrs1";
     } else {
       import("@/styles/cnrs2.css");
       document.querySelector("html").lang = "en";
+      document.querySelector("body").classList.remove("dark");
       document.querySelector("body").classList.add("light");
       locale.value = "cnrs2";
     }

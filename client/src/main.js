@@ -2,7 +2,9 @@ import { createApp } from "vue";
 import { createI18n } from "vue-i18n";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
+import Aura from "@primevue/themes/aura";
 import "primeicons/primeicons.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import App from "@/App.vue";
 import Layout from "@/layouts/Layout.vue";
@@ -24,6 +26,11 @@ app
   .use(pinia)
   .use(initRouter(app))
   .use(i18n)
-  .use(PrimeVue)
+  .use(PrimeVue, {
+    unstyled: false,
+    theme: {
+      preset: Aura
+    }
+  })
   .component("Layout", Layout)
   .mount("#app");

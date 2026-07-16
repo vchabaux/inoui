@@ -522,14 +522,14 @@ function handleSelect(value) {
   width: 100%;
   height: 6px;
   border-radius: 999px;
-  background: var(--owl-surface-border, #e5e7eb);
+  background: var(--color-element-neutral, #e5e7eb);
   overflow: hidden;
 }
 
 .temp-upload__bar {
   height: 100%;
   border-radius: 999px;
-  background: var(--owl-color-primary, #3b82f6);
+  background: var(--color-full-accent, #3b82f6);
   transition: width 0.2s ease;
 }
 

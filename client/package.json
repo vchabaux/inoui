@@ -9,11 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^7.3.0",
-    "@fortawesome/free-regular-svg-icons": "^7.3.0",
-    "@fortawesome/free-solid-svg-icons": "^7.3.0",
-    "@fortawesome/vue-fontawesome": "^3.3.0",
+    "@fortawesome/fontawesome-free": "^7.3.0",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-regular-svg-icons": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@intlify/vite-plugin-vue-i18n": "^6.0.3",
+    "@primevue/themes": "^4.5.4",
     "@vueuse/core": "^9.3.0",
     "axios": "^0.26.1",
     "dayjs": "^1.11.2",

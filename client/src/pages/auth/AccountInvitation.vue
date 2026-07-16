@@ -9,10 +9,10 @@
   <router-link v-if="showResetLink" to="/password-forgotten" class="w-full"> Renvoyer un lien par e-mail </router-link>
 
   <form @submit.prevent class="stretched">
-    <label>Mot de passe</label>
-    <InputText v-model="password" type="password" />
-    <label>Confirmer le mot de passe</label>
-    <InputText v-model="confirmPassword" type="password" />
+    <label for="password">Mot de passe</label>
+    <InputText id="password" v-model="password" type="password" />
+    <label for="confirmPassword">Confirmer le mot de passe</label>
+    <InputText id="confirmPassword" v-model="confirmPassword" type="password" />
     <Button class="w-full" :loading="submitting" @click="handleSubmit">Valider</Button>
   </form>
 </template>

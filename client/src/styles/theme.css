@@ -27,6 +27,57 @@
   --app-color-accent-99: #fdfbff;
 }
 
+/* Mapping des couleurs — sur body pour permettre les overrides dark/light */
+body {
+  --color-background-neutral: var(--app-color-neutral-99, var(--color-99));
+  --color-background-accent: var(--app-color-accent-99, var(--color-99));
+  --color-surface-neutral: var(--app-color-neutral-95, var(--color-95));
+  --color-surface-accent: var(--app-color-accent-95, var(--color-95));
+  --color-element-neutral: var(--app-color-neutral-90, var(--color-90));
+  --color-element-accent: var(--app-color-accent-90, var(--color-90));
+  --color-full-neutral: var(--app-color-neutral-40, var(--color-40));
+  --color-full-accent: var(--app-color-accent-40, var(--color-40));
+  --color-text-neutral: var(--app-color-neutral-10, var(--color-10));
+  --color-text-fade: var(--app-color-neutral-40, var(--color-40));
+  --color-text-accent: var(--app-color-accent-40, var(--color-40));
+  --color-text-inverted: var(--app-color-neutral-99, var(--color-99));
+  --color-border-neutral: var(--app-color-neutral-70, var(--color-70));
+  --color-border-accent: var(--app-color-accent-70, var(--color-70));
+  --color-filter-hover: var(--filter-dark-1);
+  --color-filter-active: var(--filter-dark-2);
+  --color-layer-hover: var(--layer-dark-1);
+  --color-layer-active: var(--layer-dark-2);
+  --color-overlay-dark: var(--layer-dark-3);
+  --color-overlay-light: var(--layer-light-3);
+  --color-1: var(--app-color-accent-60);
+  --color-muted: var(--app-color-neutral-60);
+  --color-accent-1: var(--app-color-accent-60);
+  --accent-color: var(--color-full-accent);
+}
+
+body.dark {
+  --color-background-neutral: var(--app-color-neutral-5, var(--color-5));
+  --color-background-accent: var(--app-color-accent-5, var(--color-5));
+  --color-surface-neutral: var(--app-color-neutral-1, var(--color-1));
+  --color-surface-accent: var(--app-color-accent-1, var(--color-1));
+  --color-element-neutral: var(--app-color-neutral-10, var(--color-10));
+  --color-element-accent: var(--app-color-accent-10, var(--color-10));
+  --color-full-neutral: var(--app-color-neutral-60, var(--color-60));
+  --color-full-accent: var(--app-color-accent-60, var(--color-60));
+  --color-text-neutral: var(--app-color-neutral-90, var(--color-90));
+  --color-text-fade: var(--app-color-neutral-60, var(--color-60));
+  --color-text-accent: var(--app-color-accent-60, var(--color-60));
+  --color-text-inverted: var(--app-color-neutral-1, var(--color-1));
+  --color-border-neutral: var(--app-color-neutral-30, var(--color-30));
+  --color-border-accent: var(--app-color-accent-30, var(--color-30));
+  --color-filter-hover: var(--filter-light-1);
+  --color-filter-active: var(--filter-light-2);
+  --color-layer-hover: var(--layer-light-1);
+  --color-layer-active: var(--layer-light-2);
+  --color-overlay-dark: var(--layer-dark-3);
+  --color-overlay-light: var(--layer-light-3);
+}
+
 .color-title {
   border: var(--app-border, var(--border-1)) solid var(--color-full-accent);
   margin-block-end: var(--size-8);
