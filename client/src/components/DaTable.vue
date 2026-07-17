@@ -53,7 +53,7 @@ const props = defineProps({
   emptyMessage: { type: String, default: "No data" },
 });
 
-const expandedRows = ref({});
+const expandedRows = ref([]);
 
 function onRowToggle(event) {
   expandedRows.value = event.data;

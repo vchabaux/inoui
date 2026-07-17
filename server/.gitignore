@@ -1,3 +1,4 @@
 uploads/*.*
 !uploads/README.md
 public/*
+.env.local

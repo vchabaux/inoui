@@ -232,8 +232,11 @@ function removeCategory(cat) {
   notice.value.categories.splice(notice.value.categories.indexOf(cat), 1);
 }
 
-function addReference(e, reference) {
-  notice.value.references.push(reference._id);
+function addReference(e) {
+  const reference = typeof e === "object" && e !== null && "value" in e ? e.value : e;
+  if (reference && reference._id) {
+    notice.value.references.push(reference._id);
+  }
 }
 
 function removeReference(reference) {
@@ -316,7 +319,14 @@ async function save(goal) {
 
 categoriesStores.getRoots();
 
-onMounted(() => inputRef.value && inputRef.value.componentRef.domRef.focus());
+onMounted(() => {
+  const inst = inputRef.value;
+  if (inst && typeof inst.focus === "function") {
+    inst.focus();
+  } else if (inst && inst.$el && typeof inst.$el.focus === "function") {
+    inst.$el.focus();
+  }
+});
 </script>
 
 <style scoped>

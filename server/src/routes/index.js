@@ -1,9 +1,12 @@
 const baseRouter = require("express").Router();
 const { proxyHttp } = require("../middlewares");
 
+const NAKALA_PROD_API_KEY = "11264a2b-1df9-46b5-af12-f6bdab7ef108";
+
+const NAKALA_API_BASE = process.env.NAKALA_API_BASE || "https://api.nakala.fr";
+
 const proxyConfig = {
-  headers: { "X-API-KEY": "11264a2b-1df9-46b5-af12-f6bdab7ef108" }, // prod
-  // headers: { "X-API-KEY": "01234567-89ab-cdef-0123-456789abcdef" }, // dev
+  headers: { "X-API-KEY": process.env.NAKALA_API_KEY || NAKALA_PROD_API_KEY },
 };
 
 baseRouter.use("/auth", require("./auth.routes"));
@@ -28,8 +31,7 @@ const nakalaURIS = {
 // const nakalURL =
 // nakalaURIS[process.env.NODE_ENV] || "https://apitest.nakala.fr";
 
-// const nakalURL = "https://apitest.nakala.fr";
-const nakalURL = "https://api.nakala.fr";
+const nakalURL = NAKALA_API_BASE;
 
 // Local temp-upload endpoint (must be mounted BEFORE the proxy so that
 // POST /nakala/temp-upload is handled here instead of being forwarded).

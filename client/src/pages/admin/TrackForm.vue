@@ -407,9 +407,12 @@ function getText(goal) {
   }
 }
 
-function selectMusician(e, musician) {
+function selectMusician(e) {
+  const musician = typeof e === 'object' && e !== null && 'value' in e ? e.value : e;
   selectedMusician.value = musician;
-  currentTrack.value.attributes.musician = musician._id;
+  if (currentTrack.value && currentTrack.value.attributes) {
+    currentTrack.value.attributes.musician = musician?._id ?? null;
+  }
 }
 
 async function toggleWalkingPath() {

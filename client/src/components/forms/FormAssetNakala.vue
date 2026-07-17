@@ -22,7 +22,7 @@
       v-model="selectedLicense"
       :options="licenses"
       optionLabel="name"
-      optionValue="id"
+      optionValue="code"
     />
 
     <Textarea
@@ -35,9 +35,8 @@
     <FileUpload
       ref="fileField"
       placeholder="Files"
-      @change="checkUploadSize"
+      @select="onFileSelect"
       multiple
-      auto
       v-model="images"
     />
 
@@ -171,7 +170,7 @@ const keywords = ref([]);
 const assetMetas = ref([]);
 const images = ref(null);
 // Temp upload state — files are pushed to the server on selection (prompt 2a).
-const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2 GB per file (configurable)
+const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024; // 5 GB per file (configurable)
 const uploadedFiles = ref([]); // server responses { tempId, originalname, size, mimetype }
 const fileStatuses = ref([]); // per-file UI status { name, size, status, progress }
 const selectedFiles = ref([]); // raw File objects, kept for retry
@@ -280,6 +279,11 @@ function formatMetas(metas, lang) {
       propertyUri: meta.propertyUri,
     };
   });
+}
+
+function onFileSelect(event) {
+  const files = event?.files || (event?.target && event.target.files);
+  checkUploadSize({ target: { files } });
 }
 
 function checkUploadSize(event) {

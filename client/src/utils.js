@@ -18,8 +18,7 @@ export const handleError = (err) => {
 
 export const nakala = {
   getFileURI: (dataId, fileId) => {
-    return `https://api.nakala.fr/data/10.34847/${dataId}/${fileId}`;
-    // return `https://apitest.nakala.fr/data/10.34847/${dataId}/${fileId}`;
+    return `${import.meta.env.VITE_NAKALA_API_BASE || "https://api.nakala.fr"}/data/10.34847/${dataId}/${fileId}`;
   },
 };
 

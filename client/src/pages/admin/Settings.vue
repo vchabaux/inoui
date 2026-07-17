@@ -188,9 +188,12 @@ async function deleteMeta() {
   isDeleting.value = false;
 }
 
-function addLicense(_, value) {
-  selectedLicenses.value.push(value);
-  license.value = "";
+function addLicense(e) {
+  const value = typeof e === "object" && e !== null && "value" in e ? e.value : e;
+  if (value) {
+    selectedLicenses.value.push(value);
+    license.value = "";
+  }
 }
 
 function prepareDelete(id) {

@@ -63,8 +63,7 @@ export function formatSingleAsset(data, file) {
         ? "audio"
         : file.mime_type.split("/")[0],
     originalname: file.name,
-    url: `https://api.nakala.fr/data/${data.identifier}/${file.sha1}`,
-     //url: `https://apitest.nakala.fr/data/${data.identifier}/${file.sha1}`,
+    url: `${import.meta.env.VITE_NAKALA_API_BASE || "https://api.nakala.fr"}/data/${data.identifier}/${file.sha1}`,
     ...file,
   };
 }

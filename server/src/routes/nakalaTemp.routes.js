@@ -4,6 +4,14 @@ const { v4: uuidv4 } = require("uuid");
 const axios = require("axios");
 const proxyHttp = require("../middlewares/proxyHttp");
 
+// Dedicated instance for Nakala TUS calls.  The default axios limits
+// maxBodyLength / maxContentLength, which would reject chunks approaching
+// 15 MB even when the payload is legitimately large.
+const nakalaAxios = axios.create({
+  maxBodyLength: Infinity,
+  maxContentLength: Infinity,
+});
+
 const router = express.Router();
 
 // Reuse the disk-storage multer configured in proxyHttp (same temp folder,
@@ -23,8 +31,10 @@ const MAX_AGE_MS = 60 * 60 * 1000; // 1 hour
 const CLEANUP_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
 
 // ── Nakala configuration (mirrors routes/index.js) ──────────────
-const NAKALA_URL = "https://api.nakala.fr";
-const NAKALA_API_KEY = "11264a2b-1df9-46b5-af12-f6bdab7ef108";
+const NAKALA_PROD_API_KEY = "11264a2b-1df9-46b5-af12-f6bdab7ef108";
+const NAKALA_API_BASE = process.env.NAKALA_API_BASE || "https://api.nakala.fr";
+const NAKALA_URL = NAKALA_API_BASE;
+const NAKALA_API_KEY = process.env.NAKALA_API_KEY || NAKALA_PROD_API_KEY;
 const TUS_CHUNK_SIZE = 15 * 1024 * 1024; // 15 MB
 
 /**
@@ -41,7 +51,7 @@ async function tusUploadAndCache(filePath, fileName, mimeType, fileSize) {
   const metadata = `filename ${enc(fileName)},filetype ${enc(mimeType)}`;
 
   // ── Step 1: Init ────────────────────────────────────────────
-  const initRes = await axios.post(
+  const initRes = await nakalaAxios.post(
     `${NAKALA_URL}/tus/`,
     null,
     {
@@ -69,9 +79,9 @@ async function tusUploadAndCache(filePath, fileName, mimeType, fileSize) {
     while (offset < fileSize) {
       const want = Math.min(TUS_CHUNK_SIZE, fileSize - offset);
       const { bytesRead } = await fd.read(buf, 0, want, offset);
-      const chunk = bytesRead < want ? buf.slice(0, bytesRead) : buf;
+      const chunk = buf.subarray(0, bytesRead);
 
-      await axios.patch(tusUrl, chunk, {
+      await nakalaAxios.patch(tusUrl, chunk, {
         headers: {
           "X-API-KEY": NAKALA_API_KEY,
           "Upload-Offset": offset,
@@ -88,25 +98,44 @@ async function tusUploadAndCache(filePath, fileName, mimeType, fileSize) {
     await fd.close();
   }
 
-  // ── Step 3: Resolve SHA1 ────────────────────────────────────
-  const cacheRes = await axios.post(
-    `${NAKALA_URL}/file/cache`,
-    { ids: [tusId] },
-    { headers: { "X-API-KEY": NAKALA_API_KEY } },
-  );
+  // ── Step 3: Resolve SHA1 (with retry + tolerant parse) ────
+  let lastRaw = null;
 
-  const cacheData = cacheRes.data;
-  const cacheEntry = Array.isArray(cacheData)
-    ? cacheData[0]
-    : Array.isArray(cacheData?.data)
-      ? cacheData.data[0]
-      : null;
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const cacheRes = await nakalaAxios.post(
+      `${NAKALA_URL}/file/cache`,
+      { ids: [tusId] },
+      { headers: { "X-API-KEY": NAKALA_API_KEY } },
+    );
 
-  if (!cacheEntry || !cacheEntry.sha1) {
-    throw new Error(`Could not resolve SHA1 for TUS upload ${tusId}`);
+    lastRaw = cacheRes.data;
+
+    const sha1 =
+      lastRaw?.data?.[0]?.sha1 ??
+      lastRaw?.[0]?.sha1 ??
+      lastRaw?.payload?.[0]?.sha1 ??
+      lastRaw?.sha1 ??
+      lastRaw?.data?.sha1;
+
+    if (sha1) {
+      const name =
+        lastRaw?.data?.[0]?.name ??
+        lastRaw?.[0]?.name ??
+        lastRaw?.payload?.[0]?.name ??
+        lastRaw?.name ??
+        lastRaw?.data?.name ??
+        fileName;
+
+      return { tusId, sha1, name };
+    }
+
+    if (attempt < 5) {
+      await new Promise((r) => setTimeout(r, 1000));
+    }
   }
 
-  return { tusId, sha1: cacheEntry.sha1, name: cacheEntry.name || fileName };
+  console.error("Nakala /file/cache failed after 5 attempts for tusId", tusId, "last response:", JSON.stringify(lastRaw));
+  throw new Error("Could not resolve SHA1 for TUS upload " + tusId);
 }
 
 /**
@@ -119,14 +148,15 @@ async function tusUploadAndCache(filePath, fileName, mimeType, fileSize) {
  */
 router.post("/publish", async (req, res, next) => {
   try {
-    const { tempIds, collectionId, title, description, language, license, metas, keywords } =
+    const { tempIds, collectionId: reqCollectionId, title, description, language, license, metas, keywords } =
       req.body;
+    const effectiveCollectionId = process.env.NAKALA_TEST_COLLECTION_ID || reqCollectionId;
 
     // ── Validate ──────────────────────────────────────────────
     if (!tempIds || !Array.isArray(tempIds) || tempIds.length === 0) {
       return res.status(400).json({ message: "tempIds must be a non-empty array" });
     }
-    if (!collectionId) {
+    if (!reqCollectionId) {
       return res.status(400).json({ message: "collectionId is required" });
     }
 
@@ -160,7 +190,7 @@ router.post("/publish", async (req, res, next) => {
     const dataBody = {
       files: uploadedFiles,
       status: "published",
-      collectionIds: [collectionId],
+      collectionIds: [effectiveCollectionId],
       metas: [
         {
           value: title,
@@ -215,7 +245,7 @@ router.post("/publish", async (req, res, next) => {
 
     // ── Link data to collection ──────────────────────────────
     await axios.post(
-      `${NAKALA_URL}/collections/${collectionId}/datas`,
+      `${NAKALA_URL}/collections/${effectiveCollectionId}/datas`,
       [identifier],
       {
         headers: {
