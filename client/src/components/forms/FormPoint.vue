@@ -52,7 +52,7 @@
         </el-form-item>
         <el-form-item label="notice">
           <el-select
-            v-model="currentPoint.attributes.notice"
+            v-model="selectedNoticeId"
             @change="savePoint"
           >
             <el-option label="-" value="" />
@@ -108,25 +108,68 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, computed } from "vue";
+import { ref, watchEffect, onMounted, computed } from "vue";
 import { useStore } from "@/stores";
 import { Search } from "@/components/mapbox";
 import FormDelete from "@/components/forms/FormDelete.vue";
 import Voice from "@/components/Voice.vue";
 import { handleError } from "@/utils";
 
+const emit = defineEmits(["go-back", "save", "edit"]);
+const props = defineProps({ node: Object });
+
 const noticeStore = useStore("notice");
 const trackStore = useStore("track");
 const currentPoint = computed(() => trackStore.findOne(props.node._id));
+
+// Local ref for the selected notice ID (string), decoupled from the reactive store
+const selectedNoticeId = ref("");
+
+// Initialiser la ref locale depuis le store une fois le composant monté
+// (à ce moment-là les données Pinia sont chargées)
+onMounted(() => {
+  const notice = currentPoint.value?.attributes?.notice;
+  if (notice && typeof notice === "object" && notice._id) {
+    selectedNoticeId.value = String(notice._id);
+  } else if (notice && typeof notice === "string") {
+    selectedNoticeId.value = String(notice);
+  } else {
+    selectedNoticeId.value = "";
+  }
+});
+
+// Synchro réactive quand l'utilisateur change de point (ou après re-fetch)
+watchEffect(() => {
+  let notice;
+  try {
+    notice = currentPoint.value?.attributes?.notice;
+  } catch {
+    notice = undefined;
+  }
+  if (notice && typeof notice === "object" && notice._id) {
+    selectedNoticeId.value = String(notice._id);
+  } else if (notice && typeof notice === "string") {
+    selectedNoticeId.value = String(notice);
+  } else {
+    selectedNoticeId.value = "";
+  }
+});
+
+  // Notices list: shows all notices not already used, plus the current one
 const notices = computed(() => {
   const allNotices = noticeStore.list;
   const usedNotices = trackStore.notices;
+  const currentId = selectedNoticeId.value;
 
-  return allNotices.filter((n) => !usedNotices.includes(n._id));
+  const filtered = allNotices.filter(
+    (n) => !usedNotices.includes(n._id) || n._id === currentId
+  );
+  if (currentId && !filtered.find((n) => n._id === currentId)) {
+    const current = allNotices.find((n) => n._id === currentId);
+    if (current) filtered.push(current);
+  }
+  return filtered;
 });
-
-const emit = defineEmits(["go-back", "save", "edit"]);
-const props = defineProps({ node: Object });
 
 const isSaving = ref(false);
 const isDeleting = ref(false);
@@ -165,22 +208,28 @@ async function savePoint() {
           },
         };
 
-    if (currentPoint.value?.attributes.notice) {
-      if (currentPoint.value.attributes.notice.title === "Aucune") {
-        currentPoint.value.attributes.notice = {
-          title: "",
-        };
-
-        delete pointToUpdate.attributes.notice;
-      } else {
-        pointToUpdate.attributes.notice = {
-          ref: "Notice",
-          value: currentPoint.value?.attributes.notice._id,
-        };
-      }
+    if (selectedNoticeId.value) {
+      pointToUpdate.attributes.notice = {
+        ref: "Notice",
+        value: String(selectedNoticeId.value),
+      };
+    } else {
+      delete pointToUpdate.attributes.notice;
     }
 
+
     await trackStore.updateNode(currentPoint.value?._id, pointToUpdate);
+
+    // Re-sync selectedNoticeId from the fresh store data after save
+    const freshNotice = currentPoint.value?.attributes?.notice;
+    if (freshNotice && typeof freshNotice === "object" && freshNotice._id) {
+      selectedNoticeId.value = String(freshNotice._id);
+    } else if (freshNotice && typeof freshNotice === "string") {
+      selectedNoticeId.value = String(freshNotice);
+    } else {
+      selectedNoticeId.value = "";
+    }
+
 
     save();
   } catch (err) {

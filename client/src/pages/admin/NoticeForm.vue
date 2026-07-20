@@ -26,7 +26,12 @@
     </el-form-item>
 
     <el-form-item label="content">
-      <el-input type="textarea" v-model="notice.content" rows="12" />
+      <RichEditor
+        ref="editorRef"
+        v-model="notice.content"
+        mediaManagement="custom"
+        @upload="openLibrary"
+      />
     </el-form-item>
 
     <div class="notice-config-container stretched">
@@ -92,6 +97,7 @@ import { computed, ref, onMounted } from "vue";
 import Notice from "@/components/notice/Notice.vue";
 import Tag from "@/components/Tag.vue";
 import Medias from "@/pages/admin/Medias.vue";
+import RichEditor from "@/components/RichEditor.vue";
 import Categories from "@/components/Categories.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCategoryStore } from "@/stores/categories";

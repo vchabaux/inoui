@@ -92,7 +92,7 @@
       @submit.prevent
     >
       <el-form-item label="Credits content">
-        <el-input type="textarea" :rows="15" v-model="page.content" />
+        <RichEditor v-model="page.content" />
       </el-form-item>
       <p class="hint-text">this will be displayed in the website footer</p>
     </el-form>
@@ -103,7 +103,7 @@
         <el-input v-model="page.title" />
       </el-form-item>
       <el-form-item label="Page content">
-        <el-input type="textarea" :rows="15" v-model="page.content" />
+        <RichEditor ref="editorRef" v-model="page.content" mediaManagement="custom" @upload="openLibrary" />
       </el-form-item>
     </el-form>
 
@@ -116,6 +116,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import Medias from "@/pages/admin/Medias.vue";
+import RichEditor from "@/components/RichEditor.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/stores";
 
@@ -128,6 +129,7 @@ const settingsStore = useStore("settings");
 const app = computed(() => settingsStore.project);
 const isMediaLibOpen = ref(false);
 const currentUploadType = ref(null);
+const editorRef = ref(null);
 
 const currentPage = computed(() =>
   pageStore.list.find((page) => page.slug === route.params.slug)
@@ -151,17 +153,19 @@ const openLibrary = (type) => {
 };
 
 function addMedia(value) {
-  const addFunctions = {
-    image: "addImage",
-    video: "addVideo",
-    audio: "addAudio",
-  };
-
+  const addFunctions = { image: "addImage", video: "addVideo", audio: "addAudio" };
   const addFunctionName = addFunctions[currentUploadType.value];
 
-  currentUploadType.value === "video"
-    ? (page.value.video = value.url)
-    : (page.value.audio = value.url);
+  // Éditeur générique (page) : injecter dans le rich-text via l'API exposée
+  if (editorRef.value && typeof editorRef.value[addFunctionName] === "function") {
+    editorRef.value[addFunctionName](value.url);
+  }
+  // Écran intro : les boutons upload vidéo/audio écrivent direct dans page.video / page.audio
+  else if (currentUploadType.value === "video") {
+    page.value.video = value.url;
+  } else if (currentUploadType.value === "audio") {
+    page.value.audio = value.url;
+  }
 
   isMediaLibOpen.value = false;
   currentUploadType.value = null;
@@ -182,7 +186,8 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: var(--size-8);
-  max-width: 800px;
+  max-width: 90ch;
+  margin-inline: auto;
 }
 
 .intro-media {

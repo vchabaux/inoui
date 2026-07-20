@@ -33,12 +33,13 @@
         v-if="sortable"
         placeholder="Type"
         v-model="fileType"
+        value-key="value"
       >
         <el-option
           v-for="t in types"
           :key="t.value"
           :label="t.name"
-          :value="t.value"
+          :value="t"
         />
       </el-select>
 
@@ -338,6 +339,7 @@ function selectItem(item) {
 .library-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, 177px);
+  align-items: start;
 }
 
 .library-preview {

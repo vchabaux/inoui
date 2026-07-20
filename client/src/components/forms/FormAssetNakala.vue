@@ -170,7 +170,7 @@ const keywords = ref([]);
 const assetMetas = ref([]);
 const images = ref(null);
 // Temp upload state — files are pushed to the server on selection (prompt 2a).
-const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024; // 5 GB per file (configurable)
+const MAX_FILE_SIZE = 10 * 1024 * 1024 * 1024; // 5 GB per file (configurable)
 const uploadedFiles = ref([]); // server responses { tempId, originalname, size, mimetype }
 const fileStatuses = ref([]); // per-file UI status { name, size, status, progress }
 const selectedFiles = ref([]); // raw File objects, kept for retry
