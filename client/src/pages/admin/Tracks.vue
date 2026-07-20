@@ -11,50 +11,87 @@
   <!-- Filters -->
   <div class="flow-row tracks-filters">
     <label>status</label>
-    <Select class="tracks-filter" v-model="filter.status" :options="['all', 'draft', 'pending', 'published']" placeholder="-" />
+    <el-select class="tracks-filter" v-model="filter.status" placeholder="-">
+      <el-option value="all" label="all" />
+      <el-option value="draft" label="draft" />
+      <el-option value="pending" label="pending" />
+      <el-option value="published" label="published" />
+    </el-select>
   </div>
 
   <!-- List -->
-  <DaTable expandable class="fix-table" :data="filtered" layout="1fr 0.5fr 0.5fr 0.5fr" :columns="columnsTracks">
-    <template #row-controls="{ item }">
-      <router-link :to="`/admin/tracks/${item._id}`" class="link-outline text-sm" aria-label="edit" title="edit" v-if="getPermission(item)">
-        <i class="fa-solid fa-pen"></i>
-      </router-link>
-      <Button v-if="getPermission(item)" class="danger-btn" aria-label="delete" title="delete" outlined size="small" @click="prepareDelete(item._id)">
-        <i class="fa-solid fa-trash-can"></i>
-      </Button>
-    </template>
-
-    <template #details="{ item }">
-      <div>
-        <h2 class="tracks-details-title">Track information</h2>
+  <el-table :data="filtered" class="fix-table" stripe style="width: 100%">
+    <el-table-column type="expand">
+      <template #default="{ row }">
         <div>
-          <p class="small-text"> Created by: {{ item.attributes.author?.email }} </p>
-          <p class="small-text">Created on {{ new Date(item.createdAt).toLocaleDateString() }}</p>
-          <p class="small-text">Updated on {{ new Date(item.updatedAt).toLocaleDateString() }}</p>
+          <h2 class="tracks-details-title">Track information</h2>
+          <div>
+            <p class="small-text"> Created by: {{ row.attributes.author?.email }} </p>
+            <p class="small-text">Created on {{ new Date(row.createdAt).toLocaleDateString() }}</p>
+            <p class="small-text">Updated on {{ new Date(row.updatedAt).toLocaleDateString() }}</p>
+          </div>
+
+          <h2 class="tracks-details-title">Track points</h2>
+
+          <p v-if="!row.children.length">Nothing for now</p>
+          <ul>
+            <li v-for="point in row.children" :key="point._id">
+              <p class="small-text"> {{ point.name }} - "{{ point.attributes?.notice?.title }}"</p>
+            </li>
+          </ul>
         </div>
+      </template>
+    </el-table-column>
 
-        <h2 class="tracks-details-title">Track points</h2>
+    <el-table-column prop="name" label="Name" sortable />
+    <el-table-column label="Author" sortable>
+      <template #default="{ row }">
+        {{ row.attributes.author?.email }}
+      </template>
+    </el-table-column>
+    <el-table-column label="Created" sortable width="140">
+      <template #default="{ row }">
+        {{ formatDateShort(row.createdAt) }}
+      </template>
+    </el-table-column>
+    <el-table-column label="Last updated" sortable width="140">
+      <template #default="{ row }">
+        {{ formatDateShort(row.updatedAt) }}
+      </template>
+    </el-table-column>
 
-        <p v-if="!item.children.length">Nothing for now</p>
-        <ul>
-          <li v-for="point in item.children">
-            <p class="small-text"> {{ point.name }} - "{{ point.attributes?.notice?.title }}"</p>
-          </li>
-        </ul>
-      </div>
-    </template>
-  </DaTable>
+    <el-table-column label="" width="120">
+      <template #default="{ row }">
+        <router-link
+          v-if="getPermission(row)"
+          :to="`/admin/tracks/${row._id}`"
+          class="link-outline text-sm"
+          aria-label="edit"
+          title="edit"
+        >
+          <i class="fa-solid fa-pen"></i>
+        </router-link>
+        <el-button
+          v-if="getPermission(row)"
+          size="small"
+          plain
+          class="danger-btn"
+          aria-label="delete"
+          title="delete"
+          @click="prepareDelete(row._id)"
+        >
+          <i class="fa-solid fa-trash-can"></i>
+        </el-button>
+      </template>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import DaTable from "@/components/DaTable.vue";
-import { columnsTracks } from "@/utils/columns";
+import { formatDateShort } from "@/utils/time";
 import { useStore } from "@/stores";
 import FormDelete from "@/components/forms/FormDelete.vue";
-import Button from "primevue/button";
-import Select from "primevue/select";
 
 const trackStore = useStore("track");
 const playlistStore = useStore("playlist");
@@ -114,7 +151,7 @@ async function deleteTrack() {
   display: grid;
 }
 
-.track-filter {
+.tracks-filter {
   flex: 1;
   min-width: 300px;
 }

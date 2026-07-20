@@ -2,7 +2,7 @@
   <div>
     <div class="category-row" :class="{ '-favorite': favorite === node._id }">
       <!-- Icon picker button -->
-      <Button
+      <el-button
         v-if="icons"
         class="category-icon-btn"
         text
@@ -13,11 +13,11 @@
       >
         <i v-if="node.attributes?.icon" :class="getIconClass(node.attributes.icon)" />
         <i v-else class="fa-solid fa-icons" />
-      </Button>
+      </el-button>
 
       <!-- Rename mode -->
       <template v-if="isRenaming">
-        <InputText
+        <el-input
           v-model="renameValue"
           class="category-edit-input"
           autofocus
@@ -28,7 +28,7 @@
       </template>
 
       <!-- Display name -->
-      <Button
+      <el-button
         v-else
         class="category-name-btn"
         text
@@ -36,10 +36,10 @@
         @click="$emit('select', node)"
       >
         {{ node.name }}
-      </Button>
+      </el-button>
 
       <!-- Star button -->
-      <Button
+      <el-button
         v-if="favorite !== undefined"
         class="category-star-btn"
         text
@@ -50,11 +50,11 @@
         @click="$emit('star', node)"
       >
         <i class="fa-solid fa-star" />
-      </Button>
+      </el-button>
 
       <!-- Add child mode -->
       <template v-if="isAddingChild">
-        <InputText
+        <el-input
           v-model="newChildName"
           class="category-add-input"
           placeholder="New category name"
@@ -66,7 +66,7 @@
       </template>
 
       <!-- Add child button -->
-      <Button
+      <el-button
         v-if="editable && !isAddingChild"
         class="category-add-btn"
         text
@@ -76,10 +76,10 @@
         @click="startAddChild"
       >
         <i class="fa-solid fa-plus" />
-      </Button>
+      </el-button>
 
       <!-- Rename button -->
-      <Button
+      <el-button
         v-if="editable && !isRenaming"
         class="category-edit-btn"
         text
@@ -89,10 +89,10 @@
         @click="startRename"
       >
         <i class="fa-solid fa-pen" />
-      </Button>
+      </el-button>
 
       <!-- Delete button -->
-      <Button
+      <el-button
         v-if="editable"
         class="category-delete-btn"
         text
@@ -102,7 +102,7 @@
         @click="$emit('delete', node)"
       >
         <i class="fa-solid fa-trash-can" />
-      </Button>
+      </el-button>
     </div>
 
     <!-- Children -->
@@ -125,8 +125,6 @@
 
 <script setup>
 import { ref } from "vue";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
 import { useCategoryStore } from "@/stores/categories";
 
 const props = defineProps({
@@ -233,5 +231,5 @@ function getIconClass(icon) {
 .category-add-input {
   flex: 1;
   min-width: 100px;
-	}
+}
 </style>

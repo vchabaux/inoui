@@ -32,9 +32,9 @@
     </div>
 
     <div class="mobile-menu flow-row stretched">
-      <Button aria-label="open menu" title="open menu" text class="w-full" @click="emit('toggleMenu')">
+      <el-button aria-label="open menu" title="open menu" text class="w-full" @click="emit('toggleMenu')">
         <i class="fa-solid fa-bars" />
-      </Button>
+      </el-button>
 
       <div v-if="open" class="mobile-nav" @keyup.escape="emit('toggleMenu')">
         <ul class="header-nav">
@@ -65,7 +65,6 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import Button from "primevue/button";
 import { useStore } from "@/stores";
 
 const settingsStore = useStore("settings");

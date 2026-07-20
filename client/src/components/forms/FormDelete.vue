@@ -1,5 +1,5 @@
 <template>
-  <Dialog :visible="open" modal @hide="emit('cancel')">
+  <el-dialog :model-value="open" @close="emit('cancel')">
     <template #header>
       <div class="variant-dash-title">
         <h2>Are you sure ?</h2>
@@ -9,18 +9,16 @@
     <p class="modal-text">When you delete items, they're gone forever</p>
 
     <div class="flow-row -end">
-      <Button outlined @click="emit('cancel', $event)"> Cancel </Button>
-      <Button class="danger-btn" @click="emit('delete', $event)"> Delete </Button>
+      <el-button plain @click="emit('cancel')"> Cancel </el-button>
+      <el-button class="danger-btn" @click="emit('delete')"> Delete </el-button>
     </div>
-  </Dialog>
+  </el-dialog>
 </template>
 
 <script setup>
-import Dialog from "primevue/dialog";
-import Button from "primevue/button";
-
 const emit = defineEmits(["cancel", "delete"]);
-const props = defineProps({
+
+defineProps({
   open: {
     type: Boolean,
     default: false,

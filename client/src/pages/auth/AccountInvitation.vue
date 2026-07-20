@@ -8,13 +8,15 @@
   <p class="small-text">Veuillez créer votre mot de passe afin de continuer</p>
   <router-link v-if="showResetLink" to="/password-forgotten" class="w-full"> Renvoyer un lien par e-mail </router-link>
 
-  <form @submit.prevent class="stretched">
-    <label for="password">Mot de passe</label>
-    <InputText id="password" v-model="password" type="password" />
-    <label for="confirmPassword">Confirmer le mot de passe</label>
-    <InputText id="confirmPassword" v-model="confirmPassword" type="password" />
-    <Button class="w-full" :loading="submitting" @click="handleSubmit">Valider</Button>
-  </form>
+  <el-form label-position="top" @submit.prevent>
+    <el-form-item label="Mot de passe">
+      <el-input id="password" v-model="password" type="password" />
+    </el-form-item>
+    <el-form-item label="Confirmer le mot de passe">
+      <el-input id="confirmPassword" v-model="confirmPassword" type="password" />
+    </el-form-item>
+    <el-button class="w-full" :loading="submitting" @click="handleSubmit">Valider</el-button>
+  </el-form>
 </template>
 
 <script setup>
@@ -22,8 +24,6 @@ import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Voice from "@/components/Voice.vue";
 import { api } from "@/api/axios";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
 
 const route = useRoute();
 const router = useRouter();

@@ -1,48 +1,44 @@
 <template>
-  <DataTable
-    :value="data"
-    :dataKey="selectionKey"
-    :emptyMessage="emptyMessage"
-    v-model:expandedRows="expandedRows"
-    @rowToggle="onRowToggle"
-    stripedRows
-    scrollable
-    scrollHeight="flex"
+  <el-table
+    :data="data"
+    :row-key="selectionKey || '_id'"
+    stripe
+    v-model:expand-row-keys="expandedRowKeys"
+    :empty-text="emptyMessage"
+    style="width: 100%"
   >
-    <Column
+    <el-table-column v-if="expandable || $slots['details']" type="expand">
+      <template #default="{ row }">
+        <slot name="details" :item="row" />
+      </template>
+    </el-table-column>
+
+    <el-table-column
       v-for="(col, i) in columns"
       :key="col.key"
-      :field="col.key"
-      :header="col.displayName"
+      :label="col.displayName"
       :sortable="col.sortable ? true : false"
-      :style="columnStyle(i)"
     >
-      <template #body="{ data }">
+      <template #default="{ row }">
         <template v-if="col.format">
-          {{ col.format(getNestedValue(data, col.key), data) }}
+          {{ col.format(getNestedValue(row, col.key), row) }}
         </template>
         <template v-else>
-          {{ getNestedValue(data, col.key) }}
+          {{ getNestedValue(row, col.key) }}
         </template>
       </template>
-    </Column>
+    </el-table-column>
 
-    <Column v-if="$slots['row-controls']" :header="''">
-      <template #body="{ data }">
-        <slot name="row-controls" :item="data" />
+    <el-table-column v-if="$slots['row-controls']" label="" width="120">
+      <template #default="{ row }">
+        <slot name="row-controls" :item="row" />
       </template>
-    </Column>
-
-    <template v-if="$slots['details']" #expansion="{ data }">
-      <slot name="details" :item="data" />
-    </template>
-  </DataTable>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
 
 const props = defineProps({
   data: { type: Array, default: () => [] },
@@ -53,34 +49,10 @@ const props = defineProps({
   emptyMessage: { type: String, default: "No data" },
 });
 
-const expandedRows = ref([]);
-
-function onRowToggle(event) {
-  expandedRows.value = event.data;
-}
+const expandedRowKeys = ref([]);
 
 function getNestedValue(obj, path) {
   if (!path) return "";
   return path.split(".").reduce((acc, part) => (acc ? acc[part] : ""), obj);
-}
-
-function columnStyle(i) {
-  if (!props.layout) return {};
-  const parts = props.layout.split(/\s+/);
-  if (i < parts.length) {
-    const fr = parseFloat(parts[i]);
-    if (!isNaN(fr)) {
-      return { width: `${(fr / totalFr()) * 100}%` };
-    }
-  }
-  return {};
-}
-
-function totalFr() {
-  if (!props.layout) return 1;
-  return props.layout.split(/\s+/).reduce((sum, p) => {
-    const v = parseFloat(p);
-    return sum + (isNaN(v) ? 1 : v);
-  }, 0);
 }
 </script>

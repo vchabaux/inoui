@@ -1,35 +1,24 @@
 <template>
-  <form class="search" @submit.prevent>
-    <InputText :placeholder="label" v-model="search" class="w-full" />
-
-    <ul class="search-list stretched">
-      <li v-if="loading" class="search-spinner">
-        <i class="fa-solid fa-spinner fa-spin" />
-      </li>
-
-      <li v-for="(r, i) in results" :key="i">
-        <Button
-          class="search-item"
-          text
-          size="small"
-          @click="handleClick(r)"
-        >
-          {{ formatResult(r) }}
-        </Button>
-      </li>
-    </ul>
-  </form>
+  <div class="async-search">
+    <el-autocomplete
+      v-model="search"
+      :fetch-suggestions="querySearch"
+      :loading="loading"
+      :trigger-on-focus="false"
+      :debounce="300"
+      :placeholder="label"
+      style="width: 100%"
+      @select="handleSelect"
+    />
+  </div>
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
-import InputText from "primevue/inputtext";
-import Button from "primevue/button";
+import { ref } from "vue";
 import { getProperty } from "@/utils";
 import axios from "axios";
 
 const search = ref("");
-const searchResult = ref([]);
 const loading = ref(false);
 
 const emits = defineEmits(["select"]);
@@ -39,34 +28,22 @@ const props = defineProps({
     type: String,
     required: true,
   },
-
   label: {
     type: String,
     default: "Search",
   },
-
   queryKey: {
     type: String,
     default: "q",
   },
-  /**
-   * Used
-   */
   maxItems: {
     type: Number,
     default: 5,
   },
-
-  /**
-   * Depends on the response type, either the either is located @data key
-   * or its nested.
-   * Can pass a value such as data.foo.bar to get the array of results.
-   */
   resultLocation: {
     type: String,
     default: "data",
   },
-
   formatResult: {
     type: Function,
     default(v) {
@@ -75,63 +52,42 @@ const props = defineProps({
   },
 });
 
-watch(search, async (newValue) => {
-  /**
-   * TODO Debounce search.
-   */
-  try {
-    loading.value = true;
-    const response = await axios.get(`${props.endPoint}`, {
-      params: {
-        [props.queryKey]: newValue,
-      },
-    });
+async function querySearch(queryString, cb) {
+  if (!queryString) {
+    cb([]);
+    return;
+  }
 
-    searchResult.value = getProperty(response, props.resultLocation);
+  loading.value = true;
+  try {
+    const response = await axios.get(`${props.endPoint}`, {
+      params: { [props.queryKey]: queryString },
+    });
+    const raw = getProperty(response, props.resultLocation);
+    const items = (raw || []).slice(0, props.maxItems);
+    cb(
+      items.map((item) => ({
+        ...item,
+        value: props.formatResult(item),
+      }))
+    );
   } catch (error) {
     console.log("There has been an error", error?.response?.data);
+    cb([]);
   } finally {
     loading.value = false;
   }
-});
+}
 
-const results = computed(() => {
-  return searchResult.value ? searchResult.value.slice(0, props.maxItems) : [];
-});
-
-function handleClick(r) {
-  emits("select", r);
+function handleSelect(item) {
+  const { value: _, ...original } = item;
+  emits("select", original);
   search.value = "";
 }
 </script>
 
 <style scoped>
-.search {
-  position: relative;
-}
-
-.search-list:not(:empty) {
-  display: block;
-  position: absolute;
-  inset-inline: 0;
-  inset-block-start: calc(100% + var(--size-2));
-  box-shadow: var(--box-shadow-3);
-  background-color: var(--color-surface-neutral);
-  gap: 0 !important;
-  border-radius: var(--app-radius, var(--radius-2));
-  overflow: hidden;
-  z-index: 2;
-}
-
-.search-spinner {
-  padding: var(--size-2);
-  text-align: center;
-}
-
-.search-item {
-  justify-items: flex-start !important;
-  text-align: start;
-  overflow-x: hidden;
-  padding: var(--size-2);
+.async-search {
+  width: 100%;
 }
 </style>

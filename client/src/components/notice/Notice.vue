@@ -1,5 +1,5 @@
 <template>
-  <Dialog :visible="open" modal @hide="$emit('close')">
+  <el-dialog :model-value="open" @close="$emit('close')">
     <template #header v-if="notice?.hasTitle">
       <div class="flow-row">
         <i class="fa-solid fa-location-dot" />
@@ -27,12 +27,11 @@
         @navigate="(d, v) => emit('navigate', d, v)"
       />
     </template>
-  </Dialog>
+  </el-dialog>
 </template>
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import Dialog from "primevue/dialog";
 import { useStore } from "@/stores";
 import NoticeNav from "./NoticeNav.vue";
 import NoticeRef from "./NoticeRef.vue";

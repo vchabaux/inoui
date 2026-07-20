@@ -11,16 +11,20 @@
     <!-- Information -->
     <div class="stretched form-header">
       <div v-if="isDetour" class="flow-row-between">
-        <Button aria-label="go back" title="go back" text size="small" @click="goBack">
+        <el-button text size="small" @click="goBack">
           <i class="fa-solid fa-arrow-left" />
           Go back
-        </Button>
+        </el-button>
       </div>
 
       <template v-if="isDetour">
         <h2>Detour information</h2>
-        <Divider />
-        <InputText type="text" placeholder="name" v-model="currentTrack.name" @change="saveTrack" />
+        <el-divider />
+        <el-form label-position="top">
+          <el-form-item label="name">
+            <el-input v-model="currentTrack.name" @change="saveTrack" />
+          </el-form-item>
+        </el-form>
       </template>
 
       <Voice v-if="error" :message="error.data.message" type="error" is-closable @close="error = null" />
@@ -29,10 +33,12 @@
     <!-- Content -->
     <form class="stretched" @submit.prevent>
       <h2>{{ isDetour ? "Detour points" : "Track points" }}</h2>
-      <Divider />
+      <el-divider />
 
       <!-- Points -->
-      <Search label="Add a point" @select="addPoint" defaultValue="" hint="you can also click on the map" />
+      <el-form-item label="Add a point">
+        <Search label="" @select="addPoint" defaultValue="" hint="you can also click on the map" />
+      </el-form-item>
 
       <span v-if="!currentTrack?.children?.length"> No point yet </span>
       <template v-for="($value, $key) in currentTrack.children" :key="$key">
@@ -40,21 +46,21 @@
           <span class="line-clamp-1">{{ $key + 1 }} - {{ $value?.name }} </span>
 
           <div class="flow-row list-actions">
-            <Button aria-label="move up" title="move up" @click="movePoint('up', $key)" class="caret-up" text size="small" :class="{ hidden: $key <= 0 }">
+            <el-button @click="movePoint('up', $key)" class="caret-up" text size="small" :class="{ hidden: $key <= 0 }">
               <i class="fa-solid fa-chevron-up" />
-            </Button>
+            </el-button>
 
-            <Button aria-label="move down" title="move down" @click="movePoint('down', $key)" class="caret-down" :class="{ hidden: $key === currentTrack.children.length - 1 }" text size="small">
+            <el-button @click="movePoint('down', $key)" class="caret-down" :class="{ hidden: $key === currentTrack.children.length - 1 }" text size="small">
               <i class="fa-solid fa-chevron-down" />
-            </Button>
+            </el-button>
 
-            <Button aria-label="edit" title="edit" outlined size="small" @click="editPoint($value)">
+            <el-button plain size="small" @click="editPoint($value)">
               <i class="fa-solid fa-pen" />
-            </Button>
+            </el-button>
 
-            <Button aria-label="delete" title="delete" class="danger-btn" outlined size="small" @click="prepareDelete($value._id)">
+            <el-button plain size="small" class="danger-btn" @click="prepareDelete($value._id)">
               <i class="fa-solid fa-trash-can" />
-            </Button>
+            </el-button>
           </div>
         </div>
       </template>
@@ -64,9 +70,6 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import Divider from "primevue/divider";
 import { useStore } from "@/stores";
 import { Search } from "@/components/mapbox";
 import FormDelete from "@/components/forms/FormDelete.vue";
@@ -149,7 +152,8 @@ async function deletePoint() {
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
-  gap: 0;
+  gap: var(--size-8);
+  padding: var(--size-6) var(--size-8);
 }
 
 .form-header:not(:empty),

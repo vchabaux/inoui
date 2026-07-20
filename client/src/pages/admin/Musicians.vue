@@ -14,9 +14,9 @@
       <router-link aria-label="edit" title="edit" class="link-outline text-sm" :to="`/admin/musicians/${item._id}`">
         <i class="fa-solid fa-pen" />
       </router-link>
-      <Button aria-label="delete" title="delete" size="small" outlined class="danger-btn" :loading="isSubmitting" @click="openDialogDelete(item._id)">
+      <el-button aria-label="delete" title="delete" size="small" plain class="danger-btn" :loading="isSubmitting" @click="openDialogDelete(item._id)">
         <i class="fa-solid fa-trash-can" />
-      </Button>
+      </el-button>
     </template>
   </Datable>
 </template>
@@ -24,7 +24,6 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useStore } from "@/stores";
-import Button from "primevue/button";
 import Datable from "@/components/DaTable.vue";
 import { columnsMusicians } from "@/utils/columns";
 import FormDelete from "@/components/forms/FormDelete.vue";

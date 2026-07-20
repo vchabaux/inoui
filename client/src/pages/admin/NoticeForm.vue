@@ -3,56 +3,71 @@
   <Notice v-if="currentNotice" :noticeId="currentNotice?._id" :open="isPreviewing" @close="isPreviewing = false" />
 
   <!-- Medias dialog -->
-  <Dialog v-if="isMediaLibOpen" v-model:visible="isMediaLibOpen" modal @hide="isMediaLibOpen = false">
+  <el-dialog v-if="isMediaLibOpen" :model-value="isMediaLibOpen" @close="isMediaLibOpen = false">
     <Medias picker @select="addMedia" :mediaType="currentUploadType" />
-  </Dialog>
+  </el-dialog>
 
-  <div class="flow-row-between variant-dash-title">
+  <div class="flow-row-between variant-dash-title" style="width: 100%">
     <h1>
       {{ isUpdate ? `${notice?.title} (${notice?.status})` : "New notice" }}
     </h1>
-    <Button v-if="isUpdate" aria-label="preview" @click="isPreviewing = true"> Preview </Button>
+    <el-button v-if="isUpdate" aria-label="preview" @click="isPreviewing = true">Preview</el-button>
   </div>
 
-  <form class="width-l stretched centered" @submit.prevent>
+  <el-form label-position="top" class="width-l centered" @submit.prevent>
     <h2>Notice information</h2>
-    <InputText label="title" type="text" v-model="notice.title" autofocus ref="inputRef" />
-    <div class="notice-checkbox">
-      <Checkbox :binary="true" v-model="notice.hasTitle" />
-      <label>the title is visible in the notice</label>
-    </div>
-    <Editor v-model="notice.content" ref="editorRef" />
+
+    <el-form-item label="title">
+      <el-input v-model="notice.title" ref="inputRef" />
+    </el-form-item>
+
+    <el-form-item>
+      <el-checkbox v-model="notice.hasTitle">the title is visible in the notice</el-checkbox>
+    </el-form-item>
+
+    <el-form-item label="content">
+      <el-input type="textarea" v-model="notice.content" rows="12" />
+    </el-form-item>
 
     <div class="notice-config-container stretched">
       <h2>Categories</h2>
-      <span class="small-text text-fade"> Categories allow the user to filter points on the map. The main category icon is displayed in the point </span>
+      <span class="small-text text-fade">Categories allow the user to filter points on the map. The main category icon is displayed in the point</span>
       <ul class="variant-surface notice-config-list flow-row">
         <li v-if="!notice.categories.length">No category yet</li>
         <Tag v-for="(category, i) in notice.categories" :key="i" tag="li" :label="getCategory(category._id)?.name" @delete="removeCategory(category)" />
       </ul>
-      <Categories :favorite="favCat._id" @star="favCategory" @select="addCategory" />
+      <Categories :favorite="favCat?._id" @star="favCategory" @select="addCategory" />
     </div>
 
     <div class="notice-config-container stretched">
       <h2>References</h2>
-      <span class="small-text text-fade"> References are displayed at the bottom of the notice</span>
-      <Select v-if="filteredNotices.length" label="Select a notice" :options="filteredNotices" @change="addReference" optionLabel="title" />
+      <span class="small-text text-fade">References are displayed at the bottom of the notice</span>
+      <el-select v-if="filteredNotices.length" @change="addReference" placeholder="Select a notice" style="width: 100%">
+        <el-option
+          v-for="n in filteredNotices"
+          :key="n._id"
+          :label="n.title"
+          :value="n"
+        />
+      </el-select>
       <ul class="variant-surface notice-config-list stretched">
         <li v-if="!notice.references.length">No reference yet</li>
         <li v-for="(reference, i) in references" :key="i">
           <div class="flow-row-between">
             <span>{{ reference.title }}</span>
-            <Button aria-label="remove" title="remove" outlined size="small" @click="removeReference(reference)">
+            <el-button aria-label="remove" title="remove" size="small" plain @click="removeReference(reference)">
               <i class="fa-solid fa-xmark" />
-            </Button>
+            </el-button>
           </div>
         </li>
       </ul>
     </div>
-  </form>
+  </el-form>
 
   <div v-if="currentNotice?.original || currentNotice?.status === 'published'" class="width-l centered flow-row -end">
-    <span v-if="currentNotice?.original">You are working on a copy of {{ noticeStore.findOne(currentNotice.original)?.title }}</span>
+    <span v-if="currentNotice?.original">
+      You are working on a copy of {{ noticeStore.findOne(currentNotice.original)?.title }}
+    </span>
     <span v-if="currentNotice?.status === 'published'">This notice is currently online</span>
   </div>
   <div class="centered stretched width-s">
@@ -60,26 +75,20 @@
   </div>
 
   <div class="width-l centered flow-row -end">
-    <Button outlined @click="save('draft')">
+    <el-button @click="save('draft')">
       {{ getText("draft") }}
-    </Button>
-    <Button v-if="!isAdmin" @click="save('pending')">
+    </el-button>
+    <el-button v-if="!isAdmin" type="primary" @click="save('pending')">
       {{ getText("pending") }}
-    </Button>
-    <Button v-else @click="save('published')">
+    </el-button>
+    <el-button v-else type="primary" @click="save('published')">
       {{ getText("published") }}
-    </Button>
+    </el-button>
   </div>
 </template>
 
 <script setup>
 import { computed, ref, onMounted } from "vue";
-import InputText from "primevue/inputtext";
-import Checkbox from "primevue/checkbox";
-import Select from "primevue/select";
-import Editor from "primevue/editor";
-import Button from "primevue/button";
-import Dialog from "primevue/dialog";
 import Notice from "@/components/notice/Notice.vue";
 import Tag from "@/components/Tag.vue";
 import Medias from "@/pages/admin/Medias.vue";
@@ -126,7 +135,6 @@ const categories = computed(() => {
   return bundle;
 });
 
-
 const favCat = computed(() => notice.value.categories.length && notice.value?.categories?.[0]);
 
 const isAdmin = computed(() => currentUser.value.role.includes("admin"));
@@ -144,20 +152,23 @@ const notice = ref({
   updates: currentNotice.value?.updates || [],
 });
 
-const filteredNotices = computed(() => [...notices.value]?.filter((n) => !notice.value.references.includes(n._id) && n._id !== route.params.id));
+const filteredNotices = computed(() =>
+  [...notices.value]?.filter((n) => !notice.value.references.includes(n._id) && n._id !== route.params.id)
+);
 const references = computed(() => notice.value.references.map((r) => noticeStore.findOne(r)));
 
 const isMediaLibOpen = ref(false);
 
 function getText(goal) {
-  let status = notice.value.status;
-  let isCopy = currentNotice.value?.original;
+  const status = notice.value.status;
+  const isCopy = currentNotice.value?.original;
 
   if (isUpdate.value) {
     if (isCopy) {
       if (goal === "draft") return "Save copy as draft";
       if (goal === "pending") {
-        if (noticeStore.findOne(currentNotice.value.original).status === "pending") return "Send for review and overwrite original";
+        const original = noticeStore.findOne(currentNotice.value?.original);
+        if (original?.status === "pending") return "Send for review and overwrite original";
         else return "Send copy for review";
       }
       if (goal === "published") return "Publish and overwrite original";
@@ -200,7 +211,9 @@ function addMedia(value) {
 
   const addFunctionName = addFunctions[currentUploadType.value];
 
-  editorRef.value[addFunctionName](value.url);
+  if (editorRef.value && typeof editorRef.value[addFunctionName] === "function") {
+    editorRef.value[addFunctionName](value.url);
+  }
 
   isMediaLibOpen.value = false;
   currentUploadType.value = null;
@@ -232,10 +245,9 @@ function removeCategory(cat) {
   notice.value.categories.splice(notice.value.categories.indexOf(cat), 1);
 }
 
-function addReference(e) {
-  const reference = typeof e === "object" && e !== null && "value" in e ? e.value : e;
-  if (reference && reference._id) {
-    notice.value.references.push(reference._id);
+function addReference(n) {
+  if (n && n._id) {
+    notice.value.references.push(n._id);
   }
 }
 
@@ -288,7 +300,7 @@ async function updateNotice(goal) {
 }
 
 async function save(goal) {
-  let status = notice.value.status;
+  const status = notice.value.status;
   notice.value.mediaTypes = getMediaTypes(notice.value.content);
 
   try {

@@ -8,19 +8,17 @@
     passe vous a été envoyé.
   </p>
 
-  <form @submit.prevent class="stretched">
-    <label for="email">Email</label>
-    <InputText id="email" v-model="email" type="email" autocomplete="email" />
-  </form>
-
-  <Button class="w-full" :loading="submitting" @click="handleSubmit">Valider</Button>
+  <el-form label-position="top" @submit.prevent>
+    <el-form-item label="Email">
+      <el-input id="email" v-model="email" type="email" autocomplete="email" />
+    </el-form-item>
+    <el-button class="w-full" :loading="submitting" @click="handleSubmit">Valider</el-button>
+  </el-form>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { api } from "@/api/axios";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
 
 const error = ref(null);
 const submitting = ref(false);

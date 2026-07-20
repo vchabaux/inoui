@@ -6,40 +6,68 @@
   <FormDelete :open="isDeleting" @cancel="clearThings" @delete="deleteNotice" />
 
   <!-- Header -->
-  <div class="flow-row-between variant-dash-title">
+  <div class="flow-row-between variant-dash-title" style="width: 100%">
     <h1>Notices</h1>
-    <router-link to="/admin/notices/new" class="link-text">New notice</router-link>
+    <router-link to="/admin/notices/new">New notice</router-link>
   </div>
 
   <!-- Filters -->
   <div class="flow-row">
-    <Select class="notices-filter" label="status" v-model="filter.status" :options="['all', 'draft', 'pending', 'published']" />
+    <el-select class="notices-filter" v-model="filter.status" placeholder="-">
+      <el-option
+        v-for="opt in ['all', 'draft', 'pending', 'published']"
+        :key="opt"
+        :label="opt"
+        :value="opt"
+      />
+    </el-select>
 
-    <Select class="notices-filter" label="author" v-model="filter.author" :options="['all', ...authors]" />
+    <el-select class="notices-filter" v-model="filter.author" placeholder="-">
+      <el-option
+        v-for="opt in ['all', ...authors]"
+        :key="opt"
+        :label="opt"
+        :value="opt"
+      />
+    </el-select>
 
-    <Select class="notices-filter" label="media type" v-model="filter.mediaTypes" :options="['all', 'text', 'image', 'audio', 'video']" />
+    <el-select class="notices-filter" v-model="filter.mediaTypes" placeholder="-">
+      <el-option
+        v-for="opt in ['all', 'text', 'image', 'audio', 'video']"
+        :key="opt"
+        :label="opt"
+        :value="opt"
+      />
+    </el-select>
   </div>
 
   <!-- List -->
   <DaTable class="fix-table" :data="filtered" :columns="columnsNotices" layout="2fr 1fr 1fr" expandable>
     <template #row-controls="{ item }">
-      <Button aria-label="preview" title="preview" size="small" @click="previewNotice(item._id)">
+      <el-button aria-label="preview" title="preview" size="small" @click="previewNotice(item._id)">
         <i class="fa-solid fa-eye" />
-      </Button>
-      <router-link aria-label="edit" title="edit" v-if="getPermission(item)" class="link-outline text-sm" :to="`/admin/notices/${item._id}`">
+      </el-button>
+      <router-link
+        aria-label="edit"
+        title="edit"
+        v-if="getPermission(item)"
+        class="el-button el-button--default el-button--small"
+        :to="`/admin/notices/${item._id}`"
+      >
         <i class="fa-solid fa-pen" />
       </router-link>
-      <Button
+      <el-button
         v-if="getPermission(item)"
         aria-label="delete"
         title="delete"
         size="small"
-        outlined
+        plain
         class="danger-btn"
         :loading="isSubmitting"
-        @click="prepareDelete(item._id)">
+        @click="prepareDelete(item._id)"
+      >
         <i class="fa-solid fa-trash-can" />
-      </Button>
+      </el-button>
     </template>
 
     <template #details="{ item }">
@@ -47,14 +75,18 @@
         <h2 class="notice-update-title">Notice information</h2>
         <div>
           <span class="small-text">Created by {{ item.author.email }}</span>
-          <span class="small-text" v-if="item.updates.length"> Last updated by {{ item.updates[item.updates.length - 1].author.email }} </span>
+          <span class="small-text" v-if="item.updates.length">
+            Last updated by {{ item.updates[item.updates.length - 1].author.email }}
+          </span>
         </div>
 
         <template v-if="item.updates.length">
           <h2 class="notice-update-title">Edit history</h2>
           <ul>
-            <li v-for="update in [...item.updates].reverse()">
-              <span class="small-text"> {{ formatDateShort(update.date) }}, {{ formatTime(update.date) }} by {{ update.author.email }} </span>
+            <li v-for="update in [...item.updates].reverse()" :key="update.date">
+              <span class="small-text">
+                {{ formatDateShort(update.date) }}, {{ formatTime(update.date) }} by {{ update.author.email }}
+              </span>
             </li>
           </ul>
         </template>
@@ -65,8 +97,6 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import Button from "primevue/button";
-import Select from "primevue/select";
 import Notice from "@/components/notice/Notice.vue";
 import FormDelete from "@/components/forms/FormDelete.vue";
 import DaTable from "@/components/DaTable.vue";
@@ -99,8 +129,7 @@ const currentUser = computed(() => authStore.currentUser);
 
 function getPermission(item) {
   const isAuthor = item.author._id === currentUser.value._id;
-  const isAdmin = computed(() => currentUser.value.role.includes("admin"));
-
+  const isAdmin = currentUser.value.role.includes("admin");
   return isAuthor || isAdmin;
 }
 
@@ -116,15 +145,12 @@ function clearThings() {
 
 async function deleteNotice() {
   isSubmitting.value = true;
-
   try {
     const extras = notices.value.filter((notice) => notice.references.includes(selectedItem.value));
-
-    await extras.forEach((patient) => {
+    extras.forEach((patient) => {
       patient.references = patient.references.filter((c) => c !== selectedItem.value);
       noticeStore.update(patient._id, patient);
     });
-
     await noticeStore.delete(selectedItem.value);
   } catch (err) {
     console.err(err);

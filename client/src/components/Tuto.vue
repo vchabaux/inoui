@@ -1,17 +1,12 @@
 <template>
-  <Dialog :visible="open" modal class="tutorial" @hide="$emit('close')">
-    <template #header>
-      <h2>{{app === 'cnrs1' ? "Guide d'exploration" : "Exploring the transmedia map"}}</h2>
-    </template>
-
+  <el-dialog :model-value="open" @close="$emit('close')" class="tutorial" :title="app === 'cnrs1' ? &quot;Guide d'exploration&quot; : 'Exploring the transmedia map'" width="min(80ch, 90vw)">
     <Tuto1 v-if="app === 'cnrs1'" :hasDetectiveMode="hasDetectiveMode" />
     <Tuto2 v-else :hasDetectiveMode="hasDetectiveMode" />
-  </Dialog>
+  </el-dialog>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import Dialog from "primevue/dialog";
 import { useStore } from "@/stores";
 import Tuto1 from "./Tuto1.vue";
 import Tuto2 from "./Tuto2.vue";
@@ -24,14 +19,3 @@ const props = defineProps({
   hasDetectiveMode: Boolean,
 });
 </script>
-
-<style scoped>
-:deep(.p-dialog-content) {
-  width: min(80ch, 90vw) !important;
-}
-
-:deep(.p-dialog-content) {
-  display: grid;
-  gap: var(--size-6);
-}
-</style>

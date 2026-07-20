@@ -1,44 +1,51 @@
 <template>
-  <Dialog v-if="selectingImage" v-model:visible="selectingImage" modal @hide="clear">
+  <el-dialog v-model="selectingImage" modal @close="clear">
     <Medias picker @select="handleMedia" mediaType="image" />
-  </Dialog>
+  </el-dialog>
 
   <div class="flow-row-between variant-dash-title">
     <h1>{{ isUpdate ? currentMusician?.name : "New musician" }}</h1>
   </div>
 
-  <form class="width-s stretched centered">
+  <el-form label-position="top" class="width-s stretched centered">
     <h2>Artist information</h2>
 
-    <!-- FIELDS -->
-    <InputText type="text" name="name" label="Name" v-model="musician.name" required />
-    <Textarea name="description" label="Description" v-model="musician.description" />
-    <InputText type="email" name="name" label="E-mail" v-model="musician.contact.email" />
-    <InputText type="tel" name="name" label="Phone number" v-model="musician.contact.phone" />
+    <el-form-item label="Name">
+      <el-input type="text" name="name" v-model="musician.name" required />
+    </el-form-item>
+    <el-form-item label="Description">
+      <el-input type="textarea" name="description" v-model="musician.description" />
+    </el-form-item>
+    <el-form-item label="E-mail">
+      <el-input type="email" name="email" v-model="musician.contact.email" />
+    </el-form-item>
+    <el-form-item label="Phone number">
+      <el-input type="tel" name="phone" v-model="musician.contact.phone" />
+    </el-form-item>
 
     <div class="flow-row file-btns">
       <div>
-        <Button class="w-full" @click="getImage('main')">
+        <el-button class="w-full" @click="getImage('main')">
           <i class="fa-regular fa-image" />
           Image 1
-        </Button>
+        </el-button>
 
         <img :src="musician.pictures.main" alt="main" />
       </div>
 
       <div>
-        <Button class="w-full" @click="getImage('secondary')">
+        <el-button class="w-full" @click="getImage('secondary')">
           <i class="fa-regular fa-image" />
           Image 2
-        </Button>
+        </el-button>
 
         <img :src="musician.pictures.secondary" alt="secondary" />
       </div>
     </div>
-  </form>
+  </el-form>
 
   <div class="width-s centered">
-    <Button class="w-full" @click="saveMusician" :loading="isSubmitting"> Save changes </Button>
+    <el-button class="w-full" @click="saveMusician" :loading="isSubmitting"> Save changes </el-button>
   </div>
 </template>
 
@@ -46,11 +53,8 @@
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/stores";
-import Dialog from "primevue/dialog";
-import InputText from "primevue/inputtext";
-import Textarea from "primevue/textarea";
-import Button from "primevue/button";
 import Medias from "@/pages/admin/Medias.vue";
+
 const musicianStore = useStore("musician");
 const router = useRouter();
 const route = useRoute();

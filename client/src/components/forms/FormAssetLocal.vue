@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent class="width-s">
+  <el-form @submit.prevent class="width-s">
     <template v-if="!isUpdate">
       <!-- VOICE -->
       <Voice
@@ -10,25 +10,31 @@
         :closable="true"
       />
 
-      <!-- FORM -->
+      <!-- FILES -->
       <h2>Files</h2>
-      <FileUpload
-        ref="fileField"
-        v-model="files"
-        label="Files"
-        multiple
-        auto
-      />
+      <el-form-item label="Files">
+        <input
+          ref="fileInputRef"
+          type="file"
+          multiple
+          style="display: none"
+          @change="onFileSelect"
+        />
+        <el-button @click="fileInputRef?.click()" type="default">
+          Choose files
+        </el-button>
+      </el-form-item>
     </template>
 
     <div class="list stretched">
       <h2>Tags</h2>
-      <InputText
-        type="text"
-        placeholder="Add a tag"
-        v-model="currentTag"
-        @keydown.enter="handleAddTag"
-      />
+      <el-form-item label="Add a tag">
+        <el-input
+          v-model="currentTag"
+          placeholder="Add a tag"
+          @keydown.enter.prevent="handleAddTag"
+        />
+      </el-form-item>
 
       <div class="flow-row variant-surface">
         <span class="small-text" v-if="!tags.length">No tag yet</span>
@@ -38,25 +44,23 @@
       <AssetDetails
         v-if="isMulti"
         v-for="assetId in assets"
+        :key="assetId"
         :file="getAsset(assetId)"
       />
     </div>
 
-    <Button
+    <el-button
       class="w-full upload-btn"
       :loading="isSubmitting"
       @click="isUpdate ? updateTags() : handleSubmit()"
     >
       {{ isUpdate ? "Save" : "Add to the library" }}
-    </Button>
-  </form>
+    </el-button>
+  </el-form>
 </template>
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import InputText from "primevue/inputtext";
-import Button from "primevue/button";
-import FileUpload from "primevue/fileupload";
 import { useStore } from "@/stores";
 import Tag from "@/components/Tag.vue";
 import AssetDetails from "@/components/media/AssetDetails.vue";
@@ -75,7 +79,7 @@ const mediaStore = useStore("media");
 
 const isMulti = computed(() => Array.isArray(props.assets));
 
-const fileField = ref(null);
+const fileInputRef = ref(null);
 const files = ref([]);
 const error = ref(null);
 
@@ -101,6 +105,10 @@ const getAsset = (id) => {
   return mediaStore.findOne(id);
 };
 
+function onFileSelect(event) {
+  files.value = Array.from(event.target.files || []);
+}
+
 const handleAddTag = () => {
   const foundTag = tags.value.find(
     (tag) => tag.toLowerCase().trim() === currentTag.value.toLowerCase().trim()
@@ -120,9 +128,7 @@ const updateTags = async () => {
   try {
     const promises = props.assets.map((id) => {
       const currentAsset = mediaStore.findOne(id);
-
       currentAsset.tags = [...new Set([...currentAsset.tags, ...tags.value])];
-
       return mediaStore.updateOne(id, currentAsset.tags);
     });
 
@@ -147,7 +153,9 @@ const handleSubmit = async () => {
     if (!files.value.length) return;
     await mediaStore.create(files.value, tags.value);
     files.value = [];
-    fileField.value.fileRef.clearFiles();
+    if (fileInputRef.value) {
+      fileInputRef.value.value = "";
+    }
     emits("upload");
   } catch (err) {
     // TODO

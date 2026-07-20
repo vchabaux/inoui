@@ -8,16 +8,12 @@
   />
 
   <!-- Medias dialog -->
-  <Dialog v-model:visible="isPicking" modal @hide="isPicking = false">
+  <el-dialog v-model="isPicking">
     <Medias picker @select="selectAudio" mediaType="audio" />
-  </Dialog>
+  </el-dialog>
 
   <!-- Detective dialog -->
-  <Dialog
-    v-model:visible="isLearningDetective"
-    modal
-    @hide="isLearningDetective = false"
-  >
+  <el-dialog v-model="isLearningDetective">
     <template #header>
       <h2>Detective mode</h2>
     </template>
@@ -40,16 +36,12 @@
         entry points are visible on the map)
       </p>
 
-      <Button class="w-full" @click="isLearningDetective = false">Okay</Button>
+      <el-button class="w-full" @click="isLearningDetective = false">Okay</el-button>
     </div>
-  </Dialog>
+  </el-dialog>
 
   <!-- Path dialog -->
-  <Dialog
-    v-model:visible="isLearningPath"
-    modal
-    @hide="isLearningPath = false"
-  >
+  <el-dialog v-model="isLearningPath">
     <template #header>
       <h2>Type of path</h2>
     </template>
@@ -76,160 +68,163 @@
         order to reflect recent changes (50 000 requests a month)</p
       >
 
-      <Button class="w-full" @click="isLearningPath = false">Okay</Button>
+      <el-button class="w-full" @click="isLearningPath = false">Okay</el-button>
     </div>
-  </Dialog>
+  </el-dialog>
 
-  <!-- Header -->
-  <div class="variant-dash-title flow-row-between">
-    <h1>
-      {{
-        isUpdate
-          ? `${currentTrack?.name} (${currentTrack?.attributes?.status})`
-          : "New track"
-      }}
-    </h1>
-  </div>
-
-  <div class="stretched width-s centered">
-    <Voice
-      v-if="error"
-      type="error"
-      :message="error.message"
-      @close="error = null"
-      :closable="true"
-    />
-  </div>
-
-  <!-- 1. Name -->
   <template v-if="!isUpdate">
-    <div class="width-s stretched centered">
-      <h2>Track information</h2>
-      <label>name</label>
-      <InputText
-        type="text"
-        required
-        v-model="newTrack.name"
-        @keyup.enter="createTrack"
-      />
-    </div>
+    <div class="page-content">
+      <div class="variant-dash-title flow-row-between">
+        <h1>New track</h1>
+      </div>
 
-    <div class="width-s centered">
-      <Button class="w-full" @click="createTrack">Save</Button>
+      <el-form label-position="top" class="width-s stretched centered">
+        <h2>Track information</h2>
+        <el-form-item label="name">
+          <el-input
+            type="text"
+            required
+            v-model="newTrack.name"
+            @keyup.enter="createTrack"
+          />
+        </el-form-item>
+      </el-form>
+
+      <div class="width-s centered">
+        <el-button class="w-full" @click="createTrack">Save</el-button>
+      </div>
     </div>
   </template>
 
   <!-- 2. Content -->
   <template v-else>
-    <div v-if="currentTrack" class="width-l centered stretched">
+    <div class="page-content">
+      <div class="variant-dash-title flow-row-between">
+        <h1>
+          {{ currentTrack?.name }} ({{ currentTrack?.attributes?.status }})
+        </h1>
+      </div>
+
+      <div class="stretched width-s centered">
+        <Voice
+          v-if="error"
+          type="error"
+          :message="error.message"
+          @close="error = null"
+          :closable="true"
+        />
+      </div>
+
+      <el-form label-position="top" v-if="currentTrack" class="width-l centered stretched">
       <h2>Track information</h2>
 
       <div class="flow-row grid-auto">
-        <label>name</label>
-        <InputText type="text" v-model="currentTrack.name" />
+        <el-form-item label="name">
+          <el-input type="text" v-model="currentTrack.name" />
+        </el-form-item>
 
         <div class="flow-row hidden-info">
-          <Checkbox
-            :binary="true"
-            v-model="currentTrack.attributes.isHidden"
-          />
-          <label>the track is hidden</label>
-          <Button
+          <el-checkbox v-model="currentTrack.attributes.isHidden">the track is hidden</el-checkbox>
+          <el-button
             aria-label="more info"
             title="more info"
-            outlined
             size="small"
-            rounded
+            circle
             class="info-btn"
             @click="isLearningDetective = true"
           >
             <i class="fa-solid fa-info"></i>
-          </Button>
+          </el-button>
         </div>
       </div>
 
-      <Select
-        v-if="app === 'cnrs1'"
-        :options="[{ _id: '', name: '-' }, ...musicians]"
-        optionLabel="name"
-        :modelValue="selectedMusician"
-        @change="selectMusician"
-      />
+      <el-form-item v-if="app === 'cnrs1'" label="artist">
+        <el-select
+          v-model="selectedMusician"
+          @change="selectMusician"
+        >
+          <el-option
+            v-for="m in [{ _id: '', name: '-' }, ...musicians]"
+            :key="m._id"
+            :label="m.name"
+            :value="m"
+          />
+        </el-select>
+      </el-form-item>
 
       <div class="flow-row grid-line">
-        <template v-if="currentTrack.attributes.media">
-          <label>audio</label>
-          <InputText
-            type="text"
-            readonly
-            v-model="
-              currentTrack.attributes.media.url.split('/')[
-                currentTrack.attributes.media.url.split('/').length - 1
-              ]
-            "
-          />
+        <el-form-item label="audio">
+          <template v-if="currentTrack.attributes.media">
+            <el-input
+              type="text"
+              readonly
+              v-model="
+                currentTrack.attributes.media.url.split('/')[
+                  currentTrack.attributes.media.url.split('/').length - 1
+                ]
+              "
+            />
+          </template>
           <p class="text-sm text-fade">the audio will be played when the user approaches the entry point</p>
-        </template>
-        <Button
+        </el-form-item>
+        <el-button
           class="fix1"
           aria-label="pick a file"
           title="pick a file"
           @click="isPicking = true"
         >
           <i class="fa-solid fa-arrow-up-from-bracket"></i>
-        </Button>
+        </el-button>
       </div>
 
       <div class="flow-row-between">
         <div class="flow-row">
-          <label>color</label>
-          <ColorPicker
-            class="fix2"
-            v-model="currentTrack.attributes.color"
-          />
-          <Checkbox
-            :binary="true"
+          <el-form-item label="color">
+            <el-color-picker
+              class="fix2"
+              v-model="currentTrack.attributes.color"
+            />
+          </el-form-item>
+          <el-checkbox
             v-model="currentTrack.attributes.transparence"
-          />
-          <label>the track points are not linked</label>
+          >the track points are not linked</el-checkbox>
         </div>
 
         <div class="flow-row">
-          <Checkbox
-            :binary="true"
+          <el-checkbox
             v-model="currentTrack.attributes.isWalking"
             @change="toggleWalkingPath"
-          />
-          <label>the track path follows the road</label>
-          <Button
+          >the track path follows the road</el-checkbox>
+          <el-button
             aria-label="more info"
             title="more info"
-            outlined
             size="small"
-            rounded
+            circle
             class="info-btn"
             @click="isLearningPath = true"
           >
             <i class="fa-solid fa-info"></i>
-          </Button>
-          <Button v-if="currentTrack.attributes.isWalking" @click="getPath">
+          </el-button>
+          <el-button v-if="currentTrack.attributes.isWalking" @click="getPath">
             Update path
-          </Button>
+          </el-button>
         </div>
       </div>
 
       <!-- Actions -->
       <div class="flow-row -end">
-        <Button outlined @click="save('draft')">
+        <el-button @click="save('draft')">
           {{ getText("draft") }}
-        </Button>
-        <Button v-if="!isAdmin" @click="save('pending')">
+        </el-button>
+        <el-button v-if="!isAdmin" @click="save('pending')">
           {{ getText("pending") }}
-        </Button>
-        <Button v-else @click="save('published')">
+        </el-button>
+        <el-button v-else @click="save('published')">
           {{ getText("published") }}
-        </Button>
+        </el-button>
       </div>
+    </el-form>
+
     </div>
 
     <Map
@@ -295,6 +290,8 @@
   </template>
 </template>
 
+
+
 <script setup>
 import axios from "axios";
 import { computed, ref } from "vue";
@@ -308,12 +305,6 @@ import Notice from "@/components/notice/Notice.vue";
 import Medias from "@/pages/admin/Medias.vue";
 import Voice from "@/components/Voice.vue";
 import { handleError } from "@/utils";
-import Button from "primevue/button";
-import Dialog from "primevue/dialog";
-import InputText from "primevue/inputtext";
-import Select from "primevue/select";
-import Checkbox from "primevue/checkbox";
-import ColorPicker from "primevue/colorpicker";
 
 const route = useRoute();
 const router = useRouter();
@@ -337,6 +328,7 @@ const app = computed(() => settingsStore.project);
 const currentForm = computed(() =>
   currentNode.value?.context === "Parcours" ? FormTrack : FormPoint
 );
+const noticeStore = useStore("notice");
 const currentUser = computed(() => authStore.currentUser);
 const isAdmin = computed(() => currentUser.value.role.includes("admin"));
 const selectedMusician = ref(
@@ -375,9 +367,8 @@ function getText(goal) {
     if (isCopy) {
       if (goal === "draft") return "Save copy as draft";
       if (goal === "pending") {
-        if (
-          noticeStore.findOne(currentNotice.value.original).status === "pending"
-        )
+        const orig = currentNotice?.value?.original;
+        if (orig && noticeStore.findOne(orig)?.status === "pending")
           return "Send for review and overwrite original";
         else return "Send copy for review";
       }
@@ -519,6 +510,9 @@ async function getAddress(lat, lng) {
 }
 
 function selectAudio(file) {
+  if (!currentTrack.value.attributes.media) {
+    currentTrack.value.attributes.media = {};
+  }
   currentTrack.value.attributes.media.url = file.url;
   isPicking.value = false;
 }
@@ -730,6 +724,10 @@ async function save(goal) {
 
 .fix2 {
   margin-block-end: 25px;
+}
+
+.variant-dash-title {
+  width: 100%;
 }
 
 @media (max-width: 767px) {

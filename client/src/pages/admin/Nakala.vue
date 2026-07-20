@@ -1,10 +1,10 @@
 <template>
   <div class="flow-row-between variant-dash-title">
     <h1>Données Nakala</h1>
-    <Button @click="handleAddMedia">New data</Button>
+    <el-button @click="handleAddMedia">New data</el-button>
   </div>
 
-  <Dialog v-model:visible="isFormNakalaOpen" modal @hide="clear">
+  <el-dialog :model-value="isFormNakalaOpen" @close="clear">
     <template #header>
       <div class="variant-dash-title">
         <h2>Add files</h2>
@@ -17,7 +17,7 @@
         @upload="isFormNakalaOpen = false"
       />
     </div>
-  </Dialog>
+  </el-dialog>
 
   <Voice
     v-if="error"
@@ -47,37 +47,34 @@
               alt="file"
             />
 
-            <Button
+            <el-button
               size="small"
               aria-label="delete"
               title="delete"
               @click="handleDeleteFile(item, $value)"
             >
               <i class="fa-solid fa-trash-can" />
-            </Button>
+            </el-button>
           </div>
         </template>
       </div>
     </template>
 
     <template #row-controls="{ item }">
-      <Button
-        outlined
+      <el-button
         size="small"
         aria-label="edit"
         title="edit"
         @click="handleEdit(item)"
       >
         <i class="fa-solid fa-pen" />
-      </Button>
+      </el-button>
     </template>
   </Datable>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import Button from "primevue/button";
-import Dialog from "primevue/dialog";
 import Datable from "@/components/DaTable.vue";
 import { columnsNakala } from "@/utils/columns";
 import FormAssetNakala from "@/components/forms/FormAssetNakala.vue";

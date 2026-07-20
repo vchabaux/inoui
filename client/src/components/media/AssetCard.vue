@@ -1,31 +1,28 @@
 <template>
   <div class="flow-row asset-container" :class="{ '-selected': selected }">
-    <Button :aria-label="file.originalname" :title="file.originalname" text class="asset-button" @click="emits('select', file)">
+    <div class="asset-button" @click="emits('select', file)">
       <img :src="file.url" :alt="file.originalname" class="thumbnail" />
-      <template #footer>
-        <div class="media-card-footer">
-          <span class="line-clamp-1 text-start">{{ file.originalname }}</span>
-        </div>
-      </template>
-    </Button>
+      <div class="media-card-footer">
+        <span class="line-clamp-1 text-start">{{ file.originalname }}</span>
+      </div>
+    </div>
 
     <div class="flow-column asset-actions">
-      <Button v-if="!picker" aria-label="delete" title="delete" text size="small" class="danger-btn" @click="emits('delete', $event, file)">
+      <el-button v-if="!picker" aria-label="delete" title="delete" text size="small" class="danger-btn" @click="emits('delete', $event, file)">
         <i class="fa-solid fa-trash-can" />
-      </Button>
-      <Button v-if="!picker" aria-label="preview" title="preview" text size="small" @click="emits('preview', file)">
+      </el-button>
+      <el-button v-if="!picker" aria-label="preview" title="preview" text size="small" @click="emits('preview', file)">
         <i class="fa-solid fa-eye" />
-      </Button>
-      <Button aria-label="copy url" title="copy url" text size="small" :loading="isCopying" @click="copyFile(file)">
+      </el-button>
+      <el-button aria-label="copy url" title="copy url" text size="small" @click="copyFile(file)">
         <i class="fa-solid fa-link" />
-      </Button>
+      </el-button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import Button from "primevue/button";
 
 const emits = defineEmits(["preview", "delete", "copy", "select"]);
 
@@ -92,6 +89,7 @@ function formatSize(size) {
 .asset-button {
   padding: 0;
   border: 0;
+  cursor: pointer;
 }
 
 .thumbnail {

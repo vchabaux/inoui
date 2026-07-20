@@ -7,9 +7,9 @@
 
     <ul class="stretched">
       <li v-for="card in cards">
-        <Button class="card w-full" text @click="previewNotice(card._id)">
+        <el-button class="card w-full" text @click="previewNotice(card._id)">
           <span>{{ card.title }}</span>
-        </Button>
+        </el-button>
       </li>
     </ul>
   </div>
@@ -20,7 +20,6 @@ import { computed, ref } from "vue";
 import { useStore } from "@/stores";
 import { useCategoryStore } from "@/stores/categories";
 import Notice from "@/components/notice/Notice.vue";
-import Button from "primevue/button";
 
 const settingsStore = useStore("settings");
 const noticeStore = useStore("notice");

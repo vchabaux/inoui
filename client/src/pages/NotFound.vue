@@ -9,12 +9,12 @@
     <p v-else>The page you're looking for doesn't exist, it may have been deleted</p>
 
     <div class="flow-row" v-if="isPublic">
-      <Button outlined @click="router.go(-1)" v-t="'notfound.back'"></Button>
+      <el-button @click="router.go(-1)" v-t="'notfound.back'"></el-button>
       <router-link :to="isPublic ? '/' : '/admin'" v-t="'notfound.home'"></router-link>
     </div>
 
     <div class="flow-row" v-else>
-      <Button outlined @click="router.go(-1)">Go back</Button>
+      <el-button @click="router.go(-1)">Go back</el-button>
       <router-link :to="isPublic ? '/' : '/admin'">Home</router-link>
     </div>
   </div>
@@ -23,7 +23,6 @@
 <script setup>
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import Button from "primevue/button";
 
 const route = useRoute();
 const router = useRouter();

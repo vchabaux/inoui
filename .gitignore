@@ -35,6 +35,9 @@ node_modules
 
 # nakala temporary uploads (written on file selection, cleaned up after 1h)
 uploads/temp/
+
+# reference copy of original owlabio admin views (do not version)
+/old-vues/
 .cache
 .temp
 .env

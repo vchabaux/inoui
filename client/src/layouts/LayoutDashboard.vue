@@ -30,9 +30,9 @@
             {{ !fullTimeAccount && expiresIn < 30 ? ` (${expiresIn}d left)` : "" }}
           </router-link>
 
-          <Button aria-label="sign out" title="sign out" @click="signout" text>
+          <el-button aria-label="sign out" title="sign out" @click="signout" text>
             <i class="fa-solid fa-arrow-right-from-bracket" />
-          </Button>
+          </el-button>
         </div>
       </div>
     </aside>
@@ -45,7 +45,6 @@
 
 <script setup>
 import { computed } from "vue";
-import Button from "primevue/button";
 import { useStore } from "@/stores";
 import { getDateDiff } from "@/utils/time";
 

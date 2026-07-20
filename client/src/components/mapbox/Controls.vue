@@ -2,13 +2,13 @@
   <!-- Actions -->
   <div class="map-actions flow-row-between">
     <!-- NARRATION : back to entry points -->
-    <Button v-if="controls.back" class="map-back color-btn" :aria-label="$t('controls.back')" :title="$t('controls.back')" @click="emit('back')" text>
+    <el-button v-if="controls.back" class="map-back color-btn" :aria-label="$t('controls.back')" :title="$t('controls.back')" @click="emit('back')" text>
       <i class="fa-solid fa-arrow-left" />
-    </Button>
+    </el-button>
 
     <!-- CLASSIC : filters -->
     <div v-if="controls.mode === 'classic'" class="map-filter-zone stretched" @keyup.escape="emit('toggleFilters')">
-      <Button
+      <el-button
         class="map-filter-toggle color-btn"
         :aria-label="$t('controls.filters')"
         :title="$t('controls.filters')"
@@ -16,14 +16,14 @@
         :aria-pressed="controls.filters"
         @click="emit('toggleFilters')" text>
         <i class="fa-solid fa-filter" />
-      </Button>
+      </el-button>
 
       <aside class="map-filters" :class="{ invisible: !controls.filters }">
         <!-- MEDIA FILTER -->
         <div class="map-filter">
           <div class="filter-menu flow-row-between">
             <span class="filter-title" v-t="'controls.titletypes'"></span>
-            <Button
+            <el-button
               text
               size="small"
               class="reset-btn"
@@ -32,14 +32,14 @@
               :disabled="!filterType.length"
               @click="emit('resetFilter', 'type')">
               <i class="fa-solid fa-arrow-rotate-left" />
-            </Button>
+            </el-button>
           </div>
 
           <ul class="filter-list stretched">
             <li v-for="(type, i) in types" :key="`type-${i}`">
-              <Button
+              <el-button
                 size="small"
-                rounded
+                round
                 class="w-full filter-btn"
                 :class="{ '-active': filterType.includes(type) }"
                 :text="!filterType.includes(type)"
@@ -48,7 +48,7 @@
                 <i v-if="type === 'image'" class="fa-regular fa-image" />
                 <i v-else :class="getIconName(type)" />
                 {{ formatType(type) }}
-              </Button>
+              </el-button>
             </li>
           </ul>
         </div>
@@ -57,7 +57,7 @@
         <div v-if="app === 'cnrs1'" class="map-filter">
           <div class="filter-menu flow-row-between">
             <span class="filter-title" v-t="'controls.titlemusicians'"></span>
-            <Button
+            <el-button
               text
               size="small"
               class="reset-btn"
@@ -66,21 +66,21 @@
               :disabled="!filterMus.length"
               @click="emit('resetFilter', 'mus')">
               <i class="fa-solid fa-arrow-rotate-left" />
-            </Button>
+            </el-button>
           </div>
 
           <ul class="filter-list stretched">
             <li v-for="(mus, i) in musicians" :key="`mus-${i}`">
-              <Button
+              <el-button
                 size="small"
-                rounded
+                round
                 class="w-full filter-btn"
                 :class="{ '-active': filterMus.includes(mus._id) }"
                 :text="!filterMus.includes(mus._id)"
                 :aria-pressed="filterMus.includes(mus._id)"
                 @click="emit('filter', 'mus', mus._id)">
                 {{ mus.name }}
-              </Button>
+              </el-button>
             </li>
           </ul>
         </div>
@@ -89,7 +89,7 @@
         <div class="map-filter">
           <div class="filter-menu flow-row-between">
             <span class="filter-title" v-t="'controls.titlecategories'"></span>
-            <Button
+            <el-button
               text
               size="small"
               class="reset-btn"
@@ -98,22 +98,22 @@
               :disabled="!filterCat.length"
               @click="emit('resetFilter', 'cat')">
               <i class="fa-solid fa-arrow-rotate-left" />
-            </Button>
+            </el-button>
           </div>
 
           <ul class="filter-list flow-row">
             <li v-for="(cat, i) in categories" :key="`cat-${i}`">
-              <Button
+              <el-button
                 size="small"
-                rounded
+                round
                 class="filter-btn"
                 :class="{ '-active': filterCat.includes(cat._id) }"
                 :text="!filterCat.includes(cat._id)"
                 :aria-pressed="filterCat.includes(cat._id)"
                 @click="emit('filter', 'cat', cat._id)">
-                <template v-if="cat.attributes?.icon" #start><i :class="getTypeClass(cat.attributes?.icon?.type) + ' fa-' + cat.attributes?.icon?.name" /></template>
+                <template #icon><i :class="getTypeClass(cat.attributes?.icon?.type) + ' fa-' + cat.attributes?.icon?.name" /></template>
                 {{ cat.name }}
-              </Button>
+              </el-button>
             </li>
           </ul>
         </div>
@@ -121,20 +121,20 @@
     </div>
 
     <!-- HELP -->
-    <Button class="map-help color-btn" :aria-label="$t('controls.help')" :title="$t('controls.help')" @click="emit('help')" text>
+    <el-button class="map-help color-btn" :aria-label="$t('controls.help')" :title="$t('controls.help')" @click="emit('help')" text>
       <i class="fa-solid fa-question" />
-    </Button>
+    </el-button>
 
     <!-- TOP ACTIONS -->
     <div class="map-top-actions">
       <!-- MODE TOGGLE -->
-      <Button
+      <el-button
         class="map-mode-toggle color-btn"
         :aria-label="controls.mode === 'narration' ? $t('controls.free') : $t('controls.itinerary')"
         :title="controls.mode === 'narration' ? $t('controls.free') : $t('controls.itinerary')"
         @click="emit('toggleMode')" text>
         <i :class="controls.mode === 'narration' ? 'fa-solid fa-location-dot' : 'fa-solid fa-route'" class="fa-shake" />
-      </Button>
+      </el-button>
 
       <!-- AUDIO TOGGLE -->
       <div class="map-audio">
@@ -152,7 +152,7 @@
               --fa-bounce-land-scale-y: 1;
             " />
         </div>
-        <Button
+        <el-button
           class="map-audio-toggle color-btn"
           :aria-label="$t('controls.sound')"
           :title="$t('controls.sound')"
@@ -160,11 +160,11 @@
           :aria-pressed="controls.audio"
           @click="emit('toggleAudio')" text>
           <i :class="'fa-solid' + ' fa-' + (controls.audio ? app === 'cnrs1' ? 'headphones' : 'volume-high' : app === 'cnrs1' ? 'volume-off' : 'volume-xmark')" />
-        </Button>
+        </el-button>
       </div>
 
       <!-- DETECTIVE TOGGLE -->
-      <Button
+      <el-button
         v-if="hasDetectiveMode && controls.mode === 'narration' && !controls.back"
         class="map-detective-toggle color-btn"
         :aria-label="$t('controls.accessible')"
@@ -173,27 +173,26 @@
         :aria-pressed="!controls.isDetective"
         @click="emit('toggleDetective')" text>
         <i :class="controls.isDetective ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" />
-      </Button>
+      </el-button>
     </div>
 
     <!-- BOTTOM ACTIONS -->
     <div class="map-bottom-actions">
-      <Button class="color-btn" :aria-label="$t('controls.zoomin')" :title="$t('controls.zoomin')" @click="emit('zoom', 'in')" text>
+      <el-button class="color-btn" :aria-label="$t('controls.zoomin')" :title="$t('controls.zoomin')" @click="emit('zoom', 'in')" text>
         <i class="fa-solid fa-plus" />
-      </Button>
-      <Button class="color-btn" :aria-label="$t('controls.zoomout')" :title="$t('controls.zoomout')" @click="emit('zoom', 'out')" text>
+      </el-button>
+      <el-button class="color-btn" :aria-label="$t('controls.zoomout')" :title="$t('controls.zoomout')" @click="emit('zoom', 'out')" text>
         <i class="fa-solid fa-minus" />
-      </Button>
-      <Button class="color-btn" :aria-label="$t('controls.center')" :title="$t('controls.center')" @click="emit('center')" text>
+      </el-button>
+      <el-button class="color-btn" :aria-label="$t('controls.center')" :title="$t('controls.center')" @click="emit('center')" text>
         <i class="fa-solid fa-crosshairs" />
-      </Button>
+      </el-button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import Button from "primevue/button";
 import { useStore } from "@/stores";
 import { useCategoryStore } from "@/stores/categories";
 

@@ -5,32 +5,21 @@
 
   <p class="small-text" v-if="!hasToken">No token provided</p>
 
-  <form @submit.prevent class="stretched">
-    <label for="password">Mot de passe</label>
-    <InputText
-      id="password"
-      v-model="password"
-      type="password"
-      autocomplete="new-password"
-    />
-    <label for="confirmPassword">Confirmer le mot de passe</label>
-    <InputText
-      id="confirmPassword"
-      v-model="confirmPassword"
-      type="password"
-      autocomplete="new-password"
-    />
-  </form>
-
-  <Button class="w-full" :loading="submitting" @click="handleSubmit">Valider</Button>
+  <el-form label-position="top" @submit.prevent>
+    <el-form-item label="Mot de passe">
+      <el-input id="password" v-model="password" type="password" autocomplete="new-password" />
+    </el-form-item>
+    <el-form-item label="Confirmer le mot de passe">
+      <el-input id="confirmPassword" v-model="confirmPassword" type="password" autocomplete="new-password" />
+    </el-form-item>
+    <el-button class="w-full" :loading="submitting" @click="handleSubmit">Valider</el-button>
+  </el-form>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from "@/api/axios";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
 
 const route = useRoute();
 const router = useRouter();

@@ -470,7 +470,7 @@ h1, h2, h3, h4, h5, h6 {
   display: grid;
   gap: var(--size-8);
   align-content: flex-start;
-  justify-items: start;
+  justify-items: normal;
   box-shadow: var(--box-shadow-5);
 }
 .-floating {

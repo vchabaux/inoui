@@ -1,11 +1,11 @@
 <template>
   <div class="notice-nav">
     <div class="notice-prev">
-      <Button v-if="navigation?.prevTrack && app === 'cnrs2'" class="w-full nav-track" text @click="emit('navigate', 'track', navigation?.prevTrack)">
+      <el-button v-if="navigation?.prevTrack && app === 'cnrs2'" class="w-full nav-track" text @click="emit('navigate', 'track', navigation?.prevTrack)">
         <i class="fa-solid fa-route" />
         {{ navigation?.prevTrack?.name }}
-      </Button>
-      <Button
+      </el-button>
+      <el-button
         v-if="navigation?.prevPoint"
         class="w-full nav-point"
         text
@@ -13,8 +13,8 @@
         :aria-label="$t('noticenav.prevpoint')"
         :title="$t('noticenav.prevpoint')">
         <i class="fa-solid fa-backward-step" />
-      </Button>
-      <Button
+      </el-button>
+      <el-button
         v-if="navigation?.prevDetour"
         class="w-full nav-detour"
         text
@@ -22,7 +22,7 @@
         :aria-label="$t('noticenav.prevdetour')"
         :title="$t('noticenav.prevdetour')">
         <i class="fa-solid fa-backward" />
-      </Button>
+      </el-button>
     </div>
 
     <div class="notice-next">
@@ -30,11 +30,11 @@
         <i class="fa-solid fa-link" />
         {{$t('noticenav.about')}}
       </router-link>
-      <Button class="w-full nav-track" v-if="navigation?.nextTrack && app === 'cnrs2'" text @click="emit('navigate', 'track', navigation?.nextTrack)">
+      <el-button class="w-full nav-track" v-if="navigation?.nextTrack && app === 'cnrs2'" text @click="emit('navigate', 'track', navigation?.nextTrack)">
         <i class="fa-solid fa-route" />
         {{ navigation?.nextTrack?.name }}
-      </Button>
-      <Button
+      </el-button>
+      <el-button
         class="w-full nav-point"
         v-if="navigation?.nextPoint"
         text
@@ -42,8 +42,8 @@
         :aria-label="$t('noticenav.nextpoint')"
         :title="$t('noticenav.nextpoint')">
         <i class="fa-solid fa-forward-step" />
-      </Button>
-      <Button
+      </el-button>
+      <el-button
         class="w-full nav-detour"
         v-if="navigation?.nextDetour"
         text
@@ -51,14 +51,13 @@
         :aria-label="$t('noticenav.nextdetour')"
         :title="$t('noticenav.nextdetour')">
         <i class="fa-solid fa-forward" />
-      </Button>
+      </el-button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import Button from "primevue/button";
 import { useStore } from "@/stores";
 
 const settingsStore = useStore("settings");
@@ -96,13 +95,13 @@ const props = defineProps({
   border: var(--app-border, var(--border-1)) dashed var(--color-full-accent) !important;
 }
 
-.notice-prev :deep(.p-button),
+.notice-prev .el-button,
 .notice-prev .link-text {
   justify-self: start !important;
   width: max-content;
 }
 
-.notice-next :deep(.p-button),
+.notice-next .el-button,
 .notice-next .link-text {
   justify-self: end !important;
   width: max-content;

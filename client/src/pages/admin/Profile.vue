@@ -1,67 +1,78 @@
 <template>
   <!-- update email dialog -->
-  <Dialog v-model:visible="isFormEmail" modal @hide="isFormEmail = false">
+  <el-dialog :model-value="isFormEmail" @close="isFormEmail = false">
     <template #header>
       <h2>Update email</h2>
     </template>
 
-    <form class="stretched">
+    <el-form label-position="top">
       <template v-if="tokenSent">
         <p>Enter the code received by email</p>
-        <InputText label="Code" type="text" v-model="verificationCode" />
-        <Button @click="submitCode">Validate</Button>
+        <el-form-item label="Code">
+          <el-input v-model="verificationCode" />
+        </el-form-item>
+        <el-button type="primary" @click="submitCode">Validate</el-button>
       </template>
 
       <template v-else>
-        <InputText label="New email" type="email" v-model="email" autocomplete="email" />
-        <Button @click="sendToken">Validate</Button>
+        <el-form-item label="New email">
+          <el-input type="email" v-model="email" autocomplete="email" />
+        </el-form-item>
+        <el-button type="primary" @click="sendToken">Validate</el-button>
       </template>
-    </form>
-  </Dialog>
+    </el-form>
+  </el-dialog>
 
   <!-- update password dialog -->
-  <Dialog v-model:visible="isFormPassword" modal @hide="clear">
+  <el-dialog :model-value="isFormPassword" @close="clear">
     <template #header>
       <h2>Update password</h2>
     </template>
 
-    <form class="stretched">
-      <InputText label="current password" type="password" v-model="password" autocomplete="current-password" />
-      <InputText label="new password" type="password" v-model="newPassword" autocomplete="new-password" />
+    <el-form label-position="top">
+      <el-form-item label="current password">
+        <el-input type="password" v-model="password" autocomplete="current-password" />
+      </el-form-item>
+      <el-form-item label="new password">
+        <el-input type="password" v-model="newPassword" autocomplete="new-password" />
+      </el-form-item>
 
-      <Button :loading="isSubmittingPassword" @click="updatePassword"> Submit </Button>
-    </form>
-  </Dialog>
+      <el-button type="primary" :loading="isSubmittingPassword" @click="updatePassword"> Submit </el-button>
+    </el-form>
+  </el-dialog>
 
-  <div class="flow-row-between variant-dash-title">
+  <div class="flow-row-between variant-dash-title" style="width: 100%">
     <h1>Profile</h1>
-    <Button @click="handleSignout">Sign out</Button>
+    <el-button @click="handleSignout">Sign out</el-button>
   </div>
 
-  <form class="width-s centered stretched">
-    <h2>Account information</h2>
-    <InputText label="name" type="text" v-model="user.name" />
-    <InputText label="email" type="email" v-model="user.email" disabled />
-  </form>
+  <div class="page-content">
+    <el-form label-position="top" class="width-s centered">
+      <h2>Account information</h2>
+      <el-form-item label="name">
+        <el-input v-model="user.name" />
+      </el-form-item>
+      <el-form-item label="email">
+        <el-input v-model="user.email" disabled />
+      </el-form-item>
+    </el-form>
 
-  <form class="flow-row actions width-s centered stretched">
-    <Button outlined @click="promptEmailForm">Update email</Button>
-    <Button outlined @click="promptPasswordDialog"> Update password </Button>
-  </form>
+    <div class="flow-row actions width-s centered">
+      <el-button @click="promptEmailForm">Update email</el-button>
+      <el-button @click="promptPasswordDialog">Update password</el-button>
+    </div>
 
-  <form class="width-s centered stretched">
-    <Button :loading="isSubmitting" class="w-full" @click="updateUser"> Save changes </Button>
-  </form>
+    <el-form label-position="top" class="width-s centered">
+      <el-button type="primary" :loading="isSubmitting" class="w-full" @click="updateUser">Save changes</el-button>
+    </el-form>
 
-  <span v-if="currentUser.expiresAt">Your account is active until: {{ formatDateLong(currentUser.expiresAt) }}</span>
-  <span v-if="currentUser.expiresAt">Only an administrator can change the expiration date</span>
+    <span v-if="currentUser.expiresAt">Your account is active until: {{ formatDateLong(currentUser.expiresAt) }}</span>
+    <span v-if="currentUser.expiresAt">Only an administrator can change the expiration date</span>
+  </div>
 </template>
 
 <script setup>
 import { computed, ref, onMounted } from "vue";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import Dialog from "primevue/dialog";
 import { formatDateLong } from "@/utils/time";
 import { useStore } from "@/stores";
 import Voice from "@/components/Voice.vue";
@@ -145,11 +156,13 @@ async function updateUser() {
 </script>
 
 <style scoped>
-.actions > * {
-  flex: 1;
+.page-content {
+  display: grid;
+  gap: var(--size-8);
+  align-content: flex-start;
 }
 
-dialog button {
-  align-self: end;
+.actions > * {
+  flex: 1;
 }
 </style>

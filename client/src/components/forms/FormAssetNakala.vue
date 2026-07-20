@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent class="width-s stretched">
+  <el-form @submit.prevent label-position="top" class="width-s stretched">
     <Voice
       v-if="error"
       :message="error.message"
@@ -8,37 +8,49 @@
       @close="error = null"
     />
 
-    <InputText
+    <el-form-item
       v-for="meta in assetMetas"
       :key="meta.title"
-      v-model="meta.defaultValue"
-      :placeholder="meta.title"
-    />
+      :label="meta.title"
+    >
+      <el-input v-model="meta.defaultValue" />
+    </el-form-item>
 
-    <InputText type="text" placeholder="name" v-model="title" />
+    <el-form-item label="name">
+      <el-input v-model="title" />
+    </el-form-item>
 
-    <Select
-      placeholder="License"
-      v-model="selectedLicense"
-      :options="licenses"
-      optionLabel="name"
-      optionValue="code"
-    />
+    <el-form-item label="License">
+      <el-select v-model="selectedLicense" placeholder="License" style="width: 100%">
+        <el-option
+          v-for="lic in licenses"
+          :key="lic.code"
+          :label="lic.name"
+          :value="lic.code"
+        />
+      </el-select>
+    </el-form-item>
 
-    <Textarea
-      :rows="3"
-      placeholder="Description"
-      name="description"
-      v-model="description"
-    />
+    <el-form-item label="Description">
+      <el-input
+        type="textarea"
+        :rows="3"
+        v-model="description"
+      />
+    </el-form-item>
 
-    <FileUpload
-      ref="fileField"
-      placeholder="Files"
-      @select="onFileSelect"
-      multiple
-      v-model="images"
-    />
+    <el-form-item label="Files">
+      <input
+        ref="fileInputRef"
+        type="file"
+        multiple
+        style="display: none"
+        @change="onFileSelect"
+      />
+      <el-button @click="fileInputRef?.click()" type="default">
+        Choose files
+      </el-button>
+    </el-form-item>
 
     <!-- TEMP UPLOAD: files are pushed to the server on selection -->
     <div
@@ -52,7 +64,7 @@
         <div
           class="temp-upload__bar"
           :style="{ width: uploadProgress + '%' }"
-        ></div>
+        />
       </div>
 
       <ul class="flow-column temp-upload__list">
@@ -70,31 +82,24 @@
 
           <span class="temp-upload__name">{{ file.name }}</span>
 
-          <Button
+          <el-button
             v-if="file.status === 'error'"
+            size="small"
             class="temp-upload__retry"
             @click="retryFile(i)"
           >
             Réessayer
-          </Button>
+          </el-button>
         </li>
       </ul>
     </div>
 
-    <Checkbox
-      :binary="true"
-      v-model="withAuthor"
-      label="this file has an author"
-      name="author"
-    />
+    <el-checkbox v-model="withAuthor" label="this file has an author" />
 
     <template v-if="withAuthor">
-      <InputText
-        type="text"
-        placeholder="Author name"
-        name="authorName"
-        v-model="author.name"
-      />
+      <el-form-item label="Author name">
+        <el-input v-model="author.name" />
+      </el-form-item>
     </template>
 
     <AsyncSearch
@@ -108,8 +113,8 @@
 
     <!-- SELECTED KEYWORDS -->
     <ul>
-      <li class="flow-row" v-for="(word, i) in keywords">
-        {{ word["@label"] }} <Button @click="removeKeyword(i)">X</Button>
+      <li class="flow-row" v-for="(word, i) in keywords" :key="i">
+        {{ word["@label"] }} <el-button @click="removeKeyword(i)" size="small">X</el-button>
       </li>
     </ul>
 
@@ -117,6 +122,7 @@
     <AssetDetails
       v-if="isMulti"
       v-for="assetId in assets"
+      :key="assetId"
       :file="getFile(assetId)"
     />
 
@@ -125,20 +131,14 @@
       Upload en cours, veuillez patienter...
     </span>
 
-    <Button class="w-full upload-btn" :loading="isSubmitting" @click="upload">
+    <el-button class="w-full upload-btn" :loading="isSubmitting" @click="upload">
       {{ isUpdate ? "Save" : "Add to nakala library" }}
-    </Button>
-  </form>
+    </el-button>
+  </el-form>
 </template>
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import Textarea from "primevue/textarea";
-import Select from "primevue/select";
-import Checkbox from "primevue/checkbox";
-import FileUpload from "primevue/fileupload";
 import Voice from "@/components/Voice.vue";
 import AssetDetails from "../media/AssetDetails.vue";
 import { useStore } from "@/stores";
@@ -163,7 +163,7 @@ const settingsStore = useStore("settings");
 const isUpdate = computed(() => !!props.dataId);
 
 const isSubmitting = ref(false);
-const fileField = ref(null);
+const fileInputRef = ref(null);
 const withAuthor = ref(false);
 const error = ref(null);
 const keywords = ref([]);
@@ -282,8 +282,7 @@ function formatMetas(metas, lang) {
 }
 
 function onFileSelect(event) {
-  const files = event?.files || (event?.target && event.target.files);
-  checkUploadSize({ target: { files } });
+  checkUploadSize(event);
 }
 
 function checkUploadSize(event) {
@@ -466,7 +465,9 @@ async function createData() {
     await nakalaStore.create(images.value, data, tempIds);
 
     emits("upload");
-    fileField.value.fileRef.clearFiles();
+    if (fileInputRef.value) {
+      fileInputRef.value.value = "";
+    }
     resetTempUpload();
   } catch (err) {
     if (err.response && err.response.data) {

@@ -1,6 +1,6 @@
 <template>
   <div class="voice-container variant-surface" :class="type">
-    <Button
+    <el-button
       v-if="closable"
       class="voice-btn"
       text
@@ -10,7 +10,7 @@
       @click="handleClose"
     >
       <i class="fa-solid fa-xmark" />
-    </Button>
+    </el-button>
 
     <span
       class="voice-message small-text"
@@ -20,8 +20,6 @@
 </template>
 
 <script setup>
-import Button from "primevue/button";
-
 defineProps({
   message: {
     type: String,

@@ -5,9 +5,6 @@
 </template>
 
 <script setup>
-import "@/assets/owl-css-reset.css";
-import "@/styles/theme.css";
-
 import { useStore } from "@/stores";
 import Layout from "@/layouts/Layout.vue";
 import { computed, watch } from "vue";

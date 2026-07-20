@@ -1,5 +1,5 @@
 <template>
-  <Dialog :open="open" modal @hide="$emit('close')" header="Pick an icon" :style="{ width: '600px' }">
+  <el-dialog :model-value="open" @close="$emit('close')" title="Pick an icon" :width="'600px'">
     <div class="icon-picker-grid">
       <button
         v-for="icon in icons"
@@ -12,12 +12,11 @@
         <i :class="icon.class" />
       </button>
     </div>
-  </Dialog>
+  </el-dialog>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import Dialog from "primevue/dialog";
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -128,5 +127,5 @@ function selectIcon(icon) {
   background: var(--color-element-neutral);
   border-color: var(--color-full-accent);
   border-width: 2px;
-	}
+}
 </style>

@@ -1,30 +1,34 @@
 <template>
-  <div class="variant-dash-title flow-row-between">
+  <div class="variant-dash-title flow-row-between" style="width:100%">
     <h1>{{ isUpdate ? user.name : "New user" }}</h1>
   </div>
 
-  <form class="width-s stretched centered" @submit.prevent>
+  <el-form label-position="top" class="width-s stretched centered" @submit.prevent>
     <h2>User information</h2>
-    <label>name</label>
-    <InputText type="text" v-model="name" />
-    <label>e-mail</label>
-    <InputText type="email" v-model="email" />
-  </form>
+    <el-form-item label="name">
+      <el-input v-model="name" />
+    </el-form-item>
+    <el-form-item label="e-mail">
+      <el-input v-model="email" type="email" />
+    </el-form-item>
+  </el-form>
 
-  <form class="width-s stretched centered" @submit.prevent>
+  <el-form label-position="top" class="width-s stretched centered" @submit.prevent>
     <h2>User permissions</h2>
-    <label>role</label>
-    <Select
-      :options="Object.keys(roles).map((key) => roles[key])"
-      v-model="role"
-    />
-    <label>This is a temporary member</label>
-    <Checkbox v-model="isTemporary" :binary="true" />
+    <el-form-item label="role">
+      <el-select v-model="role" style="width:100%">
+        <el-option v-for="r in roles" :key="r" :label="r" :value="r" />
+      </el-select>
+    </el-form-item>
+    <el-form-item label="This is a temporary member">
+      <el-checkbox v-model="isTemporary" />
+    </el-form-item>
     <template v-if="isTemporary">
-      <label>Expiration date</label>
-      <DatePicker v-model="_expiresAt" />
+      <el-form-item label="Expiration date">
+        <el-date-picker v-model="_expiresAt" type="date" value-format="YYYY-MM-DD" style="width:100%" />
+      </el-form-item>
     </template>
-  </form>
+  </el-form>
 
   <div class="centered width-s">
     <Voice
@@ -32,14 +36,9 @@
       type="error"
       :message="Object.values(errors).join(`<br>`)"
     />
-    <Button
-      class="w-full"
-      @click="save"
-      :loading="isSubmitting"
-      :disabled="!!Object.keys(errors).length"
-    >
+    <el-button class="w-full" @click="save" :loading="isSubmitting" :disabled="!!Object.keys(errors).length">
       {{ isUpdate ? "Save changes" : "Send an invitation" }}
-    </Button>
+    </el-button>
   </div>
 </template>
 
@@ -50,11 +49,6 @@ import { useStore } from "@/stores";
 import Voice from "@/components/Voice.vue";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import Select from "primevue/select";
-import Checkbox from "primevue/checkbox";
-import DatePicker from "primevue/datepicker";
 
 const route = useRoute();
 const router = useRouter();
@@ -98,7 +92,7 @@ const _expiresAt = computed({
   get() {
     const date = expiresAt;
     const formatted = new Date(date);
-    const year = formatted.getFullYear(); // Add 1 year
+    const year = formatted.getFullYear();
     const month = twoDigits(formatted.getMonth() + 1);
     const day = twoDigits(formatted.getUTCDate());
 

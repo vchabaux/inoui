@@ -7,29 +7,22 @@
     <Voice type="error" :message="error.message" @close="error = null" />
   </div>
 
-  <form
+  <el-form
     class="stretched"
+    label-position="top"
     @submit.prevent
     @keydown.enter="handleCredentials"
   >
-    <label for="email">e-mail</label>
-    <InputText
-      id="email"
-      type="email"
-      v-model="user.email"
-      autocomplete="email"
-    />
-    <label for="password">password</label>
-    <InputText
-      id="password"
-      type="password"
-      v-model="user.password"
-      autocomplete="current-password"
-    />
+    <el-form-item label="e-mail">
+      <el-input id="email" type="email" v-model="user.email" autocomplete="email" />
+    </el-form-item>
+    <el-form-item label="password">
+      <el-input id="password" type="password" v-model="user.password" autocomplete="current-password" />
+    </el-form-item>
 
-    <Button class="w-full" @click="handleCredentials" :loading="submitting">
+    <el-button class="w-full" @click="handleCredentials" :loading="submitting">
       {{ `${submitting ? "Connection en cours" : "Se connecter"}` }}
-    </Button>
+    </el-button>
 
     <div class="flow-row">
       <p>Mot de passe oublié ?</p>
@@ -37,7 +30,7 @@
         Réinitialiser
       </router-link>
     </div>
-  </form>
+  </el-form>
 </template>
 
 <script setup>
@@ -45,8 +38,6 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "@/stores";
 import Voice from "@/components/Voice.vue";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
 
 const user = ref({
   email: "",

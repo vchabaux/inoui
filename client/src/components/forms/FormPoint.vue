@@ -15,20 +15,18 @@
     <!-- Information -->
     <div class="stretched form-header">
       <div class="flow-row-between">
-        <Button
-          aria-label="go back"
-          title="go back"
+        <el-button
           text
           size="small"
           @click="goBack"
         >
           <i class="fa-solid fa-arrow-left" />
           Go back
-        </Button>
+        </el-button>
       </div>
 
       <h2>Point information</h2>
-      <Divider />
+      <el-divider />
       <div v-if="error" class="width-s stretched centered">
         <Voice
           :message="error.message"
@@ -38,40 +36,47 @@
         />
       </div>
 
-      <InputText
-        type="text"
-        placeholder="name"
-        v-model="currentPoint.name"
-        @change="savePoint"
-      />
-      <Search
-        label="address"
-        @select="updatePoint"
-        :defaultValue="currentPoint.attributes.placeName"
-      />
-      <Select
-        label="notice"
-        :options="[{ _id: '', title: '-' }, ...notices]"
-        optionLabel="title"
-        optionValue="_id"
-        v-model="currentPoint.attributes.notice"
-        @change="savePoint"
-      />
+      <el-form label-position="top">
+        <el-form-item label="name">
+          <el-input
+            v-model="currentPoint.name"
+            @change="savePoint"
+          />
+        </el-form-item>
+        <el-form-item label="address">
+          <Search
+            label=""
+            @select="updatePoint"
+            :defaultValue="currentPoint.attributes.placeName"
+          />
+        </el-form-item>
+        <el-form-item label="notice">
+          <el-select
+            v-model="currentPoint.attributes.notice"
+            @change="savePoint"
+          >
+            <el-option label="-" value="" />
+            <el-option v-for="n in notices" :key="n._id" :label="n.title" :value="n._id" />
+          </el-select>
+        </el-form-item>
+      </el-form>
     </div>
 
     <!-- Content -->
     <div v-if="depth < 4" class="stretched form-list">
       <h2>Point detours</h2>
-      <Divider />
+      <el-divider />
 
       <!-- Detours -->
-      <InputText
-        style="flex: 1"
-        type="text"
-        placeholder="detour name"
-        v-model="newDetour"
-        @keyup.enter="addDetour"
-      />
+      <el-form label-position="top">
+        <el-form-item label="detour name">
+          <el-input
+            style="flex: 1"
+            v-model="newDetour"
+            @keyup.enter="addDetour"
+          />
+        </el-form-item>
+      </el-form>
 
       <span v-if="!currentPoint?.children?.length">No detour yet</span>
       <template v-for="($value, $key) in currentPoint.children" :key="$key">
@@ -79,26 +84,22 @@
           <span class="line-clamp-1">{{ $value?.name }} </span>
 
           <div class="flow-row list-actions">
-            <Button
-              aria-label="edit"
-              title="edit"
-              outlined
+            <el-button
+              plain
               size="small"
               @click="editDetour($value)"
             >
               <i class="fa-solid fa-pen" />
-            </Button>
+            </el-button>
 
-            <Button
+            <el-button
               class="danger-btn"
-              aria-label="delete"
-              title="delete"
-              outlined
+              plain
               size="small"
               @click="prepareDelete($value._id)"
             >
               <i class="fa-solid fa-trash-can" />
-            </Button>
+            </el-button>
           </div>
         </div>
       </template>
@@ -108,10 +109,6 @@
 
 <script setup>
 import { ref, watchEffect, computed } from "vue";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import Select from "primevue/select";
-import Divider from "primevue/divider";
 import { useStore } from "@/stores";
 import { Search } from "@/components/mapbox";
 import FormDelete from "@/components/forms/FormDelete.vue";
@@ -238,7 +235,8 @@ async function deleteDetour() {
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
-  gap: 0;
+  gap: var(--size-8);
+  padding: var(--size-6) var(--size-8);
 }
 
 .form-header:not(:empty),

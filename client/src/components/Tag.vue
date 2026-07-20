@@ -1,15 +1,13 @@
 <template>
   <div class="tag-container flow-row" :is="tag">
     <span class="tag-text text-inverted"># {{ label }}</span>
-    <Button class="tag-btn" aria-label="remove" title="remove" text size="small" @click="emits('delete')">
+    <el-button class="tag-btn" aria-label="remove" title="remove" text size="small" @click="emits('delete')">
       <i class="fa-solid fa-xmark" />
-    </Button>
+    </el-button>
   </div>
 </template>
 
 <script setup>
-import Button from "primevue/button";
-
 const emits = defineEmits(["delete"]);
 
 const props = defineProps({

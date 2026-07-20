@@ -7,11 +7,10 @@
   />
 
   <!-- Edit dialog -->
-  <Dialog
+  <el-dialog
     v-if="isEditForm"
-    v-model:visible="isEditForm"
-    modal
-    @hide="isEditForm = false"
+    v-model="isEditForm"
+    @close="isEditForm = false"
   >
     <template #header>
       <div class="variant-dash-title">
@@ -23,49 +22,50 @@
       <FormAssetNakala v-if="isNakala" :assets="selectedItems" />
       <FormAssetLocal v-else :assets="selectedItems" />
     </div>
-  </Dialog>
+  </el-dialog>
 
   <!-- Library container -->
   <div class="library">
     <!-- Header -->
     <div class="flow-row library-header">
-      <InputText type="text" placeholder="Tag" v-model="search" />
-      <Select
+      <el-input type="text" placeholder="Tag" v-model="search" />
+      <el-select
         v-if="sortable"
         placeholder="Type"
-        :options="types"
-        optionLabel="name"
-        optionValue="value"
         v-model="fileType"
-      />
+      >
+        <el-option
+          v-for="t in types"
+          :key="t.value"
+          :label="t.name"
+          :value="t.value"
+        />
+      </el-select>
 
       <div class="flow-row" v-if="selectedItems.length">
-        <Button
+        <el-button
           aria-label="download selection"
           title="download selection"
-          outlined
           @click="downloadSelection"
         >
           <i class="fa-solid fa-download" />
-        </Button>
-        <Button
+        </el-button>
+        <el-button
           aria-label="edit selection"
           title="edit selection"
-          outlined
           @click="openEditForm"
         >
           <i class="fa-solid fa-pen" />
-        </Button>
-        <Button
+        </el-button>
+        <el-button
           aria-label="delete selection"
           title="delete selection"
           v-if="canDelete"
           class="danger-btn"
-          outlined
           @click="isDeleting = true"
         >
           <i class="fa-solid fa-trash-can" />
-        </Button>
+        </el-button>
       </div>
     </div>
 
@@ -94,7 +94,7 @@
       stretched
     >
       <div class="preview-title flow-row variant-dash-title">
-        <Button
+        <el-button
           aria-label="close"
           title="close"
           text
@@ -102,7 +102,7 @@
           size="small"
         >
           <i class="fa-solid fa-xmark" />
-        </Button>
+        </el-button>
         <h2 class="line-clamp-1">{{ previewedItem.originalname }} </h2>
       </div>
 
@@ -114,10 +114,6 @@
 
 <script setup>
 import { ref, computed, watch, onUnmounted } from "vue";
-import Dialog from "primevue/dialog";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import Select from "primevue/select";
 import AssetCard from "@/components/media/AssetCard.vue";
 import { useStore } from "@/stores";
 import FormAssetLocal from "@/components/forms/FormAssetLocal.vue";

@@ -7,9 +7,9 @@
       <h1 class="-first content" v-html="content.title"></h1>
       <h2 class="-second content" v-html="content.subtitle"></h2>
 
-      <Button text :aria-label="$t('intro.next')" :title="$t('intro.next')" class="-third content intro-btn" @click="goForward">
+      <el-button text :aria-label="$t('intro.next')" :title="$t('intro.next')" class="-third content intro-btn" @click="goForward">
         <i class="fa-solid fa-forward"></i>
-      </Button>
+      </el-button>
     </div>
 
     <div v-else-if="app === 'cnrs2'" class="intro-container text-container">
@@ -17,10 +17,10 @@
       <h1 class="-first content invisible" v-html="content.title"></h1>
 
       <div class="buttons flow-row-between width-l centered stretched">
-        <Button :disabled="currentIndex === 0" text :aria-label="$t('intro.previous')" :title="$t('intro.previous')" class="content -second intro-btn" @click="goBackward">
+        <el-button :disabled="currentIndex === 0" text :aria-label="$t('intro.previous')" :title="$t('intro.previous')" class="content -second intro-btn" @click="goBackward">
           <i class="fa-solid fa-backward"></i>
-        </Button>
-        <Button
+        </el-button>
+        <el-button
           text
           :aria-label="$t('intro.audio')"
           :title="$t('intro.audio')"
@@ -28,10 +28,10 @@
           :aria-pressed="hasAudio"
           @click="hasAudio = !hasAudio">
           <i :class="hasAudio ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark'"></i>
-        </Button>
-        <Button text :aria-label="$t('intro.next')" :title="$t('intro.next')" class="content -second intro-btn" @click="goForward">
+        </el-button>
+        <el-button text :aria-label="$t('intro.next')" :title="$t('intro.next')" class="content -second intro-btn" @click="goForward">
           <i class="fa-solid fa-forward"></i>
-        </Button>
+        </el-button>
       </div>
 
       <p class="-first content text-content text-inverted text-center" v-html="content?.content?.[currentIndex]"></p>
@@ -44,7 +44,6 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "@/stores";
 import AppSplash from "@/pages/app/AppSplash.vue";
-import Button from "primevue/button";
 
 const router = useRouter();
 const settingsStore = useStore("settings");

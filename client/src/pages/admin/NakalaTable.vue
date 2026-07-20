@@ -3,16 +3,33 @@
 
   <pre>{{ JSON.stringify(foo, null, 2) }}</pre>
 
-  <Select label="Meta-datas types" :options="metaDataTypes" v-model="selectedMeta" />
-  <Select label="Licenses" :options="licenses" optionLabel="name" v-model="selectedLicense" />
-  <Select label="Data types" :options="dataTypes" v-model="selectedDataType" />
-  <Select label="Properties" :options="properties" v-model="selectedProperty" />
+  <el-form label-position="top">
+    <el-form-item label="Meta-datas types">
+      <el-select v-model="selectedMeta" placeholder="Select" style="width: 100%">
+        <el-option v-for="item in metaDataTypes" :key="item" :label="item" :value="item" />
+      </el-select>
+    </el-form-item>
+    <el-form-item label="Licenses">
+      <el-select v-model="selectedLicense" placeholder="Select" style="width: 100%">
+        <el-option v-for="item in licenses" :key="item.name" :label="item.name" :value="item" />
+      </el-select>
+    </el-form-item>
+    <el-form-item label="Data types">
+      <el-select v-model="selectedDataType" placeholder="Select" style="width: 100%">
+        <el-option v-for="item in dataTypes" :key="item" :label="item" :value="item" />
+      </el-select>
+    </el-form-item>
+    <el-form-item label="Properties">
+      <el-select v-model="selectedProperty" placeholder="Select" style="width: 100%">
+        <el-option v-for="item in properties" :key="item" :label="item" :value="item" />
+      </el-select>
+    </el-form-item>
+  </el-form>
 </template>
 
 <script setup>
 import { computed, ref } from "@vue/reactivity";
 import { useRoute } from "vue-router";
-import Select from "primevue/select";
 import { useStore } from "@/stores";
 
 const route = useRoute();

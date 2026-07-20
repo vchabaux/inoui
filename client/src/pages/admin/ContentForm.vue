@@ -1,128 +1,120 @@
 <template>
   <!-- Medias dialog -->
-  <Dialog
+  <el-dialog
     v-if="isMediaLibOpen"
-    v-model:visible="isMediaLibOpen"
-    modal
-    @hide="isMediaLibOpen = false"
+    :model-value="isMediaLibOpen"
+    @close="isMediaLibOpen = false"
   >
     <Medias picker @select="addMedia" :mediaType="currentUploadType" />
-  </Dialog>
+  </el-dialog>
 
-  <div class="flow-row-between variant-dash-title">
+  <div class="flow-row-between variant-dash-title" style="width: 100%">
     <h1>{{ currentPage?.slug }}</h1>
   </div>
 
-  <div class="width-m centered">
-    <div
+  <div class="page-content">
+    <!-- Intro form -->
+    <el-form
       v-if="route.params.slug === 'intro'"
-      tag="form"
-      class="stretched"
+      label-position="top"
       @submit.prevent
     >
-      <div class="stretched">
-        <h2>Title screen</h2>
-        <div class="flow-row intro-media">
-          <label for="video">video</label>
-          <InputText
-            id="video"
-            type="text"
+      <h2>Title screen</h2>
+
+      <div class="intro-media">
+        <el-form-item label="video">
+          <el-input
+            :model-value="page.video.split('/')[page.video.split('/').length - 1]"
             readonly
-            v-model="page.video.split('/')[page.video.split('/').length - 1]"
           />
-          <Button
-            aria-label="upload"
-            title="upload"
-            @click="openLibrary('video')"
-          >
-            <i class="fa-solid fa-arrow-up-from-bracket" />
-          </Button>
-        </div>
-        <label for="title">title</label>
-        <InputText id="title" type="text" v-model="page.title" />
-        <label for="subtitle">sub-title</label>
-        <Textarea
-          id="subtitle"
-          :rows="3"
-          v-model="page.subtitle"
-        />
+        </el-form-item>
+        <el-button
+          aria-label="upload"
+          title="upload"
+          @click="openLibrary('video')"
+        >
+          <i class="fa-solid fa-arrow-up-from-bracket" />
+        </el-button>
       </div>
 
-      <Divider v-if="app === 'cnrs2'" />
+      <el-form-item label="title">
+        <el-input v-model="page.title" />
+      </el-form-item>
 
-      <div class="stretched" v-if="app === 'cnrs2'">
+      <el-form-item label="sub-title">
+        <el-input type="textarea" :rows="3" v-model="page.subtitle" />
+      </el-form-item>
+
+      <el-divider v-if="app === 'cnrs2'" />
+
+      <template v-if="app === 'cnrs2'">
         <h2>Text screen</h2>
-        <div class="flow-row intro-media">
-          <label for="audio">audio</label>
-          <InputText
-            id="audio"
-            type="text"
-            readonly
-            v-model="page.audio.split('/')[page.audio.split('/').length - 1]"
-          />
-          <Button
+
+        <div class="intro-media">
+          <el-form-item label="audio">
+            <el-input
+              :model-value="page.audio.split('/')[page.audio.split('/').length - 1]"
+              readonly
+            />
+          </el-form-item>
+          <el-button
             aria-label="upload"
             title="upload"
             @click="openLibrary('audio')"
           >
             <i class="fa-solid fa-arrow-up-from-bracket" />
-          </Button>
+          </el-button>
         </div>
-        <label :for="`text-${i}`">text {{ slot > 1 ? '(slide ' + slot + ')' : '' }}</label>
-        <Textarea
-          :id="`text-${i}`"
-          :rows="5"
-          v-model="page.content[i]"
-        />
+
+        <el-form-item
+          v-for="slot in textSlots"
+          :key="slot"
+          :label="`text ${slot > 1 ? '(slide ' + slot + ')' : ''}`"
+        >
+          <el-input type="textarea" :rows="5" v-model="page.content[slot - 1]" />
+        </el-form-item>
 
         <div class="-centered flow-row">
-          <Button outlined size="small" @click="textSlots++"
-            ><i class="fa-solid fa-plus"
-          /></Button>
-          <Button
-            class="danger-btn"
-            outlined
-            size="small"
-            @click="textSlots--"
-            ><i class="fa-solid fa-minus"
-          /></Button>
+          <el-button size="small" @click="textSlots++">
+            <i class="fa-solid fa-plus" />
+          </el-button>
+          <el-button size="small" class="danger-btn" @click="textSlots--">
+            <i class="fa-solid fa-minus" />
+          </el-button>
         </div>
-      </div>
-    </div>
+      </template>
+    </el-form>
 
-    <div
+    <!-- Credits form -->
+    <el-form
       v-else-if="route.params.slug === 'credits'"
-      tag="form"
-      class="stretched"
+      label-position="top"
       @submit.prevent
     >
-      <Editor
-        v-model="page.content"
-      />
-    </div>
+      <el-form-item label="Credits content">
+        <el-input type="textarea" :rows="15" v-model="page.content" />
+      </el-form-item>
+      <p class="hint-text">this will be displayed in the website footer</p>
+    </el-form>
 
-    <div v-else tag="form" class="stretched" @submit.prevent>
-      <InputText type="text" label="Page title" v-model="page.title" />
-      <Editor
-        v-model="page.content"
-        ref="editorRef"
-      />
-    </div>
+    <!-- Other pages form -->
+    <el-form v-else label-position="top" @submit.prevent>
+      <el-form-item label="Page title">
+        <el-input v-model="page.title" />
+      </el-form-item>
+      <el-form-item label="Page content">
+        <el-input type="textarea" :rows="15" v-model="page.content" />
+      </el-form-item>
+    </el-form>
 
     <div class="flow-row -end save-btn">
-      <Button @click="save">Save changes</Button>
+      <el-button @click="save">Save changes</el-button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import Dialog from "primevue/dialog";
-import InputText from "primevue/inputtext";
-import Textarea from "primevue/textarea";
-import Editor from "primevue/editor";
-import Button from "primevue/button";
-import Divider from "primevue/divider";
 import Medias from "@/pages/admin/Medias.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/stores";
@@ -136,7 +128,6 @@ const settingsStore = useStore("settings");
 const app = computed(() => settingsStore.project);
 const isMediaLibOpen = ref(false);
 const currentUploadType = ref(null);
-const editorRef = ref(null);
 
 const currentPage = computed(() =>
   pageStore.list.find((page) => page.slug === route.params.slug)
@@ -168,13 +159,9 @@ function addMedia(value) {
 
   const addFunctionName = addFunctions[currentUploadType.value];
 
-  if (editorRef.value) {
-    editorRef.value[addFunctionName](value.url);
-  } else {
-    currentUploadType.value === "video"
-      ? (page.value.video = value.url)
-      : (page.value.audio = value.url);
-  }
+  currentUploadType.value === "video"
+    ? (page.value.video = value.url)
+    : (page.value.audio = value.url);
 
   isMediaLibOpen.value = false;
   currentUploadType.value = null;
@@ -191,8 +178,11 @@ h1 {
   text-transform: capitalize;
 }
 
-form {
-  gap: var(--size-8) !important;
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-8);
+  max-width: 800px;
 }
 
 .intro-media {
@@ -208,5 +198,11 @@ form {
 
 .save-btn {
   margin-block-start: var(--size-4);
+}
+
+.hint-text {
+  font-size: 0.85em;
+  color: var(--el-text-color-secondary);
+  margin: -0.5em 0 0;
 }
 </style>

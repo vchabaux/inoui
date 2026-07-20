@@ -12,9 +12,9 @@
       <router-link :to="`/admin/users/${item._id}`" class="link-outline text-sm" aria-label="edit" title="edit">
         <i class="fa-solid fa-pen"></i>
       </router-link>
-      <Button class="danger-btn" aria-label="delete" title="delete" outlined size="small" @click="prepareDelete(item._id)">
+      <el-button class="danger-btn" aria-label="delete" title="delete" type="danger" plain size="small" @click="prepareDelete(item._id)">
         <i class="fa-solid fa-trash-can"></i>
-      </Button>
+      </el-button>
     </template>
   </DaTable>
 </template>
@@ -25,7 +25,6 @@ import DaTable from "@/components/DaTable.vue";
 import { columnsUsers } from "@/utils/columns";
 import { useStore } from "@/stores";
 import FormDelete from "@/components/forms/FormDelete.vue";
-import Button from "primevue/button";
 
 const userStore = useStore("user");
 const users = computed(() => userStore.list);

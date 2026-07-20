@@ -1,47 +1,72 @@
 <template>
-  <div class="flow-row-between variant-dash-title">
+  <div class="flow-row-between variant-dash-title" style="width: 100%">
     <h1>{{ isUpdate ? currentPlaylist?.name : "New playlist" }}</h1>
   </div>
 
-  <form class="width-s stretched centered">
-    <h2>Playlist information</h2>
-    <InputText type="text" name="name" placeholder="Name" v-model="playlist.name" required />
+  <div class="page-content">
+    <el-form label-position="top" class="width-s">
+      <h2>Playlist information</h2>
+      <el-form-item label="Name">
+        <el-input v-model="playlist.name" name="name" required />
+      </el-form-item>
 
-    <h2>Playlist tracks</h2>
-    <div class="variant-surface stretched">
-      <span v-if="!tracksSelected.length">No track selected yet</span>
-      <template v-for="$value in tracksSelected" :key="$value._id">
-        <div class="row-selected">
-          <span class="line-clamp-1">{{ $value.name }}</span>
-          <Button aria-label="move up" title="move up" text size="small" :class="{ hidden: checkSwap('first', $value._id) }" @click="swapTrackUp($value._id)">
-            <i class="fa-solid fa-chevron-up" />
-          </Button>
-          <Button aria-label="move down" title="move down" text size="small" :class="{ hidden: checkSwap('down', $value._id) }" @click="swapTrackDown($value._id)">
-            <i class="fa-solid fa-chevron-down" />
-          </Button>
-          <Button aria-label="remove from playlist" title="remove from playlist" outlined size="small" @click="removeTrack($value._id)">
-            <i class="fa-solid fa-xmark" />
-          </Button>
-        </div>
-      </template>
+      <h2>Playlist tracks</h2>
+      <div class="variant-surface stretched">
+        <span v-if="!tracksSelected.length">No track selected yet</span>
+        <template v-for="$value in tracksSelected" :key="$value._id">
+          <div class="row-selected">
+            <span class="line-clamp-1">{{ $value.name }}</span>
+            <el-button
+              aria-label="move up"
+              title="move up"
+              text
+              size="small"
+              :class="{ hidden: checkSwap('first', $value._id) }"
+              @click="swapTrackUp($value._id)">
+              <i class="fa-solid fa-chevron-up" />
+            </el-button>
+            <el-button
+              aria-label="move down"
+              title="move down"
+              text
+              size="small"
+              :class="{ hidden: checkSwap('down', $value._id) }"
+              @click="swapTrackDown($value._id)">
+              <i class="fa-solid fa-chevron-down" />
+            </el-button>
+            <el-button
+              aria-label="remove from playlist"
+              title="remove from playlist"
+              plain
+              size="small"
+              @click="removeTrack($value._id)">
+              <i class="fa-solid fa-xmark" />
+            </el-button>
+          </div>
+        </template>
+      </div>
+
+      <h2>Available tracks</h2>
+      <div class="variant-surface stretched">
+        <span v-if="!tracksAvailable.length">Every published track is already in the playlist</span>
+        <template v-for="$value in tracksAvailable" :key="$value._id">
+          <div class="row-available">
+            <span class="line-clamp-1">{{ $value.name }}</span>
+            <el-button
+              aria-label="add to playlist"
+              title="add to playlist"
+              size="small"
+              @click="addTrack($value._id)">
+              <i class="fa-solid fa-plus" />
+            </el-button>
+          </div>
+        </template>
+      </div>
+    </el-form>
+
+    <div class="width-s">
+      <el-button class="w-full" @click="savePlaylist" :loading="isSubmitting"> Save changes </el-button>
     </div>
-
-    <h2>Available tracks</h2>
-    <div class="variant-surface stretched">
-      <span v-if="!tracksAvailable.length">Every published track is already in the playlist</span>
-      <template v-for="$value in tracksAvailable" :key="$value._id">
-        <div class="row-available">
-          <span class="line-clamp-1">{{ $value.name }}</span>
-          <Button aria-label="add to playlist" title="add to playlist" size="small" @click="addTrack($value._id)">
-            <i class="fa-solid fa-plus" />
-          </Button>
-        </div>
-      </template>
-    </div>
-  </form>
-
-  <div class="width-s centered">
-    <Button class="w-full" @click="savePlaylist" :loading="isSubmitting"> Save changes </Button>
   </div>
 </template>
 
@@ -49,8 +74,6 @@
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/stores";
-import InputText from "primevue/inputtext";
-import Button from "primevue/button";
 
 const playlistStore = useStore("playlist");
 const trackStore = useStore("track");
