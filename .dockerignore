@@ -1,0 +1,11 @@
+.git
+.idea
+.junie
+.tmp
+old-vues
+**/node_modules
+**/.env*
+!client/.env.production
+**/uploads
+**/dist
+server/public
