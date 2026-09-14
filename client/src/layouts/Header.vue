@@ -1,9 +1,9 @@
 <template>
-  <header class="flow-row-between stretched" :class="{'-accent' : app === 'cnrs2'}">
+  <header class="flow-row-between stretched" :class="{'-cnrs1': app === 'cnrs1', '-accent' : app === 'cnrs2'}">
     <div class="flow-row stretched">
       <div class="header-title -uppercase flow-row" :class="{ 'img-title': app === 'cnrs2' }">
         <router-link v-if="app === 'cnrs1'" class="header-link link-text" to="/">{{ settings?.name }}</router-link>
-        <router-link v-else to="/"><img src="/cnrs2-logo.jpg" alt="São José" width="150" /></router-link>
+        <router-link v-else to="/"><img src="/cnrs2-logo.jpg" alt="São José" width="200" /></router-link>
       </div>
 
       <nav class="desktop-nav flow-row stretched">
@@ -89,12 +89,64 @@ function setPublicLang(lang) {
 </script>
 
 <style scoped>
+header {
+  padding: var(--size-4) var(--size-6);
+}
+
+header.-cnrs1 {
+  padding: 0 var(--size-6);
+}
+
+.-cnrs1 .header-title {
+  padding-block: 0;
+  line-height: 0.5;
+}
+
+.-cnrs1 .header-title .header-link {
+  font-size: inherit;
+  padding-block: 0;
+  line-height: inherit;
+  padding: var(--size-5) var(--size-1);
+}
+
+.-cnrs1 .desktop-nav .header-link,
+.-cnrs1 .header-extra a {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-block: var(--size-2);
+}
+
+.-cnrs1 .header-link.-active {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-radius: 0 !important;
+}
+
+.-cnrs1 .desktop-nav,
+.-cnrs1 .mobile-menu {
+  border-inline-start: none !important;
+}
+
+.header-nav {
+  gap: var(--size-6);
+}
+
+.header-link {
+  font-size: var(--size-4);
+}
+
 .-accent {
   font-family: var(--app-font-title);
 }
 
 .-uppercase {
   text-transform: uppercase;
+  font-weight: bold;
+}
+
+.-cnrs1 .-uppercase {
+  font-weight: normal;
 }
 
 .img-title {

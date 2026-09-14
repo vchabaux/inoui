@@ -8,50 +8,59 @@
   <!-- Header -->
   <div class="flow-row-between variant-dash-title" style="width: 100%">
     <h1>Notices</h1>
-    <router-link to="/admin/notices/new">New notice</router-link>
+    <router-link to="/admin/notices/new" class="link-plain">New notice</router-link>
   </div>
 
   <!-- Filters -->
   <div class="flow-row">
-    <el-select class="notices-filter" v-model="filter.status" placeholder="-">
-      <el-option
-        v-for="opt in ['all', 'draft', 'pending', 'published']"
-        :key="opt"
-        :label="opt"
-        :value="opt"
-      />
-    </el-select>
+    <div class="notices-filter">
+      <label class="text-fade">status</label>
+      <el-select v-model="filter.status" placeholder="-">
+        <el-option
+          v-for="opt in ['all', 'draft', 'pending', 'published']"
+          :key="opt"
+          :label="opt"
+          :value="opt"
+        />
+      </el-select>
+    </div>
 
-    <el-select class="notices-filter" v-model="filter.author" placeholder="-">
-      <el-option
-        v-for="opt in ['all', ...authors]"
-        :key="opt"
-        :label="opt"
-        :value="opt"
-      />
-    </el-select>
+    <div class="notices-filter">
+      <label class="text-fade">author</label>
+      <el-select v-model="filter.author" placeholder="-">
+        <el-option
+          v-for="opt in ['all', ...authors]"
+          :key="opt"
+          :label="opt"
+          :value="opt"
+        />
+      </el-select>
+    </div>
 
-    <el-select class="notices-filter" v-model="filter.mediaTypes" placeholder="-">
-      <el-option
-        v-for="opt in ['all', 'text', 'image', 'audio', 'video']"
-        :key="opt"
-        :label="opt"
-        :value="opt"
-      />
-    </el-select>
+    <div class="notices-filter">
+      <label class="text-fade">media type</label>
+      <el-select v-model="filter.mediaTypes" placeholder="-">
+        <el-option
+          v-for="opt in ['all', 'text', 'image', 'audio', 'video']"
+          :key="opt"
+          :label="opt"
+          :value="opt"
+        />
+      </el-select>
+    </div>
   </div>
 
   <!-- List -->
   <DaTable class="fix-table" :data="filtered" :columns="columnsNotices" layout="2fr 1fr 1fr" expandable>
     <template #row-controls="{ item }">
-      <el-button aria-label="preview" title="preview" size="small" @click="previewNotice(item._id)">
+      <el-button aria-label="preview" title="preview" type="primary" size="small" @click="previewNotice(item._id)">
         <i class="fa-solid fa-eye" />
       </el-button>
       <router-link
         aria-label="edit"
         title="edit"
         v-if="getPermission(item)"
-        class="el-button el-button--default el-button--small"
+        class="link-outline"
         :to="`/admin/notices/${item._id}`"
       >
         <i class="fa-solid fa-pen" />
@@ -60,9 +69,9 @@
         v-if="getPermission(item)"
         aria-label="delete"
         title="delete"
-        size="small"
+        type="danger"
         plain
-        class="danger-btn"
+        size="small"
         :loading="isSubmitting"
         @click="prepareDelete(item._id)"
       >
@@ -170,6 +179,8 @@ function previewNotice(id) {
 .notices-filter {
   flex: 1;
   min-width: 300px;
+  display: grid;
+  gap: var(--size-2);
 }
 
 .notice-update-title {

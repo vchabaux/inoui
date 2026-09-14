@@ -5,7 +5,7 @@
   <!-- Header -->
   <div class="flow-row-between variant-dash-title" style="width: 100%">
     <h1>Playlists</h1>
-    <router-link to="/admin/playlists/new" class="link-text">New playlist</router-link>
+    <router-link to="/admin/playlists/new" class="link-plain">New playlist</router-link>
   </div>
 
   <!-- List -->
@@ -27,8 +27,8 @@
         aria-label="delete"
         title="delete"
         size="small"
+        type="danger"
         plain
-        class="danger-btn"
         :loading="isSubmitting"
         @click="openDialogDelete(item._id)">
         <i class="fa-solid fa-trash-can" />

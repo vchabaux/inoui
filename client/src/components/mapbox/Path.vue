@@ -142,6 +142,7 @@ function getLayer(id, color, dashed) {
     layout: {
       "line-cap": "round",
       "line-join": "round",
+      visibility: props.visible ? "visible" : "none",
     },
     paint: {
       "line-color": color,

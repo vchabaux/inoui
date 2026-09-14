@@ -78,7 +78,7 @@
           <el-button size="small" @click="textSlots++">
             <i class="fa-solid fa-plus" />
           </el-button>
-          <el-button size="small" class="danger-btn" @click="textSlots--">
+          <el-button size="small" type="danger" plain @click="textSlots--">
             <i class="fa-solid fa-minus" />
           </el-button>
         </div>

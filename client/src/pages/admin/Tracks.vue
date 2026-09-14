@@ -5,7 +5,7 @@
   <!-- Header -->
   <div class="variant-dash-title flow-row-between">
     <h1>Tracks</h1>
-    <router-link to="/admin/tracks/new">New track</router-link>
+    <router-link to="/admin/tracks/new" class="link-plain">New track</router-link>
   </div>
 
   <!-- Filters -->
@@ -60,7 +60,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="" width="120">
+    <el-table-column label="" width="190" class-name="row-controls-cell">
       <template #default="{ row }">
         <router-link
           v-if="getPermission(row)"
@@ -74,8 +74,8 @@
         <el-button
           v-if="getPermission(row)"
           size="small"
+          type="danger"
           plain
-          class="danger-btn"
           aria-label="delete"
           title="delete"
           @click="prepareDelete(row._id)"
@@ -149,6 +149,7 @@ async function deleteTrack() {
 <style scoped>
 .tracks-filters {
   display: grid;
+  gap: var(--size-2);
 }
 
 .tracks-filter {

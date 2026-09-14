@@ -134,6 +134,31 @@
     <el-button class="w-full upload-btn" :loading="isSubmitting" @click="upload">
       {{ isUpdate ? "Save" : "Add to nakala library" }}
     </el-button>
+
+    <!-- PUBLISH PROGRESS: server → Nakala (async via SSE) -->
+    <div v-if="nakalaStore.publishStatus === 'uploading'" class="temp-upload__progress">
+      <div
+        class="temp-upload__bar"
+        :style="{ width: (nakalaStore.publishProgress ?? 0) + '%' }"
+      />
+    </div>
+
+    <div
+      v-else-if="nakalaStore.publishStatus === 'hashing' || nakalaStore.publishStatus === 'creating'"
+      class="publish-phase"
+    >
+      <i class="fa-solid fa-spinner fa-spin" />
+      <span v-if="nakalaStore.publishStatus === 'hashing'">Indexation Nakala…</span>
+      <span v-else>Création de la notice…</span>
+    </div>
+
+    <Voice
+      v-if="nakalaStore.publishStatus === 'error' && nakalaStore.publishError"
+      :message="nakalaStore.publishError"
+      type="error"
+      :closable="true"
+      @close="nakalaStore.publishStatus = 'idle'; nakalaStore.publishError = null"
+    />
   </el-form>
 </template>
 
@@ -202,10 +227,10 @@ const excludedMetas = [
 watch(
   () => props.dataId,
   (identifier) => {
+    const configuredMetas = settingsStore.settings?.nakala?.assetMetas ?? [];
+
     if (!identifier) {
-      assetMetas.value = settingsStore.settings.nakala.assetMetas.map(
-        (meta) => ({ ...meta })
-      );
+      assetMetas.value = configuredMetas.map((meta) => ({ ...meta }));
       title.value = "";
       selectedLicense.value = "";
       author.value = {
@@ -218,6 +243,7 @@ watch(
     }
 
     const foundData = nakalaStore.getById(identifier);
+    if (!foundData) return; // donnée absente du store : rien à pré-remplir
 
     const foundLicense = foundData.metas.find((m) =>
       m.propertyUri.includes("license")
@@ -241,15 +267,21 @@ watch(
     });
 
     filteredMetas.forEach((meta) => {
-      const foundAssociation = settingsStore.settings.nakala.assetMetas.find(
-        (m) => {
-          return (
-            m.propertyUri === meta.propertyUri && m.typeUri === meta.typeUri
-          );
-        }
-      );
+      const foundAssociation = configuredMetas.find((m) => {
+        return (
+          m.propertyUri === meta.propertyUri && m.typeUri === meta.typeUri
+        );
+      });
 
-      meta.title = foundAssociation.title;
+      const isHash = meta.propertyUri.includes("#");
+      const propertyName = isHash
+        ? meta.propertyUri.split("#")[1]
+        : meta.propertyUri.split("/").pop();
+
+      // Meta absente de la config : titre de repli dérivé de l'URI, la meta
+      // reste affichée et sera préservée à la sauvegarde (formatMetas envoie
+      // toutes les entrées d'assetMetas).
+      meta.title = foundAssociation?.title ?? propertyName;
       meta.defaultValue = meta.value;
     });
 
@@ -259,16 +291,15 @@ watch(
 
     title.value = foundTitle?.value;
 
-    const normalizedLicense = nakalaStore.getLicense(foundLicense.value);
-
-    selectedLicense.value = normalizedLicense;
+    // Le select attend le CODE de la licence (valeur des el-option).
+    selectedLicense.value = foundLicense?.value ?? "";
   },
   {
     immediate: true,
   }
 );
 
-const licenses = computed(() => settingsStore.settings.nakala.licenses);
+const licenses = computed(() => nakalaStore.vocabularies?.licenses ?? []);
 const language = computed(() => settingsStore.settings.nakala.language);
 
 function formatMetas(metas, lang) {
@@ -560,5 +591,14 @@ function handleSelect(value) {
 .temp-upload__waiting {
   font-size: 0.875rem;
   opacity: 0.8;
+}
+
+.publish-phase {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  opacity: 0.8;
+  margin-top: 0.5rem;
 }
 </style>

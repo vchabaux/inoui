@@ -5,7 +5,7 @@
   <!-- Header -->
   <div class="flow-row-between variant-dash-title">
     <h1>Artists</h1>
-    <router-link to="/admin/musicians/new" class="link-text">New artist</router-link>
+    <router-link to="/admin/musicians/new" class="link-plain">New artist</router-link>
   </div>
 
   <!-- List -->
@@ -14,7 +14,7 @@
       <router-link aria-label="edit" title="edit" class="link-outline text-sm" :to="`/admin/musicians/${item._id}`">
         <i class="fa-solid fa-pen" />
       </router-link>
-      <el-button aria-label="delete" title="delete" size="small" plain class="danger-btn" :loading="isSubmitting" @click="openDialogDelete(item._id)">
+      <el-button aria-label="delete" title="delete" size="small" type="danger" plain :loading="isSubmitting" @click="openDialogDelete(item._id)">
         <i class="fa-solid fa-trash-can" />
       </el-button>
     </template>

@@ -1,31 +1,41 @@
 <template>
-  <div class="layout-column">
-    <slot />
+  <div class="form-shell">
+    <div class="form-page -floating">
+      <slot />
+    </div>
   </div>
 </template>
 
-<style scoped>
-.layout-column {
-  max-width: 600px;
-  margin-inline: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+<style>
+/* Reproduction du LayoutColumn owl-ui : shell accent + carte flottante
+   de largeur "small" (min(50ch,100%)) centrée, comme l'ancienne app. */
+.form-shell {
   min-height: 100vh;
-  padding: var(--size-4);
-  gap: var(--size-6);
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  background-color: var(--color-surface-accent);
+}
+
+.form-page {
+  width: min(50ch, 100%);
+  margin: var(--size-8);
+  background-color: var(--color-background-neutral);
+  border: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  border-radius: var(--app-radius, var(--radius-2));
+  box-shadow: var(--box-shadow-5);
+  padding: var(--size-6) var(--size-8);
+  display: grid;
+  gap: var(--size-8);
+  align-content: flex-start;
+  justify-items: stretch;
 }
 
 form {
   display: flex;
   flex-direction: column;
   gap: var(--size-4);
-}
-
-/* Inputs full width dans les formulaires */
-:deep(input) {
-  width: 100%;
-  box-sizing: border-box;
 }
 
 label {

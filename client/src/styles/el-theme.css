@@ -1,0 +1,185 @@
+/* ============================================================
+   el-theme.css — Pont Element Plus -> design tokens owl
+   Fait correspondre les variables CSS d'Element Plus aux tokens
+   de l'app (owl-css) pour que les composants el-* adoptent le
+   langage visuel d'origine (accent #4e5e7f, rayons owl, ombres).
+   ============================================================ */
+
+body {
+  /* Couleur primaire = full-accent de l'app (accent-40) */
+  --el-color-primary: var(--color-full-accent);
+  --el-color-primary-light-3: var(--app-color-accent-30, #374766);
+  --el-color-primary-light-5: var(--app-color-accent-50, #677799);
+  --el-color-primary-light-7: var(--app-color-accent-70, #9babcf);
+  --el-color-primary-light-8: var(--app-color-accent-80, #b7c7ed);
+  --el-color-primary-light-9: var(--app-color-accent-95, #ebf0ff);
+  --el-color-primary-dark-2: var(--app-color-accent-50, #677799);
+
+  /* Danger = crimson (comme .danger-btn owl) */
+  --el-color-danger: crimson;
+  --el-color-danger-light-3: #d94a5c;
+  --el-color-danger-light-5: #e77e8b;
+  --el-color-danger-light-7: #f0aeb6;
+  --el-color-danger-light-8: #f4c6cb;
+  --el-color-danger-light-9: #f9e2e5;
+  --el-color-danger-dark-2: #a90f2f;
+
+  /* Textes */
+  --el-text-color-primary: var(--color-text-neutral);
+  --el-text-color-regular: var(--color-text-neutral);
+  --el-text-color-secondary: var(--color-text-fade);
+  --el-text-color-placeholder: var(--color-text-fade);
+  --el-text-color-disabled: var(--color-text-fade);
+
+  /* Bordures / fonds */
+  --el-border-color: var(--color-border-neutral);
+  --el-border-color-light: var(--color-border-neutral);
+  --el-border-color-lighter: var(--color-border-neutral);
+  --el-border-color-extra-light: var(--color-element-neutral);
+  --el-fill-color-blank: var(--color-background-neutral);
+  --el-fill-color: var(--color-element-neutral);
+  --el-fill-color-light: var(--color-element-neutral);
+  --el-fill-color-lighter: var(--color-surface-neutral);
+  --el-bg-color: var(--color-background-neutral);
+  --el-bg-color-page: var(--color-background-neutral);
+  --el-bg-color-overlay: var(--color-background-neutral);
+
+  /* Typographie */
+  --el-font-family: var(--app-font-body, inherit);
+  --el-font-size-base: 14px;
+  --el-font-size-small: 13px;
+
+  /* Rayons — l'app pilote via --app-radius (0 sur cnrs1 public) */
+  --el-border-radius-base: var(--app-radius, var(--radius-2));
+  --el-border-radius-small: var(--app-radius, var(--radius-1));
+  --el-border-radius-round: var(--radius-4);
+
+  /* Ombres */
+  --el-box-shadow: var(--box-shadow-3);
+  --el-box-shadow-light: var(--box-shadow-2);
+  --el-box-shadow-lighter: var(--box-shadow-1);
+  --el-box-shadow-dark: var(--box-shadow-5);
+
+  /* Blanc el = texte inversé de l'app (texte du bouton primary) */
+  --el-color-white: var(--color-text-inverted);
+}
+
+/* --- Corrections ciblées de composants el-* ------------------ */
+
+/* Boutons : espacement owl (padding size-2/size-4) et hover par filtre */
+.el-button {
+  gap: var(--size-2);
+  transition: all .2s ease-in-out;
+}
+.el-button:not(.el-button--text):not(.is-text):not(.is-link):hover {
+  filter: var(--color-filter-hover);
+}
+.el-button:not(.el-button--text):not(.is-text):not(.is-link):active {
+  filter: var(--color-filter-active);
+}
+
+/* Champs : fond = background de l'app (comme owl-input-field) */
+.el-input__wrapper,
+.el-textarea__inner {
+  background-color: var(--color-background-neutral);
+  border-radius: var(--app-radius, var(--radius-2));
+}
+.el-input__wrapper.is-focus,
+.el-textarea__inner:focus {
+  box-shadow: 0 0 0 1px var(--color-full-accent) inset !important;
+}
+.el-select__wrapper {
+  background-color: var(--color-element-neutral);
+  border-radius: var(--app-radius, var(--radius-2));
+}
+.el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 1px var(--color-full-accent) inset !important;
+}
+
+/* Dialog : cards owl (header/footer surface, ombre box-shadow-5) */
+.el-dialog {
+  border: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  border-radius: var(--app-radius, var(--radius-2));
+  box-shadow: var(--box-shadow-5);
+  overflow: hidden;
+}
+.el-dialog__header {
+  background-color: var(--color-surface-neutral);
+  border-block-end: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  padding: var(--size-4) var(--size-8);
+  margin-inline-end: 0;
+}
+.el-dialog__title {
+  font-family: var(--app-font-title, inherit);
+  font-weight: 700;
+}
+.el-dialog__body {
+  padding: var(--size-6) var(--size-8);
+}
+.el-dialog__footer {
+  background-color: var(--color-surface-neutral);
+  border-block-start: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  padding: var(--size-4) var(--size-8);
+}
+
+/* Tables : conteneur type da-table (bordure + rayon, zebra owl) */
+.el-table {
+  --el-table-border-color: var(--color-border-neutral);
+  --el-table-header-bg-color: var(--color-surface-neutral);
+  --el-table-header-text-color: var(--color-text-neutral);
+  --el-table-row-hover-bg-color: var(--color-element-neutral);
+  --el-table-tr-bg-color: var(--color-background-neutral);
+  background-color: var(--color-background-neutral);
+}
+.el-table--border,
+.el-table--border::after {
+  border-color: var(--color-border-neutral);
+}
+
+/* Actions de ligne : horizontales sur une seule ligne, comme les boutons
+   icônes owl d'origine. Global (ici) car Tracks.vue monte son propre
+   el-table sans passer par DaTable. On annule aussi les marges de frères
+   el-button (12px) qui s'ajouteraient au gap et provoqueraient un wrap. */
+.el-table td.row-controls-cell .cell {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  flex-wrap: nowrap;
+}
+.el-table td.row-controls-cell .cell .el-button + .el-button {
+  margin-inline-start: 0;
+}
+/* Hauteur homogène des contrôles d'action : le lien link-outline (padding
+   owl 8px) mesure 32px contre 24px pour un el-button small — on aligne. */
+.el-table td.row-controls-cell .cell .link-outline {
+  padding-block: var(--size-1);
+}
+
+/* Popper (menus déroulants, selects) */
+.el-popper.is-light {
+  background-color: var(--color-background-neutral);
+  border: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  border-radius: var(--app-radius, var(--radius-2));
+  box-shadow: var(--box-shadow-3);
+}
+.el-popper.is-light .el-popper__arrow::before {
+  background-color: var(--color-background-neutral);
+  border-color: var(--color-border-neutral);
+}
+
+/* Pagination */
+.el-pagination {
+  --el-pagination-button-color: var(--color-text-neutral);
+  --el-pagination-hover-color: var(--color-full-accent);
+}
+
+/* Checkbox / radio / switch : accent de l'app */
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-radio__input.is-checked .el-radio__inner {
+  background-color: var(--color-full-accent);
+  border-color: var(--color-full-accent);
+}
+.el-switch.is-checked .el-switch__core {
+  background-color: var(--color-full-accent);
+  border-color: var(--color-full-accent);
+}

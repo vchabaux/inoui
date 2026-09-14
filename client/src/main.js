@@ -6,6 +6,7 @@ import "@/assets/owl-css-reset.css";
 import "@/styles/theme.css";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
+import "@/styles/el-theme.css";
 
 import App from "@/App.vue";
 import Layout from "@/layouts/Layout.vue";

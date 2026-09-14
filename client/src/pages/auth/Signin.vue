@@ -13,20 +13,20 @@
     @submit.prevent
     @keydown.enter="handleCredentials"
   >
-    <el-form-item label="e-mail">
+    <el-form-item label="E-mail">
       <el-input id="email" type="email" v-model="user.email" autocomplete="email" />
     </el-form-item>
-    <el-form-item label="password">
-      <el-input id="password" type="password" v-model="user.password" autocomplete="current-password" />
+    <el-form-item label="Password">
+      <el-input id="password" type="password" v-model="user.password" autocomplete="current-password" show-password />
     </el-form-item>
 
-    <el-button class="w-full" @click="handleCredentials" :loading="submitting">
+    <el-button type="primary" class="w-full" @click="handleCredentials" :loading="submitting">
       {{ `${submitting ? "Connection en cours" : "Se connecter"}` }}
     </el-button>
 
     <div class="flow-row">
       <p>Mot de passe oublié ?</p>
-      <router-link to="/password-forgotten" class="link-text">
+      <router-link to="/password-forgotten" class="link-text" style="color: var(--color-text-accent)">
         Réinitialiser
       </router-link>
     </div>

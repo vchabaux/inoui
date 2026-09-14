@@ -1,7 +1,7 @@
 <template>
   <el-table
     :data="data"
-    :row-key="selectionKey || '_id'"
+    :row-key="getRowKey"
     stripe
     v-model:expand-row-keys="expandedRowKeys"
     :empty-text="emptyMessage"
@@ -29,7 +29,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column v-if="$slots['row-controls']" label="" width="120">
+    <el-table-column v-if="$slots['row-controls']" label="" width="190" class-name="row-controls-cell">
       <template #default="{ row }">
         <slot name="row-controls" :item="row" />
       </template>
@@ -50,6 +50,22 @@ const props = defineProps({
 });
 
 const expandedRowKeys = ref([]);
+
+/* Clé de ligne unique : indispensable pour que l'expand ne déplie que la
+   ligne cliquée. Les datas Nakala n'ont pas de _id (mais un identifier),
+   d'où la chaîne de repli — sinon toutes les lignes partagent la clé
+   `undefined` et se déplient ensemble. */
+const fallbackKeys = new WeakMap();
+let fallbackSeq = 0;
+
+function getRowKey(row) {
+  if (props.selectionKey) return row[props.selectionKey];
+  if (row._id != null) return row._id;
+  if (row.identifier != null) return row.identifier;
+  if (row.id != null) return row.id;
+  if (!fallbackKeys.has(row)) fallbackKeys.set(row, `__row_${fallbackSeq++}`);
+  return fallbackKeys.get(row);
+}
 
 function getNestedValue(obj, path) {
   if (!path) return "";

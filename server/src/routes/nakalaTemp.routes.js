@@ -1,6 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
+const { EventEmitter } = require("events");
 const axios = require("axios");
 const proxyHttp = require("../middlewares/proxyHttp");
 
@@ -37,16 +38,27 @@ const NAKALA_URL = NAKALA_API_BASE;
 const NAKALA_API_KEY = process.env.NAKALA_API_KEY || NAKALA_PROD_API_KEY;
 const TUS_CHUNK_SIZE = 15 * 1024 * 1024; // 15 MB
 
+// ── Async job registry for POST /nakala/publish ─────────────────
+//   jobId -> { status, phase, percent, message, result, error, emitter }
+const jobs = new Map();
+
 /**
  * Upload a single file to Nakala via the TUS protocol.
  *
  * 1. POST  {nakala}/tus/          – init, gets back Location (tus URL)
  * 2. PATCH {tusUrl} × N chunks    – upload in 15 MB blocks
- * 3. POST  {nakala}/file/cache    – resolve tusId → { name, sha1 }
+ * 3. POST  {nakala}/file/cache    – resolve tusId → { name, sha1 }  (exponential backoff)
  *
+ * @param {string}  filePath   – local disk path
+ * @param {string}  fileName   – original filename
+ * @param {string}  mimeType   – MIME type
+ * @param {number}  fileSize   – total bytes
+ * @param {object}  [emitter]  – optional EventEmitter for progress/phase events
+ * @param {number}  [totalBytes] – total bytes across all files (for cumulative progress)
+ * @param {number}  [loadedBytes] – bytes already uploaded from previous files
  * @returns {{ tusId, sha1, name }}
  */
-async function tusUploadAndCache(filePath, fileName, mimeType, fileSize) {
+async function tusUploadAndCache(filePath, fileName, mimeType, fileSize, emitter, totalBytes, loadedBytes) {
   const enc = (s) => Buffer.from(s, "utf-8").toString("base64");
   const metadata = `filename ${enc(fileName)},filetype ${enc(mimeType)}`;
 
@@ -93,20 +105,41 @@ async function tusUploadAndCache(filePath, fileName, mimeType, fileSize) {
       });
 
       offset += chunk.length;
+
+      // Emit cumulative progress across all files in the job
+      if (emitter && totalBytes > 0) {
+        const cumulative = (loadedBytes || 0) + offset;
+        const percent = Math.round((cumulative / totalBytes) * 100);
+        emitter.emit("progress", { phase: "uploading", percent });
+      }
     }
   } finally {
     await fd.close();
   }
 
-  // ── Step 3: Resolve SHA1 (with retry + tolerant parse) ────
-  let lastRaw = null;
+  // ── Step 3: Resolve SHA1 (exponential backoff + tolerant parse) ──
+  if (emitter) {
+    emitter.emit("progress", { phase: "hashing", percent: null });
+  }
 
-  for (let attempt = 1; attempt <= 5; attempt++) {
-    const cacheRes = await nakalaAxios.post(
-      `${NAKALA_URL}/file/cache`,
-      { ids: [tusId] },
-      { headers: { "X-API-KEY": NAKALA_API_KEY } },
-    );
+  let lastRaw = null;
+  const maxAttempts = 15;
+  let delay = 2000; // 2s initial
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    let cacheRes;
+    try {
+      cacheRes = await nakalaAxios.post(
+        `${NAKALA_URL}/file/cache`,
+        { ids: [tusId] },
+        { headers: { "X-API-KEY": NAKALA_API_KEY } },
+      );
+    } catch (err) {
+      // Real HTTP error (e.g. 404, 500) — fail fast, don't retry
+      throw new Error(
+        `Nakala /file/cache HTTP error for tusId ${tusId}: ${err.response?.status} ${err.response?.data ? JSON.stringify(err.response.data) : err.message}`,
+      );
+    }
 
     lastRaw = cacheRes.data;
 
@@ -129,50 +162,42 @@ async function tusUploadAndCache(filePath, fileName, mimeType, fileSize) {
       return { tusId, sha1, name };
     }
 
-    if (attempt < 5) {
-      await new Promise((r) => setTimeout(r, 1000));
+    // SHA1 not yet computed — wait with exponential backoff
+    if (attempt < maxAttempts) {
+      await new Promise((r) => setTimeout(r, delay));
+      delay = Math.min(delay * 2, 180000); // cap at 3 minutes
     }
   }
 
-  console.error("Nakala /file/cache failed after 5 attempts for tusId", tusId, "last response:", JSON.stringify(lastRaw));
+  console.error(
+    "Nakala /file/cache failed after", maxAttempts, "attempts for tusId",
+    tusId, "last response:", JSON.stringify(lastRaw),
+  );
   throw new Error("Could not resolve SHA1 for TUS upload " + tusId);
 }
 
 /**
- * POST /nakala/publish
+ * Run the full publish pipeline in the background.
  *
- * Takes tempIds previously stored by POST /nakala/temp-upload, publishes
- * each file to Nakala via the TUS protocol, and creates a Nakala Data
- * with the supplied metadata.  On success the temp files are cleaned up;
- * on failure they are preserved so the caller can retry.
+ * @param {string}          jobId
+ * @param {object}          job      – entry in the jobs Map
+ * @param {Array<object>}   files    – files from tempStore [{ path, originalname, size, mimetype }]
+ * @param {object}          metadata – all form fields + tempIds
  */
-router.post("/publish", async (req, res, next) => {
+async function runPublishJob(jobId, job, files, metadata) {
+  const {
+    effectiveCollectionId, title, description, language, license,
+    metas, keywords, tempIds,
+  } = metadata;
+
   try {
-    const { tempIds, collectionId: reqCollectionId, title, description, language, license, metas, keywords } =
-      req.body;
-    const effectiveCollectionId = process.env.NAKALA_TEST_COLLECTION_ID || reqCollectionId;
+    job.status = "uploading";
 
-    // ── Validate ──────────────────────────────────────────────
-    if (!tempIds || !Array.isArray(tempIds) || tempIds.length === 0) {
-      return res.status(400).json({ message: "tempIds must be a non-empty array" });
-    }
-    if (!reqCollectionId) {
-      return res.status(400).json({ message: "collectionId is required" });
-    }
+    // ── Compute total bytes for cumulative progress ──
+    const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+    let loadedBytes = 0;
 
-    // ── Collect files from tempStore ──────────────────────────
-    const files = [];
-    for (const tempId of tempIds) {
-      const entry = tempStore.get(tempId);
-      if (!entry) {
-        return res.status(400).json({
-          message: `File with tempId ${tempId} not found or expired — please re-upload`,
-        });
-      }
-      files.push(...entry.files);
-    }
-
-    // ── TUS-upload every file and grab SHA1 ───────────────────
+    // ── TUS-upload every file and grab SHA1 ──
     const uploadedFiles = [];
     for (const file of files) {
       const { tusId, sha1, name } = await tusUploadAndCache(
@@ -180,11 +205,21 @@ router.post("/publish", async (req, res, next) => {
         file.originalname,
         file.mimetype,
         file.size,
+        job.emitter,
+        totalBytes,
+        loadedBytes,
       );
       uploadedFiles.push({ name, sha1, tusId });
+      loadedBytes += file.size;
     }
 
-    // ── Build Nakala Data payload ─────────────────────────────
+    // ── Phase: creating data ──
+    job.status = "creating";
+    job.phase = "creating";
+    job.percent = null;
+    job.emitter.emit("progress", { phase: "creating", percent: null });
+
+    // ── Build Nakala Data payload ──
     const licenseCode = typeof license === "string" ? license : license?.code;
 
     const dataBody = {
@@ -230,7 +265,7 @@ router.post("/publish", async (req, res, next) => {
       ],
     };
 
-    // ── POST /datas ───────────────────────────────────────────
+    // ── POST /datas ──
     const dataRes = await axios.post(`${NAKALA_URL}/datas`, dataBody, {
       headers: {
         "X-API-KEY": NAKALA_API_KEY,
@@ -243,7 +278,7 @@ router.post("/publish", async (req, res, next) => {
       throw new Error("Nakala data creation returned no payload.id");
     }
 
-    // ── Link data to collection ──────────────────────────────
+    // ── Link data to collection ──
     await axios.post(
       `${NAKALA_URL}/collections/${effectiveCollectionId}/datas`,
       [identifier],
@@ -255,7 +290,7 @@ router.post("/publish", async (req, res, next) => {
       },
     );
 
-    // ── Cleanup: remove temp files and tempStore entries ──────
+    // ── Cleanup: remove temp files and tempStore entries ──
     for (const tempId of tempIds) {
       const entry = tempStore.get(tempId);
       if (entry) {
@@ -264,15 +299,141 @@ router.post("/publish", async (req, res, next) => {
       }
     }
 
-    return res.status(200).json({ identifier });
+    // ── Success ──
+    job.status = "done";
+    job.result = { identifier };
+    job.emitter.emit("done", { identifier });
   } catch (err) {
+    const message = err.response?.data || err.message;
     console.error("Nakala publish error:", err.response?.data || err.message);
-    // Pass Nakala API errors through so the client can display them.
-    if (err.response) {
-      return res.status(err.response.status).json(err.response.data);
-    }
-    return res.status(500).json({ message: err.message });
+
+    job.status = "error";
+    job.error = message;
+    job.emitter.emit("error", { message });
+
+    // On failure: DO NOT delete temp files, so the client can retry.
+    // tempStore entries persist as well.
   }
+}
+
+/**
+ * POST /nakala/publish
+ *
+ * Takes tempIds previously stored by POST /nakala/temp-upload, publishes
+ * each file to Nakala via the TUS protocol, and creates a Nakala Data
+ * with the supplied metadata.  Returns { jobId } immediately; the actual
+ * processing runs asynchronously.  Subscribe to the SSE endpoint
+ * GET /nakala/publish/:jobId/stream to track progress.
+ */
+router.post("/publish", async (req, res, next) => {
+  try {
+    const { tempIds, collectionId: reqCollectionId, title, description, language, license, metas, keywords } =
+      req.body;
+    const effectiveCollectionId = process.env.NAKALA_TEST_COLLECTION_ID || reqCollectionId;
+
+    // ── Validate ──────────────────────────────────────────────
+    if (!tempIds || !Array.isArray(tempIds) || tempIds.length === 0) {
+      return res.status(400).json({ message: "tempIds must be a non-empty array" });
+    }
+    if (!reqCollectionId) {
+      return res.status(400).json({ message: "collectionId is required" });
+    }
+
+    // ── Collect files from tempStore ──────────────────────────
+    const files = [];
+    for (const tempId of tempIds) {
+      const entry = tempStore.get(tempId);
+      if (!entry) {
+        return res.status(400).json({
+          message: `File with tempId ${tempId} not found or expired — please re-upload`,
+        });
+      }
+      files.push(...entry.files);
+    }
+
+    // ── Create async job ──────────────────────────────────────
+    const jobId = uuidv4();
+    const emitter = new EventEmitter();
+
+    // Remove emitter listeners when nobody is listening anymore
+    emitter.setMaxListeners(100);
+
+    const job = {
+      status: "pending",
+      phase: null,
+      percent: null,
+      message: null,
+      result: null,
+      error: null,
+      emitter,
+    };
+    jobs.set(jobId, job);
+
+    // Respond immediately
+    res.status(200).json({ jobId });
+
+    // Launch background processing (no await)
+    runPublishJob(jobId, job, files, {
+      effectiveCollectionId, title, description, language, license, metas, keywords, tempIds,
+    }).catch((err) => {
+      // Safety net: if runPublishJob throws synchronously (shouldn't, but just in case)
+      console.error("Unhandled error in runPublishJob:", err);
+      if (job.status !== "error" && job.status !== "done") {
+        job.status = "error";
+        job.error = err.message;
+        job.emitter.emit("error", { message: err.message });
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * GET /nakala/publish/:jobId/stream
+ *
+ * SSE endpoint: streams progress, done, and error events for an async publish job.
+ */
+router.get("/publish/:jobId/stream", (req, res) => {
+  const { jobId } = req.params;
+  const job = jobs.get(jobId);
+
+  if (!job) {
+    return res.status(404).json({ message: "unknown job" });
+  }
+
+  // SSE headers
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+
+  // Send an initial comment to establish the connection
+  res.write(":ok\n\n");
+
+  const onProgress = (payload) => {
+    res.write(`event: progress\ndata: ${JSON.stringify(payload)}\n\n`);
+  };
+
+  const onDone = (payload) => {
+    res.write(`event: done\ndata: ${JSON.stringify(payload)}\n\n`);
+    res.end();
+  };
+
+  const onError = (payload) => {
+    res.write(`event: error\ndata: ${JSON.stringify(payload)}\n\n`);
+    res.end();
+  };
+
+  job.emitter.on("progress", onProgress);
+  job.emitter.on("done", onDone);
+  job.emitter.on("error", onError);
+
+  req.on("close", () => {
+    job.emitter.off("progress", onProgress);
+    job.emitter.off("done", onDone);
+    job.emitter.off("error", onError);
+  });
 });
 
 /**

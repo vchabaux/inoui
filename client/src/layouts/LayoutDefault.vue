@@ -85,12 +85,12 @@ main {
 }
 
 .-active {
-  background-color: var(--color-full-accent) !important;
-  color: var(--color-background-neutral) !important;
+  color: var(--color-full-accent) !important;
   filter: none !important;
 }
 
 .-active:not(button) {
   text-decoration: underline !important;
+  text-underline-offset: 4px;
 }
 </style>

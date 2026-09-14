@@ -1,104 +1,36 @@
 /* ============================================================
    owl-css-reset.css — Remplacement de @owlabio/owl-css
-   Design tokens + reset CSS minimal
+   Partie 1 : reset + design tokens — copie EXACTE de
+   @owlabio/owl-css@0.0.5/dist/style.css (MIT) pour fidélité
+   visuelle totale (tailles, rayons, ombres, dark-mode auto).
+   Partie 2 : utilitaires et classes applicatives conservés.
    ============================================================ */
 
-/* --- Reset minimal --- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+/* ------------------------------------------------------------
+   1. RESET — copie exacte de owl-css
+   ------------------------------------------------------------ */
+*,*:before,*:after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;-webkit-font-smoothing:antialiased}
+*:not(:focus-visible){outline:none!important}
+#app{height:100%;isolation:isolate}
+img,audio,picture,video,canvas,svg,embed{display:block;max-width:100%}
+dialog{color:inherit}
+a:any-link{color:inherit;text-decoration:none}
+button,[type=radio],[type=checkbox],[type=color],[type=file]{cursor:pointer}
+input,button,textarea,select{font:inherit}
+p,h1,h2,h3,h4,h5,h6{overflow-wrap:break-word;line-height:calc(1em + .5rem)}
+ul,ol,dl{list-style-type:none}
+span{display:inline-block}
+button,label,[aria-hidden=true],[type=radio],[type=checkbox],[type=color],[type=file]{user-select:none}
+@media (prefers-reduced-motion: reduce){
+*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 
-* {
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
-body {
-  min-height: 100vh;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--color-text-neutral);
-  font-family: var(--app-font-body, sans-serif);
-  background-color: var(--color-background-neutral);
-  accent-color: var(--color-full-accent);
-}
-
-img, picture, video, canvas, svg {
-  display: block;
-  max-width: 100%;
-}
-
-input, button, textarea, select {
-  font: inherit;
-}
-
-p, h1, h2, h3, h4, h5, h6 {
-  overflow-wrap: break-word;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-ul, ol {
-  list-style: none;
-}
-
-/* ============================================================
-   Design tokens — remplacement de @owlabio/owl-css
-   ============================================================ */
-
+/* ------------------------------------------------------------
+   2. TOKENS — copie exacte de owl-css
+   ------------------------------------------------------------ */
 :root {
-  /* --- Spacing scale (8px base) --- */
-  --size-1: 0.25rem;   /* 4px */
-  --size-2: 0.5rem;    /* 8px */
-  --size-3: 0.75rem;   /* 12px */
-  --size-3-5: 0.875rem; /* 14px */
-  --size-4: 1rem;      /* 16px */
-  --size-5: 1.25rem;   /* 20px */
-  --size-6: 1.5rem;    /* 24px */
-  --size-8: 2rem;      /* 32px */
-  --size-10: 2.5rem;   /* 40px */
-  --size-12: 3rem;      /* 48px */
-  --size-15: 3.75rem;  /* 60px */
-  --size-20: 5rem;     /* 80px */
-
-  /* --- Border widths --- */
-  --border-1: 1px;
-  --border-2: 2px;
-
-  /* --- Border radii --- */
-  --radius-2: 0.125rem;
-  --radius-5: 0.3125rem;
-
-  /* --- Box shadows --- */
-  --box-shadow-2: 0 1px 3px rgba(0, 0, 0, 0.12);
-  --box-shadow-3: 0 2px 6px rgba(0, 0, 0, 0.15);
-  --box-shadow-5: 0 4px 12px rgba(0, 0, 0, 0.2);
-
-  /* --- Filter presets (for hover/active effects) --- */
-  --filter-dark-1: brightness(0.8);
-  --filter-dark-2: brightness(0.6);
-  --filter-light-1: brightness(1.2);
-  --filter-light-2: brightness(1.4);
-  --layer-dark-1: rgba(0, 0, 0, 0.1);
-  --layer-dark-2: rgba(0, 0, 0, 0.3);
-  --layer-dark-3: rgba(0, 0, 0, 0.85);
-  --layer-light-1: rgba(255, 255, 255, 0.1);
-  --layer-light-2: rgba(255, 255, 255, 0.3);
-  --layer-light-3: rgba(255, 255, 255, 0.85);
-
-  /* --- Color tokens raw values (fallbacks pour theme.css) --- */
   --color-1: #030408;
   --color-5: #0f1117;
   --color-10: #1a1b22;
@@ -112,51 +44,94 @@ ul, ol {
   --color-90: #e2e1eb;
   --color-95: #f1f0fa;
   --color-99: #fdfbff;
-
-  /* --- Color tokens (defaults, overridden by theme) --- */
-  --color-background-neutral: var(--color-99);
-  --color-surface-neutral: var(--color-95);
-  --color-element-neutral: var(--color-90);
-  --color-border-neutral: var(--color-70);
-  --color-text-neutral: var(--color-10);
-  --color-text-fade: var(--color-40);
-  --color-text-inverted: var(--color-99);
-  --color-full-accent: #3b82f6;
-  --color-accent-1: #3b82f6;
-  --color-muted: var(--color-60);
-  --color: inherit;
-  --color-text-fix: inherit;
-
-  /* --- App-specific (overridden by theme) --- */
-  --app-radius: 0;
-  --app-border: var(--border-1);
-  --app-font-title: sans-serif;
-  --app-font-body: sans-serif;
-  --text-fix: 0;
+  --size-1: .25rem;
+  --size-2: .5rem;
+  --size-2-5: .625rem;
+  --size-3: .75rem;
+  --size-3-5: .875rem;
+  --size-4: 1rem;
+  --size-4-5: 1.125rem;
+  --size-5: 1.25rem;
+  --size-6: 1.5rem;
+  --size-7: 1.75rem;
+  --size-8: 2rem;
+  --size-9: 2.25rem;
+  --size-10: 2.5rem;
+  --size-11: 2.75rem;
+  --size-12: 3rem;
+  --size-13: 3.25rem;
+  --size-14: 3.5rem;
+  --size-15: 3.75rem;
+  --size-16: 4rem;
+  --size-17: 4.25rem;
+  --size-18: 4.5rem;
+  --size-19: 4.75rem;
+  --size-20: 5rem;
+  --border-1: .0625rem;
+  --border-2: .125rem;
+  --border-3: .25rem;
+  --border-4: .5rem;
+  --border-5: 1rem;
+  --radius-1: .25rem;
+  --radius-2: .5rem;
+  --radius-3: 1rem;
+  --radius-4: 1.5rem;
+  --radius-5: 50%;
+  --box-shadow-1: 0 1px 2px 0 rgb(0 0 0 / .05);
+  --box-shadow-2: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+  --box-shadow-3: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);
+  --box-shadow-4: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+  --box-shadow-5: 0 20px 25px -5px rgb(0 0 0 / .1), 0 8px 10px -6px rgb(0 0 0 / .1);
+  --filter-shadow-1: drop-shadow(0 1px 1px rgb(0 0 0 / .05));
+  --filter-shadow-2: drop-shadow(0 1px 2px rgb(0 0 0 / .1)) drop-shadow(0 1px 1px rgb(0 0 0 / .06));
+  --filter-shadow-3: drop-shadow(0 4px 3px rgb(0 0 0 / .07)) drop-shadow(0 2px 2px rgb(0 0 0 / .06));
+  --filter-shadow-4: drop-shadow(0 10px 8px rgb(0 0 0 / .04)) drop-shadow(0 4px 3px rgb(0 0 0 / .1));
+  --filter-shadow-5: drop-shadow(0 20px 13px rgb(0 0 0 / .03)) drop-shadow(0 8px 5px rgb(0 0 0 / .08));
+  --filter-blur-1: blur(.5rem);
+  --filter-blur-2: blur(1rem);
+  --filter-blur-3: blur(1.5rem);
+  --filter-dark-1: brightness(.8);
+  --filter-dark-2: brightness(.6);
+  --filter-light-1: brightness(1.2);
+  --filter-light-2: brightness(1.4);
+  --layer-dark-1: rgb(0 0 0 / .1);
+  --layer-dark-2: rgb(0 0 0 / .3);
+  --layer-dark-3: rgb(0 0 0 / .85);
+  --layer-light-1: rgb(255 255 255 / .1);
+  --layer-light-2: rgb(255 255 255 / .3);
+  --layer-light-3: rgb(255 255 255 / .85);
 }
 
-/* Focus visible */
-*:focus-visible {
-  outline: var(--border-2) solid var(--color-full-accent);
-  outline-offset: var(--border-2);
-}
+/* Mapping des couleurs sémantiques (body) — géré par styles/theme.css,
+   identique au bloc body{} de owl-css. Ne pas dupliquer ici. */
 
-::selection {
-  background-color: var(--color-element-accent, var(--color-90));
-}
+/* ------------------------------------------------------------
+   3. Base (copie exacte de owl-css : focus, selection, body)
+   ------------------------------------------------------------ */
+*:focus-visible{outline:var(--border-2) solid var(--color-full-accent);outline-offset:var(--border-2)}
+::selection{background-color:var(--color-element-accent)}
+.invisible{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;word-wrap:normal;border:0;user-select:none}
+body{background-color:var(--color-background-neutral);color:var(--color-text-neutral);accent-color:var(--color-full-accent)}
+#app{font-family:var(--app-font-body)}
+h1,h2,h3,h4,h5,h6{font-family:var(--app-font-title)}
 
-#app {
-  font-family: var(--app-font-body);
-  height: 100%;
-  isolation: isolate;
+/* ------------------------------------------------------------
+   4. Dark mode automatique (copie exacte owl-css)
+   ------------------------------------------------------------ */
+@media (prefers-color-scheme: dark){
+body{--color-background-neutral: var(--app-color-neutral-5, var(--color-5));--color-background-accent: var(--app-color-accent-5, var(--color-5));--color-surface-neutral: var(--app-color-neutral-1, var(--color-1));--color-surface-accent: var(--app-color-accent-1, var(--color-1));--color-element-neutral: var(--app-color-neutral-10, var(--color-10));--color-element-accent: var(--app-color-accent-10, var(--color-10));--color-full-neutral: var(--app-color-neutral-60, var(--color-60));--color-full-accent: var(--app-color-accent-60, var(--color-60));--color-text-neutral: var(--app-color-neutral-90, var(--color-90));--color-text-fade: var(--app-color-neutral-60, var(--color-60));--color-text-accent: var(--app-color-accent-60, var(--color-60));--color-text-inverted: var(--app-color-neutral-1, var(--color-1));--color-border-neutral: var(--app-color-neutral-30, var(--color-30));--color-border-accent: var(--app-color-accent-30, var(--color-30));--color-filter-hover: var(--filter-light-1);--color-filter-active: var(--filter-light-2);--color-layer-hover: var(--layer-light-1);--color-layer-active: var(--layer-light-2);--color-overlay-dark: var(--layer-dark-3);--color-overlay-light: var(--layer-light-3)}
+body.light{--color-background-neutral: var(--app-color-neutral-99, var(--color-99));--color-background-accent: var(--app-color-accent-99, var(--color-99));--color-surface-neutral: var(--app-color-neutral-95, var(--color-95));--color-surface-accent: var(--app-color-accent-95, var(--color-95));--color-element-neutral: var(--app-color-neutral-90, var(--color-90));--color-element-accent: var(--app-color-accent-90, var(--color-90));--color-full-neutral: var(--app-color-neutral-40, var(--color-40));--color-full-accent: var(--app-color-accent-40, var(--color-40));--color-text-neutral: var(--app-color-neutral-10, var(--color-10));--color-text-fade: var(--app-color-neutral-40, var(--color-40));--color-text-accent: var(--app-color-accent-40, var(--color-40));--color-text-inverted: var(--app-color-neutral-99, var(--color-99));--color-border-neutral: var(--app-color-neutral-70, var(--color-70));--color-border-accent: var(--app-color-accent-70, var(--color-70));--color-filter-hover: var(--filter-dark-1);--color-filter-active: var(--filter-dark-2);--color-layer-hover: var(--layer-dark-1);--color-layer-active: var(--layer-dark-2);--color-overlay-dark: var(--layer-dark-3);--color-overlay-light: var(--layer-light-3)}
 }
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--app-font-title);
+@media (prefers-contrast: more){
+.light{--color-text-fade: var(--app-color-neutral-20, var(--color-20));--color-text-accent: var(--app-color-accent-20, var(--color-20));--color-border-neutral: var(--app-color-neutral-10, var(--color-10));--color-border-accent: var(--app-color-accent-10, var(--color-10))}
+.dark{--color-text-fade: var(--app-color-neutral-80, var(--color-80));--color-text-accent: var(--app-color-accent-80, var(--color-80));--color-border-neutral: var(--app-color-neutral-90, var(--color-90));--color-border-accent: var(--app-color-accent-90, var(--color-90))}
 }
 
 /* ============================================================
-   Utility classes — remplacement des props owl-ui Container
+   5. UTILITAIRES & CLASSES APPLICATIVES
+   (conservés de l'ancienne version de ce fichier — le markup
+   de la nouvelle app les utilise ; styles initialement dérivés
+   des composants owl-ui + styles scoped de l'app)
    ============================================================ */
 
 /* Flow (flex direction) */
@@ -232,8 +207,8 @@ h1, h2, h3, h4, h5, h6 {
 .p-6 { padding: var(--size-6); }
 .p-8 { padding: var(--size-8); }
 
-
 /* Link utilities */
+a.link-text,
 .link-text {
   color: inherit;
   text-decoration: none;
@@ -241,6 +216,7 @@ h1, h2, h3, h4, h5, h6 {
 .link-text:hover {
   text-decoration: underline;
 }
+a.link-outline,
 .link-outline {
   max-width: 100%;
   width: max-content;
@@ -261,6 +237,30 @@ h1, h2, h3, h4, h5, h6 {
 }
 .link-outline:hover {
   background-color: var(--color-layer-hover);
+}
+a.link-plain,
+.link-plain {
+  max-width: 100%;
+  width: max-content;
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-items: center;
+  gap: var(--size-2);
+  border: var(--app-border, var(--border-1)) solid var(--color-full-accent);
+  border-radius: var(--app-radius, var(--radius-2));
+  transition: all .2s ease-in-out;
+  cursor: pointer;
+  padding: var(--size-2) var(--size-4);
+  background-color: var(--color-full-accent);
+  color: var(--color-text-inverted);
+  text-decoration: none;
+}
+.link-plain:hover {
+  filter: var(--color-filter-hover);
+}
+.link-plain:active {
+  filter: var(--color-filter-active);
 }
 
 /* Text utilities */
@@ -287,10 +287,6 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
 }
 
-/* ============================================================
-   Header classes
-   ============================================================ */
-
 /* Header title */
 .header-title {
   display: flex;
@@ -308,7 +304,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 .header-link.-active {
   font-weight: bold;
-  text-decoration: underline;
+  background-color: var(--color-background-neutral);
+  color: var(--color-text-neutral);
+  border-radius: var(--radius-5);
 }
 
 /* Header nav list items */
@@ -316,20 +314,13 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
 }
 
-/* ============================================================
-   Accent & uppercase helpers
-   ============================================================ */
+/* Accent & uppercase helpers */
 .-accent {
   font-family: var(--app-font-title);
 }
-
 .-uppercase {
   text-transform: uppercase;
 }
-
-/* ============================================================
-   Utility classes from production CSS
-   ============================================================ */
 
 /* Screen reader only */
 .invisible {
@@ -346,7 +337,7 @@ h1, h2, h3, h4, h5, h6 {
   user-select: none;
 }
 
-/* Text colors */
+/* Text colors (ex owl-ui Text) */
 .fade {
   color: var(--color-text-fade);
 }
@@ -454,7 +445,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================
-   App shell
+   App shell (LayoutColumn-like)
    ============================================================ */
 .shell {
   min-height: 100vh;
@@ -484,7 +475,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================
-   Sidebar
+   Sidebar (owl-ui Sidebar — conservé pour les classes utilisées)
    ============================================================ */
 .sidebar {
   height: 100%;
@@ -783,6 +774,9 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   height: 100%;
 }
+.map-map .mapboxgl-ctrl-attrib {
+  margin-block-end: var(--size-2);
+}
 .map-back,
 .map-help,
 .map-filter-zone,
@@ -797,7 +791,25 @@ h1, h2, h3, h4, h5, h6 {
 .map-mode-toggle,
 .map-detective-toggle,
 .map-audio-toggle {
-  border-radius: var(--radius-5) !important;
+  border-radius: 50% !important;
+  /* forcer une forme carrée stricte pour un vrai cercle */
+  width: 52px;
+  height: 52px;
+  padding: 0 !important;
+  min-width: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.map-back,
+.map-help,
+.map-mode-toggle,
+.map-audio-toggle,
+.map-detective-toggle {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #000 !important;
 }
 .map-top-actions {
   gap: var(--size-2) !important;
@@ -1134,13 +1146,21 @@ h1, h2, h3, h4, h5, h6 {
     padding: var(--size-3) !important;
   }
   .map-back,
+  .map-help,
+  .map-filter-toggle,
+  .map-mode-toggle,
+  .map-detective-toggle,
+  .map-audio-toggle {
+    padding: 0 !important;
+  }
+  .map-back,
   .map-filter-zone {
     inset-block-start: var(--size-2);
     inset-inline-start: var(--size-2);
   }
   .map-help {
-    inset-block-end: var(--size-2);
-    inset-inline-start: var(--size-2);
+    inset-block-end: var(--size-3);
+    inset-inline-start: var(--size-3);
   }
   .map-top-actions {
     inset-block-start: var(--size-2);
@@ -1158,21 +1178,28 @@ h1, h2, h3, h4, h5, h6 {
     padding: var(--size-4) !important;
   }
   .map-back,
+  .map-help,
+  .map-filter-toggle,
+  .map-mode-toggle,
+  .map-detective-toggle,
+  .map-audio-toggle {
+    padding: 0 !important;
+  }
+  .map-back,
   .map-filter-zone {
-    inset-block-start: var(--size-4);
-    inset-inline-start: var(--size-4);
+    inset-block-start: var(--size-6);
+    inset-inline-start: var(--size-6);
   }
   .map-help {
-    inset-block-end: var(--size-4);
-    inset-inline-start: var(--size-4);
+    inset-block-end: var(--size-6);
+    inset-inline-start: var(--size-6);
   }
   .map-top-actions {
-    inset-block-start: var(--size-4);
-    inset-inline-end: var(--size-4);
+    inset-block-start: var(--size-6);
+    inset-inline-end: var(--size-6);
   }
   .map-bottom-actions {
-    inset-block-end: var(--size-4);
-    inset-inline-end: var(--size-4);
+    inset-block-end: var(--size-6);
+    inset-inline-end: var(--size-6);
   }
 }
-

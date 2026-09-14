@@ -19,10 +19,10 @@
           </router-link>
         </div>
 
-        <a :href="'/' + ''" target="_blank" class="app-link w-full">
+        <router-link to="/" target="_blank" class="link-plain w-full app-link">
           Open app
           <i class="fa-solid fa-arrow-up-right-from-square" />
-        </a>
+        </router-link>
 
         <div class="flow-row-between">
           <router-link to="/admin/profile" class="link-text">
@@ -119,59 +119,66 @@ function signout() {
 }
 
 .sidebar {
-  background-color: var(--color-surface-neutral);
-  border-inline-end: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  background-color: var(--color-surface-accent);
+  border-inline-end: var(--app-border, var(--border-1)) solid var(--color-border-accent);
   padding: var(--size-4);
   display: flex;
   flex-direction: column;
-  gap: var(--size-4);
+  gap: var(--size-8);
 }
 
 .sidebar-header {
-  padding-block-end: var(--size-4);
-  border-block-end: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
+  background-color: var(--color-surface-accent);
 }
 
 .sidebar-title {
-  font-size: var(--size-5);
-  font-weight: bold;
+  font-size: var(--size-8);
+  font-weight: 700;
   color: var(--color-text-neutral);
   text-decoration: none;
 }
 
 .sidebar-nav {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  align-content: flex-start;
   gap: var(--size-1);
 }
 
 .sidebar-link {
+  width: max-content;
+  max-width: 100%;
   padding: var(--size-2) var(--size-4);
   border-radius: var(--app-radius, var(--radius-2));
   color: var(--color-text-neutral);
   text-decoration: none;
+  transition: background-color .15s ease-in-out;
 }
 
 .sidebar-link:hover {
-  background-color: var(--color-element-neutral);
+  background-color: var(--color-layer-hover);
 }
 
 .sidebar-link.-active {
-  background-color: var(--color-full-accent);
-  color: var(--color-text-inverted);
+  font-weight: bold;
+  background-color: var(--color-element-neutral);
 }
 
 .sidebar-footer {
-  border-block-start: var(--app-border, var(--border-1)) solid var(--color-border-neutral);
-  padding-block-start: var(--size-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-2);
+  border-block-start: var(--app-border, var(--border-1)) solid var(--color-border-accent);
+  border-inline-end: var(--app-border, var(--border-1)) solid var(--color-border-accent);
+  padding: var(--size-4) var(--size-4) var(--size-6);
+  margin-inline-end: calc(-1 * var(--size-4));
+  margin-block-start: var(--size-4);
+  display: grid;
+  gap: var(--size-4);
 }
 
 .dashboard-content {
-  padding: var(--size-8);
+  padding: var(--size-6) var(--size-8);
+  display: grid;
+  gap: var(--size-8);
+  align-content: flex-start;
   overflow-y: auto;
 }
 

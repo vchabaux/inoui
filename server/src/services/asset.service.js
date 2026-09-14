@@ -1,7 +1,8 @@
 const Asset = require("../models/Asset");
 
 exports.list = (query = {}) => {
-  return Asset.find(query);
+  // Most recent first: the ObjectId _id embeds the creation timestamp
+  return Asset.find(query).sort({ _id: -1 });
 };
 
 exports.create = (data) => {

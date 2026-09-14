@@ -82,10 +82,8 @@ watchEffect(() => {
   if (!mapRef.value) return;
 
   const markerStyles = `
-    --app-border: var(--border-${app.value === "cnrs1" ? "2" : "1"});
-    --color-text-neutral: ${
-      app.value === "cnrs1" ? "#e5e5e5" : "black"
-    } !important;
+    --app-border: var(--border-2);
+    --color-text-neutral: #ffffff !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -105,14 +103,24 @@ watchEffect(() => {
     opacity: ${
       props.invisible && !props.revealed ? "0" : props.faded ? "0.5" : "1"
     };
+    pointer-events: ${
+      props.invisible && !props.revealed ? "none" : "auto"
+    };
+    visibility: ${
+      props.invisible && !props.revealed ? "hidden" : "visible"
+    };
     animation: ${props.emphasis ? "wave 1s infinite" : "none"};
-    transition: opacity 1s ease-in-out;
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
   `;
 
   if (markerRef.value) {
-    markerRef.value?.setLngLat([props.lng, props.lat]);
+    if (typeof props.lng === "number" && typeof props.lat === "number" && !isNaN(props.lng) && !isNaN(props.lat)) {
+      markerRef.value?.setLngLat([props.lng, props.lat]);
+    }
     const element = markerRef.value?.getElement();
-    element.style.cssText = markerStyles;
+    if (element) {
+      element.style.cssText = markerStyles;
+    }
     return;
   }
 

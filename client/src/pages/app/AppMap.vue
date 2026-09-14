@@ -72,27 +72,27 @@
           isDetective &&
           mode === 'narration' &&
           !currentTrack &&
-          !visitedTracks.includes(point.track._id) &&
-          point.track.attributes?.isHidden
+          !visitedTracks.includes(point.track?._id) &&
+          point.track?.attributes?.isHidden
         "
         :faded="
           app === 'cnrs2' &&
           mode === 'narration' &&
           !currentTrack &&
-          visitedTracks.includes(point.track._id)
+          visitedTracks.includes(point.track?._id)
         "
         :emphasis="
           app === 'cnrs2' &&
           mode === 'narration' &&
           !currentTrack &&
-          point.track._id === nextTrackToVisit
+          point.track?._id === (nextTrackToVisit?._id || nextTrackToVisit)
         "
         :revealed="
           point._id === currentPoint?._id ||
           (isDetective &&
             !currentTrack &&
-            !visitedTracks.includes(point.track._id) &&
-            point.track.attributes?.isHidden &&
+            !visitedTracks.includes(point.track?._id) &&
+            point.track?.attributes?.isHidden &&
             checkVisibility(point))
         "
         :current="point._id === currentPoint?._id"
@@ -136,7 +136,7 @@
     @toggleAudio="toggleAudio"
     @toggleDetective="toggleDetective"
     @toggleFilters="toggleFilters"
-    @resetFilter="(f) => (f === 'type' ? (filterType = []) : (filterCat = []))"
+    @resetFilter="(f) => resetFilter(f)"
     @filter="(f, v) => toggleFilter(f, v)"
     @zoom="(v) => zoom(v)"
     @center="center"
@@ -190,9 +190,12 @@ const visitedTracks = ref(
     ? JSON.parse(window.localStorage.getItem("visitedTracks"))
     : []
 );
-const nextTrackToVisit = ref(
-  currentPlaylist.value?.tracks?.find((t) => !visitedTracks.value.includes(t))
-);
+const nextTrackToVisit = computed(() => {
+  return currentPlaylist.value?.tracks?.find((t) => {
+    const id = typeof t === "object" ? t._id : t;
+    return !visitedTracks.value.includes(id);
+  });
+});
 
 const isLoaded = ref(false);
 const mode = ref("narration");
@@ -347,11 +350,11 @@ const filteredPoints = computed(() => {
 
     return (
       (!filterCat.value.length ||
-        filterCat.value.some((cat) => notice?.categories.includes(cat))) &&
+        filterCat.value.some((cat) => notice?.categories?.includes(cat))) &&
       (!filterType.value.length ||
-        filterType.value.some((type) => notice?.mediaTypes.includes(type))) &&
+        filterType.value.some((type) => notice?.mediaTypes?.includes(type))) &&
       (!filterMus.value.length ||
-        filterMus.value.some((mus) => p.track.attributes?.musician === mus))
+        filterMus.value.some((mus) => p.track?.attributes?.musician === mus))
     );
   });
 });
@@ -423,6 +426,7 @@ function toggleMode() {
   } else {
     filterCat.value = [];
     filterType.value = [];
+    filterMus.value = [];
     isFiltersOpen.value = false;
     mode.value = "narration";
   }
@@ -448,9 +452,21 @@ function toggleFilters() {
 function toggleFilter(filter, value) {
   const filterArray =
     filter === "cat" ? filterCat : filter === "type" ? filterType : filterMus;
-  filterArray.value.includes(value)
-    ? filterArray.value.splice(filterArray.value.indexOf(value), 1)
-    : filterArray.value.push(value);
+  if (filterArray.value.includes(value)) {
+    filterArray.value = filterArray.value.filter((v) => v !== value);
+  } else {
+    filterArray.value = [...filterArray.value, value];
+  }
+}
+
+function resetFilter(filter) {
+  if (filter === "type") {
+    filterType.value = [];
+  } else if (filter === "cat") {
+    filterCat.value = [];
+  } else if (filter === "mus") {
+    filterMus.value = [];
+  }
 }
 
 function zoom(direction) {
@@ -473,7 +489,7 @@ function selectPoint(point) {
   if (mode.value === "narration") {
     if (!currentTrack.value) {
       // narration without track : select the track
-      currentTrack.value = trackStore.findOne(point.track._id);
+      currentTrack.value = trackStore.findOne(point.track?._id);
       currentPoint.value = point;
     } else {
       // narration with track : if the point is in the track, getNav details and open notice
@@ -596,7 +612,7 @@ function listenMouseMove(event) {
 
 function checkVisibility(point) {
   let currentDistance = inRange.value.find(
-    (t) => t.id === point.track._id
+    (t) => t.id === point.track?._id
   )?.distance;
 
   return currentDistance

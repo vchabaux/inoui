@@ -32,25 +32,18 @@ function formatDatas(datas) {
   }));
 }
 
-function formatAssets(data) {
-  const assets = [];
-
-  for (const el of data) {
-    const files = el.files;
-
-    for (const file of files) {
-      assets.push(formatSingleAsset(el, file));
-    }
-  }
-
-  return assets;
-}
-
 function formatDataFiles(data) {
   return data.files.map((file) => formatSingleAsset(data, file));
 }
 
 export function formatSingleAsset(data, file) {
+  // Creation date: API system field, falling back to the required `terms#created` meta
+  const created =
+    data.created ??
+    data.metas?.find(
+      (m) => m.propertyUri === "http://nakala.fr/terms#created"
+    )?.value;
+
   return {
     _id: file.sha1,
     metas: data.metas,
@@ -64,6 +57,7 @@ export function formatSingleAsset(data, file) {
         : file.mime_type.split("/")[0],
     originalname: file.name,
     url: `${import.meta.env.VITE_NAKALA_API_BASE || "https://api.nakala.fr"}/data/${data.identifier}/${file.sha1}`,
+    created,
     ...file,
   };
 }
@@ -71,11 +65,17 @@ export function formatSingleAsset(data, file) {
 export const useNakalaStore = defineStore("nakala", () => {
   const collection = ref(null);
   const datas = ref([]);
-  const searchResults = ref([]);
-  const searchLoading = ref(false);
   const loaded = ref(false);
   const loading = ref(true);
   const vocabLoaded = ref(false);
+
+  // ── Async publish state (prompt 2b async) ─────────────────────
+  const publishStatus = ref("idle"); // idle|uploading|hashing|creating|done|error
+  const publishPhase = ref(null);
+  const publishProgress = ref(null); // 0-100 or null
+  const publishMessage = ref(null);
+  const publishError = ref(null);
+  const publishJobId = ref(null);
 
   const vocabularies = ref({
     languages: [
@@ -95,29 +95,6 @@ export const useNakalaStore = defineStore("nakala", () => {
       return [...acc, ...currentValue.files];
     }, []);
   });
-
-  async function search(value) {
-    if (!value || !value.trim()) {
-      searchResults.value = [];
-      return;
-    }
-
-    const collectionId = settings.value.nakala.collection;
-    searchLoading.value = true;
-
-    try {
-      const url = `/nakala/collections/${collectionId}/datas?limit=20&search=${encodeURIComponent(value)}`;
-      const { data } = await api.get(url);
-      const formatted = formatDatas(data.data || []);
-      const assets = formatAssets(formatted);
-      searchResults.value = assets;
-    } catch (err) {
-      console.error("Nakala search error:", err);
-      searchResults.value = [];
-    } finally {
-      searchLoading.value = false;
-    }
-  }
 
   function getLicense(code) {
     return vocabularies.value.licenses.find((l) => {
@@ -178,7 +155,7 @@ export const useNakalaStore = defineStore("nakala", () => {
         // REQUIRED - LICENSE
         {
           // value: "CC-BY-4.0", // LICENSE CODE AND NOT URL
-          value: license.code,
+          value: typeof license === "string" ? license : license?.code,
           //lang: language,
           typeUri: "http://www.w3.org/2001/XMLSchema#string", // ?? Default
           propertyUri: "http://nakala.fr/terms#license",
@@ -230,8 +207,15 @@ export const useNakalaStore = defineStore("nakala", () => {
       keywords = [],
     } = postData;
 
-    // ── TUS publish path (prompt 2b): files already on server via temp-upload ──
+    // ── TUS publish path (prompt 2b async): files already on server via temp-upload ──
     if (tempIds && tempIds.length > 0) {
+      // Reset publish state
+      publishStatus.value = "uploading";
+      publishPhase.value = null;
+      publishProgress.value = null;
+      publishError.value = null;
+      publishJobId.value = null;
+
       const { data } = await api.post("/nakala/publish", {
         tempIds,
         collectionId: collectionID,
@@ -242,8 +226,43 @@ export const useNakalaStore = defineStore("nakala", () => {
         metas,
         keywords,
       });
-      await getAll();
-      return data;
+
+      const jobId = data.jobId;
+      publishJobId.value = jobId;
+
+      // Wrap the EventSource in a Promise: resolves on done, rejects on error
+      return new Promise((resolve, reject) => {
+        const es = new EventSource("/api/nakala/publish/" + jobId + "/stream");
+
+        es.addEventListener("progress", (event) => {
+          const payload = JSON.parse(event.data);
+          publishPhase.value = payload.phase;
+          if (payload.percent != null) {
+            publishProgress.value = payload.percent;
+          }
+          publishStatus.value = payload.phase; // uploading|hashing|creating
+        });
+
+        es.addEventListener("done", async (event) => {
+          es.close();
+          publishStatus.value = "done";
+          await getAll();
+          resolve(data);
+        });
+
+        es.addEventListener("error", (event) => {
+          // Only handle server-sent error events (with data), not connection errors
+          if (event.data) {
+            es.close();
+            const payload = JSON.parse(event.data);
+            publishStatus.value = "error";
+            publishError.value = payload.message;
+            reject(new Error(payload.message));
+          }
+          // Ignore connection errors: the server closes the stream after
+          // done/error, which triggers a transient EventSource error.
+        });
+      });
     }
 
     // ── Legacy path: upload files then create data ──────────────────────────
@@ -272,7 +291,7 @@ export const useNakalaStore = defineStore("nakala", () => {
           },
           // REQUIRED - LICENSE
           {
-            value: license.code,
+            value: typeof license === "string" ? license : license?.code,
             typeUri: "http://www.w3.org/2001/XMLSchema#string",
             propertyUri: "http://nakala.fr/terms#license",
           },
@@ -442,13 +461,18 @@ export const useNakalaStore = defineStore("nakala", () => {
     vocabularies,
     vocabLoaded,
     datas,
-    searchResults,
-    searchLoading,
+
+    // Async publish state
+    publishStatus,
+    publishPhase,
+    publishProgress,
+    publishMessage,
+    publishError,
+    publishJobId,
 
     getLicense,
     initialize,
     refresh,
-    search,
     create,
     getById,
     deleteFile,

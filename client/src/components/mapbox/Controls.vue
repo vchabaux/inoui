@@ -159,7 +159,7 @@
           :class="{ '-active': controls.audio }"
           :aria-pressed="controls.audio"
           @click="emit('toggleAudio')" text>
-          <i :class="'fa-solid' + ' fa-' + (controls.audio ? app === 'cnrs1' ? 'headphones' : 'volume-high' : app === 'cnrs1' ? 'volume-off' : 'volume-xmark')" />
+          <i :class="audioIconClass" />
         </el-button>
       </div>
 
@@ -257,6 +257,17 @@ function getTypeClass(type) {
   return styles[type] || "fa-solid";
 }
 
+const audioIconClass = computed(() => {
+  const icon = props.controls.audio
+    ? app.value === "cnrs1"
+      ? "headphones"
+      : "volume-high"
+    : app.value === "cnrs1"
+      ? "volume-off"
+      : "volume-xmark";
+  return `fa-solid fa-${icon}`;
+});
+
 categoriesStores.getRoots();
 </script>
 
@@ -271,6 +282,7 @@ categoriesStores.getRoots();
 .map-audio {
   transform: rotate(-90deg);
   position: relative;
+  margin-block-start: var(--size-1);
 }
 
 .map-audio-toggle {
@@ -313,23 +325,70 @@ categoriesStores.getRoots();
 .map-mode-toggle,
 .map-detective-toggle,
 .map-audio-toggle {
-  border-radius: var(--radius-5) !important;
+  border-radius: 50% !important;
+  /* forcer une forme carrée stricte pour un vrai cercle */
+  width: 52px;
+  height: 52px;
+  padding: 0 !important;
+  min-width: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.map-back,
+.map-help,
+.map-mode-toggle,
+.map-audio-toggle,
+.map-detective-toggle {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #000 !important;
 }
 
 .map-top-actions {
-  gap: var(--size-2) !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-1) !important;
 }
 
-.map-bottom-actions :first-child {
-  border-start-start-radius: var(--radius-5) !important;
-  border-start-end-radius: var(--radius-5) !important;
-  border-block-end: 0 !important;
+.map-bottom-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0 !important;
+  border-radius: 26px;
+  overflow: hidden;
+  border: var(--app-border, var(--border-1)) solid var(--color-full-accent) !important;
 }
 
-.map-bottom-actions :last-child {
-  border-end-start-radius: var(--radius-5) !important;
-  border-end-end-radius: var(--radius-5) !important;
-  border-block-start: 0 !important;
+.map-bottom-actions .color-btn {
+  border: 0 !important;
+  border-bottom: var(--app-border, var(--border-1)) solid var(--color-full-accent) !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  width: 52px;
+  height: 52px;
+  padding: 0 !important;
+  min-width: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-bottom-actions .color-btn:first-child {
+  border-top-left-radius: 26px !important;
+  border-top-right-radius: 26px !important;
+  border-start-start-radius: 26px !important;
+  border-start-end-radius: 26px !important;
+}
+
+.map-bottom-actions .color-btn:last-child {
+  border-bottom-left-radius: 26px !important;
+  border-bottom-right-radius: 26px !important;
+  border-end-start-radius: 26px !important;
+  border-end-end-radius: 26px !important;
+  border-bottom: 0 !important;
 }
 
 .map-mode-toggle svg {
@@ -381,14 +440,23 @@ categoriesStores.getRoots();
   }
 
   .map-back,
+  .map-help,
+  .map-filter-toggle,
+  .map-mode-toggle,
+  .map-detective-toggle,
+  .map-audio-toggle {
+    padding: 0 !important;
+  }
+
+  .map-back,
   .map-filter-zone {
     inset-block-start: var(--size-2);
     inset-inline-start: var(--size-2);
   }
 
   .map-help {
-    inset-block-end: var(--size-2);
-    inset-inline-start: var(--size-2);
+    inset-block-end: var(--size-3);
+    inset-inline-start: var(--size-3);
   }
 
   .map-top-actions {
@@ -409,24 +477,38 @@ categoriesStores.getRoots();
   }
 
   .map-back,
+  .map-help,
+  .map-filter-toggle,
+  .map-mode-toggle,
+  .map-detective-toggle,
+  .map-audio-toggle {
+    padding: 0 !important;
+  }
+
+  .map-back,
   .map-filter-zone {
-    inset-block-start: var(--size-4);
-    inset-inline-start: var(--size-4);
+    inset-block-start: var(--size-6);
+    inset-inline-start: var(--size-6);
   }
 
   .map-help {
-    inset-block-end: var(--size-4);
-    inset-inline-start: var(--size-4);
+    inset-block-end: var(--size-6);
+    inset-inline-start: var(--size-6);
   }
 
   .map-top-actions {
-    inset-block-start: var(--size-4);
-    inset-inline-end: var(--size-4);
+    inset-block-start: var(--size-6);
+    inset-inline-end: var(--size-6);
   }
 
   .map-bottom-actions {
-    inset-block-end: var(--size-4);
-    inset-inline-end: var(--size-4);
+    inset-block-end: var(--size-6);
+    inset-inline-end: var(--size-6);
   }
+}
+
+.el-button.-active {
+  background-color: var(--color-full-accent) !important;
+  color: var(--color-background-neutral) !important;
 }
 </style>

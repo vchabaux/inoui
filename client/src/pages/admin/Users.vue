@@ -4,7 +4,7 @@
 
   <div class="variant-dash-title flow-row-between">
     <h1>Users</h1>
-    <router-link to="/admin/users/new">New user</router-link>
+    <router-link to="/admin/users/new" class="link-plain">New user</router-link>
   </div>
 
   <DaTable class="fix-table" :data="users" :columns="columnsUsers" layout="2fr 1fr 1fr 1fr">

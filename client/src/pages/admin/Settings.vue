@@ -129,7 +129,7 @@
               <el-form-item label="Name">
                 <el-input v-model="meta.title" />
               </el-form-item>
-              <el-button aria-label="delete" title="delete" class="fix3 danger-btn" @click="prepareDelete(meta.id)">
+              <el-button aria-label="delete" title="delete" class="fix3" type="danger" plain @click="prepareDelete(meta.id)">
                 <i class="fa-solid fa-trash-can"></i>
               </el-button>
             </div>

@@ -17,7 +17,7 @@ const credits = computed(() => pages.value.find((p) => p.slug === "credits"));
 <style scoped>
 footer {
   background-color: var(--color-background-neutral);
-  padding: var(--size-2) var(--size-6);
+  padding: var(--size-4) var(--size-6);
   z-index: 12;
 }
 
