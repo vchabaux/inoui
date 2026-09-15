@@ -113,14 +113,21 @@ const _expiresAt = computed({
   },
 });
 
+// Sync the fetched user into the form ONCE per user id. The effect can
+// re-run on unrelated reactive updates; re-applying resetForm then would
+// clobber whatever the admin is typing (all fields reverting mid-typing).
+let syncedId = null;
+
 watchEffect(() => {
   const id = route.params.id;
   if (!id) return;
+  if (syncedId === id) return;
 
   const foundUser = userStore.findOne(id);
   if (!foundUser) return;
 
-  user.value = foundUser;
+  syncedId = id;
+  user.value = { ...foundUser };
   isTemporary.value = !!foundUser.expiresAt;
 
   // vee-validate copies initialValues once at setup: push the fetched user
