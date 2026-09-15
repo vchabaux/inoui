@@ -18,6 +18,8 @@ router.post("/", WrappedAccountController.createAccount);
 
 router.patch("/:id", WrappedController.updateOne);
 
+router.patch("/:id/password", WrappedController.changePassword);
+
 router.delete("/:id", WrappedController.deleteOne);
 
 module.exports = router;

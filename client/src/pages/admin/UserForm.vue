@@ -11,6 +11,15 @@
     <el-form-item label="e-mail">
       <el-input v-model="email" type="email" />
     </el-form-item>
+    <el-form-item v-if="isUpdate" label="new password">
+      <el-input
+        v-model="password"
+        type="password"
+        autocomplete="new-password"
+        show-password
+        placeholder="Leave empty to keep the current password"
+      />
+    </el-form-item>
   </el-form>
 
   <el-form label-position="top" class="width-s stretched centered" @submit.prevent>
@@ -72,9 +81,10 @@ const userSchema = yup.object().shape({
   email: yup.string().email("Enter a valid email").required(),
   role: yup.string().required(),
   expiresAt: yup.date(),
+  password: yup.string(),
 });
 
-const { handleSubmit, errors, isSubmitting, validate } = useForm({
+const { handleSubmit, errors, isSubmitting, resetForm } = useForm({
   validationSchema: userSchema,
   initialValues: user,
 });
@@ -83,6 +93,7 @@ const { value: name, errorMessage: nameError } = useField("name");
 const { value: email, errorMessage: emailError, meta } = useField("email");
 const { value: role, errorMessage: roleError } = useField("role");
 const { value: expiresAt } = useField("expiresAt");
+const { value: password } = useField("password");
 
 const isTemporary = ref(false);
 
@@ -90,11 +101,10 @@ const twoDigits = (value) => (value < 10 ? `0${value}` : value);
 
 const _expiresAt = computed({
   get() {
-    const date = expiresAt;
-    const formatted = new Date(date);
+    const formatted = new Date(expiresAt.value);
     const year = formatted.getFullYear();
     const month = twoDigits(formatted.getMonth() + 1);
-    const day = twoDigits(formatted.getUTCDate());
+    const day = twoDigits(formatted.getDate());
 
     return `${year}-${month}-${day}`;
   },
@@ -104,18 +114,32 @@ const _expiresAt = computed({
 });
 
 watchEffect(() => {
-  if (route.params.id) {
-    const foundUser = userStore.findOne(route.params.id);
-    user.value = foundUser;
-    user.value.name = user.value.name || "";
-    user.value.expiresAt = foundUser.expiresAt
-      ? foundUser.expiresAt
-      : new Date(new Date().setFullYear(new Date().getFullYear() + 1));
-  }
+  const id = route.params.id;
+  if (!id) return;
+
+  const foundUser = userStore.findOne(id);
+  if (!foundUser) return;
+
+  user.value = foundUser;
+  isTemporary.value = !!foundUser.expiresAt;
+
+  // vee-validate copies initialValues once at setup: push the fetched user
+  // into the fields explicitly, later mutations of `user` would not sync.
+  resetForm({
+    values: {
+      name: foundUser.name || "",
+      email: foundUser.email || "",
+      role: foundUser.role || "",
+      expiresAt: foundUser.expiresAt
+        ? foundUser.expiresAt
+        : new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+      password: "",
+    },
+  });
 });
 
 const save = handleSubmit(async (values, {}) => {
-  const { name, email, role, expiresAt } = values;
+  const { name, email, role, expiresAt, password } = values;
 
   if (isUpdate.value) {
     await userStore.update(user.value._id, {
@@ -124,6 +148,9 @@ const save = handleSubmit(async (values, {}) => {
       email: email,
       expiresAt: isTemporary.value ? expiresAt : null,
     });
+    if (password) {
+      await userStore.changePassword(user.value._id, password);
+    }
     router.push("/admin/users");
   } else {
     const _user = isTemporary.value

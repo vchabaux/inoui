@@ -37,4 +37,6 @@ exports.removeOne = async (id) => {
   return UserModel.findByIdAndRemove(id);
 };
 
-exports.changePassword = (id, password) => {};
+exports.changePassword = (id, password) => {
+  return UserModel.findByIdAndUpdate(id, { password });
+};

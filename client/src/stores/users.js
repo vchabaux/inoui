@@ -14,7 +14,7 @@ export const useUserStore = defineStore("users", {
 
     findOne() {
       return (id) => {
-        return this.users.find((user) => user._id === id);
+        return (this.users || []).find((user) => user._id === id);
       };
     },
   },
@@ -35,6 +35,11 @@ export const useUserStore = defineStore("users", {
     async update(id, user) {
       await api.patch("/admin/users/" + id, user);
       await this.find();
+      Promise.resolve();
+    },
+
+    async changePassword(id, password) {
+      await api.patch("/admin/users/" + id + "/password", { password });
       Promise.resolve();
     },
 
